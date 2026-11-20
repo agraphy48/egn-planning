@@ -1,0 +1,76 @@
+package handlers
+
+import (
+	"net/http"
+	"time"
+
+	"github.com/gin-gonic/gin"
+
+	"pulse-backend/internal/database"
+	"pulse-backend/internal/middleware"
+	"pulse-backend/internal/models"
+)
+
+// ListMilestones returns milestones for a project
+func ListMilestones(c *gin.Context) {
+	projectID := c.Query("project_id")
+
+	var milestones []models.Milestone
+	query := database.DB
+	if projectID != "" {
+		query = query.Where("project_id = ?", projectID)
+	}
+
+	if err := query.Find(&milestones).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch milestones"})
+		return
+	}
+
+	c.JSON(http.StatusOK, milestones)
+}
+
+type ApproveMilestoneRequest struct {
+	ClientName string `json:"client_name"`
+}
+
+// ApproveMilestone signs off a milestone (permitted for client, pm, super_admin)
+func ApproveMilestone(c *gin.Context) {
+	milestoneID := c.Param("id")
+	userID, _ := middleware.GetCurrentUser(c)
+
+	var req ApproveMilestoneRequest
+	_ = c.ShouldBindJSON(&req)
+
+	var milestone models.Milestone
+	if err := database.DB.Where("id = ?", milestoneID).First(&milestone).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Milestone not found"})
+		return
+	}
+
+	clientName := req.ClientName
+	if clientName == "" {
+		var user models.User
+		if err := database.DB.Where("id = ?", userID).First(&user).Error; err == nil {
+			clientName = user.Name
+		} else {
+			clientName = "Authorized Client Stakeholder"
+		}
+	}
+
+	now := time.Now()
+	milestone.Status = "approved"
+	milestone.ApprovedBy = clientName
+	milestone.ApprovedAt = &now
+
+	if err := database.DB.Save(&milestone).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to approve milestone"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":     "Milestone approved successfully",
+		"milestone":   milestone,
+		"approved_by": clientName,
+		"approved_at": now,
+	})
+}

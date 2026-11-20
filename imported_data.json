@@ -1,0 +1,2715 @@
+{
+  "projects": [
+    {
+      "id": "proj_sustagri",
+      "name": "SUSTAGRI Platform & CMS Modular",
+      "slug": "sustagri",
+      "client_name": "Kementerian Pertanian / Stakeholder Agraria",
+      "status": "active",
+      "progress_percentage": 52,
+      "color_dot": "#10B981",
+      "deadline": "2027-01-26",
+      "total_tasks": 26,
+      "completed_tasks": 7,
+      "created_at": "2026-11-01"
+    },
+    {
+      "id": "proj_smart",
+      "name": "SMART (Repositori Riset & AI Text Mining)",
+      "slug": "smart",
+      "client_name": "Badan Riset & Inovasi (BRIN) / R&D Institute",
+      "status": "active",
+      "progress_percentage": 43,
+      "color_dot": "#6366F1",
+      "deadline": "2027-01-26",
+      "total_tasks": 23,
+      "completed_tasks": 6,
+      "created_at": "2026-11-01"
+    },
+    {
+      "id": "proj_01",
+      "name": "Mobile App v2.4 (React Native)",
+      "slug": "mobile-app-v2",
+      "client_name": "Nike Tech",
+      "status": "active",
+      "progress_percentage": 74,
+      "color_dot": "#3B82F6",
+      "deadline": "2026-12-04",
+      "total_tasks": 8,
+      "completed_tasks": 2,
+      "created_at": "2026-10-01"
+    }
+  ],
+  "team_members": [
+    {
+      "id": "usr_pm",
+      "name": "Alex Rivera",
+      "email": "alex@pulse.workspace",
+      "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
+      "role": "project_manager",
+      "initials": "AR"
+    },
+    {
+      "id": "usr_fe",
+      "name": "Sarah Connor",
+      "email": "sarah.fe@pulse.workspace",
+      "avatar_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80",
+      "role": "team_member",
+      "initials": "SC"
+    },
+    {
+      "id": "usr_be",
+      "name": "Budi Santoso",
+      "email": "budi.be@pulse.workspace",
+      "avatar_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      "role": "team_member",
+      "initials": "BS"
+    },
+    {
+      "id": "usr_fs",
+      "name": "Rizky Ramadhan",
+      "email": "rizky.fs@pulse.workspace",
+      "avatar_url": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80",
+      "role": "team_member",
+      "initials": "RR"
+    },
+    {
+      "id": "usr_ai",
+      "name": "Dr. Elena Rostova",
+      "email": "elena.ai@pulse.workspace",
+      "avatar_url": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80",
+      "role": "team_member",
+      "initials": "ER"
+    },
+    {
+      "id": "usr_qa",
+      "name": "Rian Pratama",
+      "email": "rian.qa@pulse.workspace",
+      "avatar_url": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80",
+      "role": "team_member",
+      "initials": "RP"
+    },
+    {
+      "id": "usr_ui",
+      "name": "Marcus Vance",
+      "email": "marcus.design@pulse.workspace",
+      "avatar_url": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&auto=format&fit=crop&q=80",
+      "role": "team_member",
+      "initials": "MV"
+    },
+    {
+      "id": "usr_devops",
+      "name": "Dewi Lestari",
+      "email": "dewi.ops@pulse.workspace",
+      "avatar_url": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80",
+      "role": "team_member",
+      "initials": "DL"
+    },
+    {
+      "id": "usr_client",
+      "name": "Ir. H. Gunawan (Klien)",
+      "email": "gunawan@pertanian.go.id",
+      "avatar_url": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop&q=80",
+      "role": "client",
+      "initials": "HG"
+    }
+  ],
+  "milestones": [
+    {
+      "id": "ms_sust_f1",
+      "project_id": "proj_sustagri",
+      "title": "Fase 1: CMS Landing Page, Knowledge Base & Fertinnovation CMS",
+      "description": "Pengembangan landing page modular, 5 detail topic knowledge, dan modul dinamis Fertinnovation.",
+      "due_date": "2026-12-24",
+      "status": "in_review"
+    },
+    {
+      "id": "ms_sust_f2",
+      "project_id": "proj_sustagri",
+      "title": "Fase 2: AI Proposal Summarizer, RAG Chatbot & Inkubasi Bisnis",
+      "description": "Service AI text summarizer, knowledge base vector RAG, semantic search inovasi, dan portal inkubasi.",
+      "due_date": "2027-01-26",
+      "status": "pending"
+    },
+    {
+      "id": "ms_smart_f1",
+      "project_id": "proj_smart",
+      "title": "Fase 1: Repository Riset Text Mining, Ekstraksi Data & Dashboard",
+      "description": "Pipeline text mining indexing PDF/DOCX, faceted search, engine ekspor multi-format, dan visualisasi agregasi.",
+      "due_date": "2026-11-25",
+      "status": "in_review"
+    },
+    {
+      "id": "ms_smart_f2",
+      "project_id": "proj_smart",
+      "title": "Fase 2: External Reviewer, Evaluasi Mitra, TKR & Laporan Kinerja",
+      "description": "Portal penilaian reviewer eksternal, scorecard kinerja mitra, engine kalkulasi TKR, dan pelaporan BAST.",
+      "due_date": "2027-01-26",
+      "status": "pending"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task_imp_1",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F1-01.1",
+      "title": "Perancangan struktur skema database & arsitektur CMS modular (Hero, Master Header, Footer, Partner Logo)",
+      "description": "[SUST-F1-01.1] Modul: 1. CMS Landing Page Sustagri | Deliverable: ERD & Skema Database CMS Sustagri | Role/PIC: Backend Dev\n\nDeliverable: ERD & Skema Database CMS Sustagri\nEstimasi Waktu: 32h\nFase: Fase 1\nEpic: 1. CMS Landing Page Sustagri",
+      "category": "Backend",
+      "priority": "Urgent",
+      "status": "Done",
+      "assignee_id": "usr_be",
+      "due_date": "2026-11-05",
+      "start_date": "2026-11-02",
+      "time_estimate": "32h",
+      "fase": "Fase 1",
+      "epic_modul": "1. CMS Landing Page Sustagri",
+      "deliverable": "ERD & Skema Database CMS Sustagri",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 1",
+        "Build",
+        "Backend/CMS"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_1_1",
+          "task_id": "task_imp_1",
+          "title": "Review spesifikasi teknis: 1. CMS Landing Page Sustagri",
+          "is_done": true
+        },
+        {
+          "id": "sub_1_2",
+          "task_id": "task_imp_1",
+          "title": "Implementasi deliverable: ERD & Skema Database CMS Sustagri",
+          "is_done": true
+        },
+        {
+          "id": "sub_1_3",
+          "task_id": "task_imp_1",
+          "title": "QA verification & acceptance testing (32h)",
+          "is_done": true
+        }
+      ],
+      "comments": [],
+      "attachments": [
+        {
+          "id": "att_1",
+          "task_id": "task_imp_1",
+          "file_name": "SUST-F1-01.1_ERD_&_Skema_Database_CMS.pdf",
+          "file_size": "1.8 MB",
+          "file_type": "pdf",
+          "file_url": "#",
+          "uploaded_at": "2026-11-02"
+        }
+      ],
+      "client_visible": true,
+      "created_at": "2026-11-02T08:00:00Z",
+      "updated_at": "2026-11-05T17:00:00Z"
+    },
+    {
+      "id": "task_imp_2",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F1-01.2",
+      "title": "Implementasi Frontend Landing Page Sustagri responsif (Master Header, Global Search, Notifikasi, Auth UI, Contact Footer)",
+      "description": "[SUST-F1-01.2] Modul: 1. CMS Landing Page Sustagri | Deliverable: Halaman Landing Page Sustagri Responsif | Role/PIC: Frontend Dev\n\nDeliverable: Halaman Landing Page Sustagri Responsif\nEstimasi Waktu: 40h\nFase: Fase 1\nEpic: 1. CMS Landing Page Sustagri",
+      "category": "Frontend",
+      "priority": "High",
+      "status": "Done",
+      "assignee_id": "usr_fe",
+      "due_date": "2026-11-12",
+      "start_date": "2026-11-06",
+      "time_estimate": "40h",
+      "fase": "Fase 1",
+      "epic_modul": "1. CMS Landing Page Sustagri",
+      "deliverable": "Halaman Landing Page Sustagri Responsif",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 1",
+        "Build",
+        "Frontend"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_2_1",
+          "task_id": "task_imp_2",
+          "title": "Review spesifikasi teknis: 1. CMS Landing Page Sustagri",
+          "is_done": true
+        },
+        {
+          "id": "sub_2_2",
+          "task_id": "task_imp_2",
+          "title": "Implementasi deliverable: Halaman Landing Page Sustagri Responsif",
+          "is_done": true
+        },
+        {
+          "id": "sub_2_3",
+          "task_id": "task_imp_2",
+          "title": "QA verification & acceptance testing (40h)",
+          "is_done": true
+        }
+      ],
+      "comments": [],
+      "attachments": [
+        {
+          "id": "att_2",
+          "task_id": "task_imp_2",
+          "file_name": "SUST-F1-01.2_Halaman_Landing_Page_Sus.pdf",
+          "file_size": "1.8 MB",
+          "file_type": "pdf",
+          "file_url": "#",
+          "uploaded_at": "2026-11-06"
+        }
+      ],
+      "client_visible": true,
+      "created_at": "2026-11-06T08:00:00Z",
+      "updated_at": "2026-11-12T17:00:00Z"
+    },
+    {
+      "id": "task_imp_3",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F1-01.3",
+      "title": "Pembuatan Panel Admin CMS fleksibel (CRUD dinamis banner, section, menu navigasi, & preview konten)",
+      "description": "[SUST-F1-01.3] Modul: 1. CMS Landing Page Sustagri | Deliverable: Dashboard CMS Landing Page Sustagri | Role/PIC: Fullstack Dev\n\nDeliverable: Dashboard CMS Landing Page Sustagri\nEstimasi Waktu: 40h\nFase: Fase 1\nEpic: 1. CMS Landing Page Sustagri",
+      "category": "Backend",
+      "priority": "High",
+      "status": "Review",
+      "assignee_id": "usr_fs",
+      "due_date": "2026-11-19",
+      "start_date": "2026-11-13",
+      "time_estimate": "40h",
+      "fase": "Fase 1",
+      "epic_modul": "1. CMS Landing Page Sustagri",
+      "deliverable": "Dashboard CMS Landing Page Sustagri",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 1",
+        "Build",
+        "Backend/CMS"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_3_1",
+          "task_id": "task_imp_3",
+          "title": "Review spesifikasi teknis: 1. CMS Landing Page Sustagri",
+          "is_done": true
+        },
+        {
+          "id": "sub_3_2",
+          "task_id": "task_imp_3",
+          "title": "Implementasi deliverable: Dashboard CMS Landing Page Sustagri",
+          "is_done": true
+        },
+        {
+          "id": "sub_3_3",
+          "task_id": "task_imp_3",
+          "title": "QA verification & acceptance testing (40h)",
+          "is_done": false
+        }
+      ],
+      "comments": [
+        {
+          "id": "com_3_1",
+          "task_id": "task_imp_3",
+          "user_id": "usr_fs",
+          "content": "Deliverable 'Dashboard CMS Landing Page Sustagri' sudah selesai dan siap diverifikasi oleh lead.",
+          "created_at": "Today at 09:15 AM"
+        }
+      ],
+      "attachments": [
+        {
+          "id": "att_3",
+          "task_id": "task_imp_3",
+          "file_name": "SUST-F1-01.3_Dashboard_CMS_Landing_Pa.pdf",
+          "file_size": "1.8 MB",
+          "file_type": "pdf",
+          "file_url": "#",
+          "uploaded_at": "2026-11-13"
+        }
+      ],
+      "client_visible": true,
+      "created_at": "2026-11-13T08:00:00Z",
+      "updated_at": "2026-11-19T17:00:00Z"
+    },
+    {
+      "id": "task_imp_4",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F1-01.4",
+      "title": "QA Testing fungsional, responsivitas multi-device, & UAT Landing Page Sustagri",
+      "description": "[SUST-F1-01.4] Modul: 1. CMS Landing Page Sustagri | Deliverable: Dokumen UAT & Sign-off Landing Page | Role/PIC: QA Engineer\n\nDeliverable: Dokumen UAT & Sign-off Landing Page\nEstimasi Waktu: 24h\nFase: Fase 1\nEpic: 1. CMS Landing Page Sustagri",
+      "category": "QA/Test",
+      "priority": "High",
+      "status": "In Progress",
+      "assignee_id": "usr_qa",
+      "due_date": "2026-11-24",
+      "start_date": "2026-11-20",
+      "time_estimate": "24h",
+      "fase": "Fase 1",
+      "epic_modul": "1. CMS Landing Page Sustagri",
+      "deliverable": "Dokumen UAT & Sign-off Landing Page",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 1",
+        "Build",
+        "QA & Testing"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_4_1",
+          "task_id": "task_imp_4",
+          "title": "Review spesifikasi teknis: 1. CMS Landing Page Sustagri",
+          "is_done": true
+        },
+        {
+          "id": "sub_4_2",
+          "task_id": "task_imp_4",
+          "title": "Implementasi deliverable: Dokumen UAT & Sign-off Landing Page",
+          "is_done": false
+        },
+        {
+          "id": "sub_4_3",
+          "task_id": "task_imp_4",
+          "title": "QA verification & acceptance testing (24h)",
+          "is_done": false
+        }
+      ],
+      "comments": [
+        {
+          "id": "com_4_1",
+          "task_id": "task_imp_4",
+          "user_id": "usr_qa",
+          "content": "Deliverable 'Dokumen UAT & Sign-off Landing Page' sudah selesai dan siap diverifikasi oleh lead.",
+          "created_at": "Today at 09:15 AM"
+        }
+      ],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-11-20T08:00:00Z",
+      "updated_at": "2026-11-24T17:00:00Z"
+    },
+    {
+      "id": "task_imp_5",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F1-02.1",
+      "title": "Integrasi desain UI/UX Landing Page Sustainable Agriculture dengan sistem desain Sustagri (Nunito Sans & Palet Forest Green)",
+      "description": "[SUST-F1-02.1] Modul: 2. CMS Landing Page Sustainable Agriculture | Deliverable: Halaman Landing Page Sustainable Agriculture | Role/PIC: Frontend Dev\n\nDeliverable: Halaman Landing Page Sustainable Agriculture\nEstimasi Waktu: 32h\nFase: Fase 1\nEpic: 2. CMS Landing Page Sustainable Agriculture",
+      "category": "Frontend",
+      "priority": "Medium",
+      "status": "Done",
+      "assignee_id": "usr_fe",
+      "due_date": "2026-11-12",
+      "start_date": "2026-11-09",
+      "time_estimate": "32h",
+      "fase": "Fase 1",
+      "epic_modul": "2. CMS Landing Page Sustainable Agriculture",
+      "deliverable": "Halaman Landing Page Sustainable Agriculture",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 1",
+        "Build",
+        "Frontend"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_5_1",
+          "task_id": "task_imp_5",
+          "title": "Review spesifikasi teknis: 2. CMS Landing Page Sustainable Agriculture",
+          "is_done": true
+        },
+        {
+          "id": "sub_5_2",
+          "task_id": "task_imp_5",
+          "title": "Implementasi deliverable: Halaman Landing Page Sustainable Agriculture",
+          "is_done": true
+        },
+        {
+          "id": "sub_5_3",
+          "task_id": "task_imp_5",
+          "title": "QA verification & acceptance testing (32h)",
+          "is_done": true
+        }
+      ],
+      "comments": [],
+      "attachments": [
+        {
+          "id": "att_5",
+          "task_id": "task_imp_5",
+          "file_name": "SUST-F1-02.1_Halaman_Landing_Page_Sus.pdf",
+          "file_size": "1.8 MB",
+          "file_type": "pdf",
+          "file_url": "#",
+          "uploaded_at": "2026-11-09"
+        }
+      ],
+      "client_visible": true,
+      "created_at": "2026-11-09T08:00:00Z",
+      "updated_at": "2026-11-12T17:00:00Z"
+    },
+    {
+      "id": "task_imp_6",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F1-02.2",
+      "title": "Pengembangan modul CMS pengelolaan konten dinamis Sustainable Agriculture (artikel highlight, pilar program, galeri)",
+      "description": "[SUST-F1-02.2] Modul: 2. CMS Landing Page Sustainable Agriculture | Deliverable: Modul CMS Sustainable Agriculture | Role/PIC: Fullstack Dev\n\nDeliverable: Modul CMS Sustainable Agriculture\nEstimasi Waktu: 32h\nFase: Fase 1\nEpic: 2. CMS Landing Page Sustainable Agriculture",
+      "category": "Backend",
+      "priority": "Medium",
+      "status": "Review",
+      "assignee_id": "usr_fs",
+      "due_date": "2026-11-18",
+      "start_date": "2026-11-13",
+      "time_estimate": "32h",
+      "fase": "Fase 1",
+      "epic_modul": "2. CMS Landing Page Sustainable Agriculture",
+      "deliverable": "Modul CMS Sustainable Agriculture",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 1",
+        "Build",
+        "Backend/CMS"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_6_1",
+          "task_id": "task_imp_6",
+          "title": "Review spesifikasi teknis: 2. CMS Landing Page Sustainable Agriculture",
+          "is_done": true
+        },
+        {
+          "id": "sub_6_2",
+          "task_id": "task_imp_6",
+          "title": "Implementasi deliverable: Modul CMS Sustainable Agriculture",
+          "is_done": true
+        },
+        {
+          "id": "sub_6_3",
+          "task_id": "task_imp_6",
+          "title": "QA verification & acceptance testing (32h)",
+          "is_done": false
+        }
+      ],
+      "comments": [
+        {
+          "id": "com_6_1",
+          "task_id": "task_imp_6",
+          "user_id": "usr_fs",
+          "content": "Deliverable 'Modul CMS Sustainable Agriculture' sudah selesai dan siap diverifikasi oleh lead.",
+          "created_at": "Today at 09:15 AM"
+        }
+      ],
+      "attachments": [
+        {
+          "id": "att_6",
+          "task_id": "task_imp_6",
+          "file_name": "SUST-F1-02.2_Modul_CMS_Sustainable_Ag.pdf",
+          "file_size": "1.8 MB",
+          "file_type": "pdf",
+          "file_url": "#",
+          "uploaded_at": "2026-11-13"
+        }
+      ],
+      "client_visible": true,
+      "created_at": "2026-11-13T08:00:00Z",
+      "updated_at": "2026-11-18T17:00:00Z"
+    },
+    {
+      "id": "task_imp_7",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F1-02.3",
+      "title": "Pengujian integrasi CMS ke frontend & optimasi performa loading halaman",
+      "description": "[SUST-F1-02.3] Modul: 2. CMS Landing Page Sustainable Agriculture | Deliverable: Laporan QA & Performance Check | Role/PIC: QA Engineer\n\nDeliverable: Laporan QA & Performance Check\nEstimasi Waktu: 16h\nFase: Fase 1\nEpic: 2. CMS Landing Page Sustainable Agriculture",
+      "category": "QA/Test",
+      "priority": "Medium",
+      "status": "Review",
+      "assignee_id": "usr_qa",
+      "due_date": "2026-11-20",
+      "start_date": "2026-11-19",
+      "time_estimate": "16h",
+      "fase": "Fase 1",
+      "epic_modul": "2. CMS Landing Page Sustainable Agriculture",
+      "deliverable": "Laporan QA & Performance Check",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 1",
+        "Build",
+        "QA & Testing"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_7_1",
+          "task_id": "task_imp_7",
+          "title": "Review spesifikasi teknis: 2. CMS Landing Page Sustainable Agriculture",
+          "is_done": true
+        },
+        {
+          "id": "sub_7_2",
+          "task_id": "task_imp_7",
+          "title": "Implementasi deliverable: Laporan QA & Performance Check",
+          "is_done": true
+        },
+        {
+          "id": "sub_7_3",
+          "task_id": "task_imp_7",
+          "title": "QA verification & acceptance testing (16h)",
+          "is_done": false
+        }
+      ],
+      "comments": [
+        {
+          "id": "com_7_1",
+          "task_id": "task_imp_7",
+          "user_id": "usr_qa",
+          "content": "Deliverable 'Laporan QA & Performance Check' sudah selesai dan siap diverifikasi oleh lead.",
+          "created_at": "Today at 09:15 AM"
+        }
+      ],
+      "attachments": [
+        {
+          "id": "att_7",
+          "task_id": "task_imp_7",
+          "file_name": "SUST-F1-02.3_Laporan_QA_&_Performance.pdf",
+          "file_size": "1.8 MB",
+          "file_type": "pdf",
+          "file_url": "#",
+          "uploaded_at": "2026-11-19"
+        }
+      ],
+      "client_visible": true,
+      "created_at": "2026-11-19T08:00:00Z",
+      "updated_at": "2026-11-20T17:00:00Z"
+    },
+    {
+      "id": "task_imp_8",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F1-03.1",
+      "title": "Implementasi 5 Halaman Detail Topic Knowledge (Agri Media Hub, Crop Knowledge, Plant Nutrition, Precision Agriculture, Soil Health)",
+      "description": "[SUST-F1-03.1] Modul: 3. Build Knowledge & Fleksibilitas CMS | Deliverable: 5 Halaman Detail Topic Responsif | Role/PIC: Frontend Dev\n\nDeliverable: 5 Halaman Detail Topic Responsif\nEstimasi Waktu: 48h\nFase: Fase 1\nEpic: 3. Build Knowledge & Fleksibilitas CMS",
+      "category": "Frontend",
+      "priority": "Medium",
+      "status": "Backlog",
+      "assignee_id": "usr_fe",
+      "due_date": "2026-12-08",
+      "start_date": "2026-12-01",
+      "time_estimate": "48h",
+      "fase": "Fase 1",
+      "epic_modul": "3. Build Knowledge & Fleksibilitas CMS",
+      "deliverable": "5 Halaman Detail Topic Responsif",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 1",
+        "Build",
+        "Frontend"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_8_1",
+          "task_id": "task_imp_8",
+          "title": "Review spesifikasi teknis: 3. Build Knowledge & Fleksibilitas CMS",
+          "is_done": false
+        },
+        {
+          "id": "sub_8_2",
+          "task_id": "task_imp_8",
+          "title": "Implementasi deliverable: 5 Halaman Detail Topic Responsif",
+          "is_done": false
+        },
+        {
+          "id": "sub_8_3",
+          "task_id": "task_imp_8",
+          "title": "QA verification & acceptance testing (48h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-01T08:00:00Z",
+      "updated_at": "2026-12-08T17:00:00Z"
+    },
+    {
+      "id": "task_imp_9",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F1-03.2",
+      "title": "Pengembangan fitur pencarian lokal, sidebar filter dinamis, sorting, featured card, & modal pratinjau artikel",
+      "description": "[SUST-F1-03.2] Modul: 3. Build Knowledge & Fleksibilitas CMS | Deliverable: Komponen Filter, Search & Preview Modal | Role/PIC: Frontend Dev\n\nDeliverable: Komponen Filter, Search & Preview Modal\nEstimasi Waktu: 32h\nFase: Fase 1\nEpic: 3. Build Knowledge & Fleksibilitas CMS",
+      "category": "Frontend",
+      "priority": "Medium",
+      "status": "Backlog",
+      "assignee_id": "usr_fe",
+      "due_date": "2026-12-14",
+      "start_date": "2026-12-09",
+      "time_estimate": "32h",
+      "fase": "Fase 1",
+      "epic_modul": "3. Build Knowledge & Fleksibilitas CMS",
+      "deliverable": "Komponen Filter, Search & Preview Modal",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 1",
+        "Build",
+        "Frontend"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_9_1",
+          "task_id": "task_imp_9",
+          "title": "Review spesifikasi teknis: 3. Build Knowledge & Fleksibilitas CMS",
+          "is_done": false
+        },
+        {
+          "id": "sub_9_2",
+          "task_id": "task_imp_9",
+          "title": "Implementasi deliverable: Komponen Filter, Search & Preview Modal",
+          "is_done": false
+        },
+        {
+          "id": "sub_9_3",
+          "task_id": "task_imp_9",
+          "title": "QA verification & acceptance testing (32h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-09T08:00:00Z",
+      "updated_at": "2026-12-14T17:00:00Z"
+    },
+    {
+      "id": "task_imp_10",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F1-03.3",
+      "title": "Pembangunan Backend CMS Knowledge Management (CRUD artikel, kategori topik, tag, upload media/PDF, status publish)",
+      "description": "[SUST-F1-03.3] Modul: 3. Build Knowledge & Fleksibilitas CMS | Deliverable: API & Admin Panel Knowledge CMS | Role/PIC: Backend Dev\n\nDeliverable: API & Admin Panel Knowledge CMS\nEstimasi Waktu: 40h\nFase: Fase 1\nEpic: 3. Build Knowledge & Fleksibilitas CMS",
+      "category": "Backend",
+      "priority": "Medium",
+      "status": "Backlog",
+      "assignee_id": "usr_be",
+      "due_date": "2026-12-21",
+      "start_date": "2026-12-15",
+      "time_estimate": "40h",
+      "fase": "Fase 1",
+      "epic_modul": "3. Build Knowledge & Fleksibilitas CMS",
+      "deliverable": "API & Admin Panel Knowledge CMS",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 1",
+        "Build",
+        "Backend/CMS"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_10_1",
+          "task_id": "task_imp_10",
+          "title": "Review spesifikasi teknis: 3. Build Knowledge & Fleksibilitas CMS",
+          "is_done": false
+        },
+        {
+          "id": "sub_10_2",
+          "task_id": "task_imp_10",
+          "title": "Implementasi deliverable: API & Admin Panel Knowledge CMS",
+          "is_done": false
+        },
+        {
+          "id": "sub_10_3",
+          "task_id": "task_imp_10",
+          "title": "QA verification & acceptance testing (40h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-15T08:00:00Z",
+      "updated_at": "2026-12-21T17:00:00Z"
+    },
+    {
+      "id": "task_imp_11",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F1-03.4",
+      "title": "Migrasi konten awal, pengujian cross-browser, & UAT Modul Knowledge",
+      "description": "[SUST-F1-03.4] Modul: 3. Build Knowledge & Fleksibilitas CMS | Deliverable: Laporan UAT Knowledge Hub | Role/PIC: QA Engineer\n\nDeliverable: Laporan UAT Knowledge Hub\nEstimasi Waktu: 24h\nFase: Fase 1\nEpic: 3. Build Knowledge & Fleksibilitas CMS",
+      "category": "QA/Test",
+      "priority": "Medium",
+      "status": "Backlog",
+      "assignee_id": "usr_qa",
+      "due_date": "2026-12-24",
+      "start_date": "2026-12-22",
+      "time_estimate": "24h",
+      "fase": "Fase 1",
+      "epic_modul": "3. Build Knowledge & Fleksibilitas CMS",
+      "deliverable": "Laporan UAT Knowledge Hub",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 1",
+        "Build",
+        "QA & Testing"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_11_1",
+          "task_id": "task_imp_11",
+          "title": "Review spesifikasi teknis: 3. Build Knowledge & Fleksibilitas CMS",
+          "is_done": false
+        },
+        {
+          "id": "sub_11_2",
+          "task_id": "task_imp_11",
+          "title": "Implementasi deliverable: Laporan UAT Knowledge Hub",
+          "is_done": false
+        },
+        {
+          "id": "sub_11_3",
+          "task_id": "task_imp_11",
+          "title": "QA verification & acceptance testing (24h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-22T08:00:00Z",
+      "updated_at": "2026-12-24T17:00:00Z"
+    },
+    {
+      "id": "task_imp_12",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F1-04.1",
+      "title": "Audit struktur konten eksisting Fertinnovation & perancangan ulang fleksibilitas blok konten CMS",
+      "description": "[SUST-F1-04.1] Modul: 4. CMS Landing Page Fertinnovation | Deliverable: Blueprint & Wireframe CMS Fertinnovation | Role/PIC: UI/UX Designer\n\nDeliverable: Blueprint & Wireframe CMS Fertinnovation\nEstimasi Waktu: 24h\nFase: Fase 1\nEpic: 4. CMS Landing Page Fertinnovation",
+      "category": "Design",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_ui",
+      "due_date": "2026-12-09",
+      "start_date": "2026-12-07",
+      "time_estimate": "24h",
+      "fase": "Fase 1",
+      "epic_modul": "4. CMS Landing Page Fertinnovation",
+      "deliverable": "Blueprint & Wireframe CMS Fertinnovation",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 1",
+        "Enhancement",
+        "UI/UX"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_12_1",
+          "task_id": "task_imp_12",
+          "title": "Review spesifikasi teknis: 4. CMS Landing Page Fertinnovation",
+          "is_done": false
+        },
+        {
+          "id": "sub_12_2",
+          "task_id": "task_imp_12",
+          "title": "Implementasi deliverable: Blueprint & Wireframe CMS Fertinnovation",
+          "is_done": false
+        },
+        {
+          "id": "sub_12_3",
+          "task_id": "task_imp_12",
+          "title": "QA verification & acceptance testing (24h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-07T08:00:00Z",
+      "updated_at": "2026-12-09T17:00:00Z"
+    },
+    {
+      "id": "task_imp_13",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F1-04.2",
+      "title": "Pengembangan enhancement CMS dinamis Fertinnovation (pengelolaan program inovasi, timeline, FAQ, & banner)",
+      "description": "[SUST-F1-04.2] Modul: 4. CMS Landing Page Fertinnovation | Deliverable: Modul CMS Fertinnovation Dinamis | Role/PIC: Fullstack Dev\n\nDeliverable: Modul CMS Fertinnovation Dinamis\nEstimasi Waktu: 48h\nFase: Fase 1\nEpic: 4. CMS Landing Page Fertinnovation",
+      "category": "Backend",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_fs",
+      "due_date": "2026-12-17",
+      "start_date": "2026-12-10",
+      "time_estimate": "48h",
+      "fase": "Fase 1",
+      "epic_modul": "4. CMS Landing Page Fertinnovation",
+      "deliverable": "Modul CMS Fertinnovation Dinamis",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 1",
+        "Enhancement",
+        "Backend/CMS"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_13_1",
+          "task_id": "task_imp_13",
+          "title": "Review spesifikasi teknis: 4. CMS Landing Page Fertinnovation",
+          "is_done": false
+        },
+        {
+          "id": "sub_13_2",
+          "task_id": "task_imp_13",
+          "title": "Implementasi deliverable: Modul CMS Fertinnovation Dinamis",
+          "is_done": false
+        },
+        {
+          "id": "sub_13_3",
+          "task_id": "task_imp_13",
+          "title": "QA verification & acceptance testing (48h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-10T08:00:00Z",
+      "updated_at": "2026-12-17T17:00:00Z"
+    },
+    {
+      "id": "task_imp_14",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F1-04.3",
+      "title": "Sinkronisasi tampilan Frontend Fertinnovation dengan data CMS & pengujian regresi",
+      "description": "[SUST-F1-04.3] Modul: 4. CMS Landing Page Fertinnovation | Deliverable: Landing Page Fertinnovation Terintegrasi CMS | Role/PIC: QA Engineer\n\nDeliverable: Landing Page Fertinnovation Terintegrasi CMS\nEstimasi Waktu: 24h\nFase: Fase 1\nEpic: 4. CMS Landing Page Fertinnovation",
+      "category": "QA/Test",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_qa",
+      "due_date": "2026-12-22",
+      "start_date": "2026-12-18",
+      "time_estimate": "24h",
+      "fase": "Fase 1",
+      "epic_modul": "4. CMS Landing Page Fertinnovation",
+      "deliverable": "Landing Page Fertinnovation Terintegrasi CMS",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 1",
+        "Enhancement",
+        "QA & Testing"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_14_1",
+          "task_id": "task_imp_14",
+          "title": "Review spesifikasi teknis: 4. CMS Landing Page Fertinnovation",
+          "is_done": false
+        },
+        {
+          "id": "sub_14_2",
+          "task_id": "task_imp_14",
+          "title": "Implementasi deliverable: Landing Page Fertinnovation Terintegrasi CMS",
+          "is_done": false
+        },
+        {
+          "id": "sub_14_3",
+          "task_id": "task_imp_14",
+          "title": "QA verification & acceptance testing (24h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-18T08:00:00Z",
+      "updated_at": "2026-12-22T17:00:00Z"
+    },
+    {
+      "id": "task_imp_15",
+      "project_id": "proj_smart",
+      "key": "SMRT-F1-01.1",
+      "title": "Perancangan arsitektur Repositori Hasil Riset & pipeline ekstraksi teks (PDF/DOCX parsing & indexing)",
+      "description": "[SMRT-F1-01.1] Modul: 1. Repository (Search/Text Mining/AI - Hasil Riset) | Deliverable: Arsitektur Pipeline Text Mining & Indexing | Role/PIC: AI/ML Engineer\n\nDeliverable: Arsitektur Pipeline Text Mining & Indexing\nEstimasi Waktu: 40h\nFase: Fase 1\nEpic: 1. Repository (Search/Text Mining/AI - Hasil Riset)",
+      "category": "AI/ML",
+      "priority": "Urgent",
+      "status": "Done",
+      "assignee_id": "usr_ai",
+      "due_date": "2026-11-06",
+      "start_date": "2026-11-02",
+      "time_estimate": "40h",
+      "fase": "Fase 1",
+      "epic_modul": "1. Repository (Search/Text Mining/AI - Hasil Riset)",
+      "deliverable": "Arsitektur Pipeline Text Mining & Indexing",
+      "tags": [
+        "SMART",
+        "Fase 1",
+        "Build",
+        "AI/ML"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_15_1",
+          "task_id": "task_imp_15",
+          "title": "Review spesifikasi teknis: 1. Repository (Search/Text Mining/AI - Hasil Riset)",
+          "is_done": true
+        },
+        {
+          "id": "sub_15_2",
+          "task_id": "task_imp_15",
+          "title": "Implementasi deliverable: Arsitektur Pipeline Text Mining & Indexing",
+          "is_done": true
+        },
+        {
+          "id": "sub_15_3",
+          "task_id": "task_imp_15",
+          "title": "QA verification & acceptance testing (40h)",
+          "is_done": true
+        }
+      ],
+      "comments": [],
+      "attachments": [
+        {
+          "id": "att_15",
+          "task_id": "task_imp_15",
+          "file_name": "SMRT-F1-01.1_Arsitektur_Pipeline_Text.pdf",
+          "file_size": "1.8 MB",
+          "file_type": "pdf",
+          "file_url": "#",
+          "uploaded_at": "2026-11-02"
+        }
+      ],
+      "client_visible": true,
+      "created_at": "2026-11-02T08:00:00Z",
+      "updated_at": "2026-11-06T17:00:00Z"
+    },
+    {
+      "id": "task_imp_16",
+      "project_id": "proj_smart",
+      "key": "SMRT-F1-01.2",
+      "title": "Implementasi Search Engine & pengayaan metadata otomatis berbasis Text Mining / AI (keyword, topik, abstrak)",
+      "description": "[SMRT-F1-01.2] Modul: 1. Repository (Search/Text Mining/AI - Hasil Riset) | Deliverable: Engine Pencarian & Auto-Tagging AI | Role/PIC: AI/ML Engineer\n\nDeliverable: Engine Pencarian & Auto-Tagging AI\nEstimasi Waktu: 48h\nFase: Fase 1\nEpic: 1. Repository (Search/Text Mining/AI - Hasil Riset)",
+      "category": "AI/ML",
+      "priority": "High",
+      "status": "Done",
+      "assignee_id": "usr_ai",
+      "due_date": "2026-11-16",
+      "start_date": "2026-11-09",
+      "time_estimate": "48h",
+      "fase": "Fase 1",
+      "epic_modul": "1. Repository (Search/Text Mining/AI - Hasil Riset)",
+      "deliverable": "Engine Pencarian & Auto-Tagging AI",
+      "tags": [
+        "SMART",
+        "Fase 1",
+        "Build",
+        "AI/ML"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_16_1",
+          "task_id": "task_imp_16",
+          "title": "Review spesifikasi teknis: 1. Repository (Search/Text Mining/AI - Hasil Riset)",
+          "is_done": true
+        },
+        {
+          "id": "sub_16_2",
+          "task_id": "task_imp_16",
+          "title": "Implementasi deliverable: Engine Pencarian & Auto-Tagging AI",
+          "is_done": true
+        },
+        {
+          "id": "sub_16_3",
+          "task_id": "task_imp_16",
+          "title": "QA verification & acceptance testing (48h)",
+          "is_done": true
+        }
+      ],
+      "comments": [],
+      "attachments": [
+        {
+          "id": "att_16",
+          "task_id": "task_imp_16",
+          "file_name": "SMRT-F1-01.2_Engine_Pencarian_&_Auto-.pdf",
+          "file_size": "1.8 MB",
+          "file_type": "pdf",
+          "file_url": "#",
+          "uploaded_at": "2026-11-09"
+        }
+      ],
+      "client_visible": true,
+      "created_at": "2026-11-09T08:00:00Z",
+      "updated_at": "2026-11-16T17:00:00Z"
+    },
+    {
+      "id": "task_imp_17",
+      "project_id": "proj_smart",
+      "key": "SMRT-F1-01.3",
+      "title": "Pembuatan antarmuka pencarian lanjutan (faceted search, filter tahun/peneliti/topik) & integrasi API",
+      "description": "[SMRT-F1-01.3] Modul: 1. Repository (Search/Text Mining/AI - Hasil Riset) | Deliverable: UI Repositori & Pencarian Cerdas SMART | Role/PIC: Fullstack Dev\n\nDeliverable: UI Repositori & Pencarian Cerdas SMART\nEstimasi Waktu: 32h\nFase: Fase 1\nEpic: 1. Repository (Search/Text Mining/AI - Hasil Riset)",
+      "category": "Frontend",
+      "priority": "High",
+      "status": "Review",
+      "assignee_id": "usr_fs",
+      "due_date": "2026-11-20",
+      "start_date": "2026-11-17",
+      "time_estimate": "32h",
+      "fase": "Fase 1",
+      "epic_modul": "1. Repository (Search/Text Mining/AI - Hasil Riset)",
+      "deliverable": "UI Repositori & Pencarian Cerdas SMART",
+      "tags": [
+        "SMART",
+        "Fase 1",
+        "Build",
+        "Frontend"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_17_1",
+          "task_id": "task_imp_17",
+          "title": "Review spesifikasi teknis: 1. Repository (Search/Text Mining/AI - Hasil Riset)",
+          "is_done": true
+        },
+        {
+          "id": "sub_17_2",
+          "task_id": "task_imp_17",
+          "title": "Implementasi deliverable: UI Repositori & Pencarian Cerdas SMART",
+          "is_done": true
+        },
+        {
+          "id": "sub_17_3",
+          "task_id": "task_imp_17",
+          "title": "QA verification & acceptance testing (32h)",
+          "is_done": false
+        }
+      ],
+      "comments": [
+        {
+          "id": "com_17_1",
+          "task_id": "task_imp_17",
+          "user_id": "usr_fs",
+          "content": "Deliverable 'UI Repositori & Pencarian Cerdas SMART' sudah selesai dan siap diverifikasi oleh lead.",
+          "created_at": "Today at 09:15 AM"
+        }
+      ],
+      "attachments": [
+        {
+          "id": "att_17",
+          "task_id": "task_imp_17",
+          "file_name": "SMRT-F1-01.3_UI_Repositori_&_Pencaria.pdf",
+          "file_size": "1.8 MB",
+          "file_type": "pdf",
+          "file_url": "#",
+          "uploaded_at": "2026-11-17"
+        }
+      ],
+      "client_visible": true,
+      "created_at": "2026-11-17T08:00:00Z",
+      "updated_at": "2026-11-20T17:00:00Z"
+    },
+    {
+      "id": "task_imp_18",
+      "project_id": "proj_smart",
+      "key": "SMRT-F1-02.1",
+      "title": "Pengembangan modul ekspor/ekstraksi data riset terstruktur (Excel/CSV/PDF) dengan filter kustom",
+      "description": "[SMRT-F1-02.1] Modul: 2. Download / Ekstraksi Data | Deliverable: API & Engine Export Data Multi-Format | Role/PIC: Backend Dev\n\nDeliverable: API & Engine Export Data Multi-Format\nEstimasi Waktu: 40h\nFase: Fase 1\nEpic: 2. Download / Ekstraksi Data",
+      "category": "Backend",
+      "priority": "High",
+      "status": "Done",
+      "assignee_id": "usr_be",
+      "due_date": "2026-11-13",
+      "start_date": "2026-11-09",
+      "time_estimate": "40h",
+      "fase": "Fase 1",
+      "epic_modul": "2. Download / Ekstraksi Data",
+      "deliverable": "API & Engine Export Data Multi-Format",
+      "tags": [
+        "SMART",
+        "Fase 1",
+        "Build",
+        "Backend/CMS"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_18_1",
+          "task_id": "task_imp_18",
+          "title": "Review spesifikasi teknis: 2. Download / Ekstraksi Data",
+          "is_done": true
+        },
+        {
+          "id": "sub_18_2",
+          "task_id": "task_imp_18",
+          "title": "Implementasi deliverable: API & Engine Export Data Multi-Format",
+          "is_done": true
+        },
+        {
+          "id": "sub_18_3",
+          "task_id": "task_imp_18",
+          "title": "QA verification & acceptance testing (40h)",
+          "is_done": true
+        }
+      ],
+      "comments": [],
+      "attachments": [
+        {
+          "id": "att_18",
+          "task_id": "task_imp_18",
+          "file_name": "SMRT-F1-02.1_API_&_Engine_Export_Data.pdf",
+          "file_size": "1.8 MB",
+          "file_type": "pdf",
+          "file_url": "#",
+          "uploaded_at": "2026-11-09"
+        }
+      ],
+      "client_visible": true,
+      "created_at": "2026-11-09T08:00:00Z",
+      "updated_at": "2026-11-13T17:00:00Z"
+    },
+    {
+      "id": "task_imp_19",
+      "project_id": "proj_smart",
+      "key": "SMRT-F1-02.2",
+      "title": "Implementasi hak akses (RBAC), watermark/audit log unduhan, & background job untuk dataset besar",
+      "description": "[SMRT-F1-02.2] Modul: 2. Download / Ekstraksi Data | Deliverable: Sistem RBAC & Audit Log Ekstraksi Data | Role/PIC: Backend Dev\n\nDeliverable: Sistem RBAC & Audit Log Ekstraksi Data\nEstimasi Waktu: 32h\nFase: Fase 1\nEpic: 2. Download / Ekstraksi Data",
+      "category": "Backend",
+      "priority": "High",
+      "status": "Review",
+      "assignee_id": "usr_be",
+      "due_date": "2026-11-19",
+      "start_date": "2026-11-16",
+      "time_estimate": "32h",
+      "fase": "Fase 1",
+      "epic_modul": "2. Download / Ekstraksi Data",
+      "deliverable": "Sistem RBAC & Audit Log Ekstraksi Data",
+      "tags": [
+        "SMART",
+        "Fase 1",
+        "Build",
+        "Backend/CMS"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_19_1",
+          "task_id": "task_imp_19",
+          "title": "Review spesifikasi teknis: 2. Download / Ekstraksi Data",
+          "is_done": true
+        },
+        {
+          "id": "sub_19_2",
+          "task_id": "task_imp_19",
+          "title": "Implementasi deliverable: Sistem RBAC & Audit Log Ekstraksi Data",
+          "is_done": true
+        },
+        {
+          "id": "sub_19_3",
+          "task_id": "task_imp_19",
+          "title": "QA verification & acceptance testing (32h)",
+          "is_done": false
+        }
+      ],
+      "comments": [
+        {
+          "id": "com_19_1",
+          "task_id": "task_imp_19",
+          "user_id": "usr_be",
+          "content": "Deliverable 'Sistem RBAC & Audit Log Ekstraksi Data' sudah selesai dan siap diverifikasi oleh lead.",
+          "created_at": "Today at 09:15 AM"
+        }
+      ],
+      "attachments": [
+        {
+          "id": "att_19",
+          "task_id": "task_imp_19",
+          "file_name": "SMRT-F1-02.2_Sistem_RBAC_&_Audit_Log_.pdf",
+          "file_size": "1.8 MB",
+          "file_type": "pdf",
+          "file_url": "#",
+          "uploaded_at": "2026-11-16"
+        }
+      ],
+      "client_visible": true,
+      "created_at": "2026-11-16T08:00:00Z",
+      "updated_at": "2026-11-19T17:00:00Z"
+    },
+    {
+      "id": "task_imp_20",
+      "project_id": "proj_smart",
+      "key": "SMRT-F1-02.3",
+      "title": "Pengujian akurasi data hasil ekstraksi, stress test unduhan massal, & UAT",
+      "description": "[SMRT-F1-02.3] Modul: 2. Download / Ekstraksi Data | Deliverable: Laporan QA Validasi Ekstraksi Data | Role/PIC: QA Engineer\n\nDeliverable: Laporan QA Validasi Ekstraksi Data\nEstimasi Waktu: 24h\nFase: Fase 1\nEpic: 2. Download / Ekstraksi Data",
+      "category": "QA/Test",
+      "priority": "High",
+      "status": "In Progress",
+      "assignee_id": "usr_qa",
+      "due_date": "2026-11-24",
+      "start_date": "2026-11-20",
+      "time_estimate": "24h",
+      "fase": "Fase 1",
+      "epic_modul": "2. Download / Ekstraksi Data",
+      "deliverable": "Laporan QA Validasi Ekstraksi Data",
+      "tags": [
+        "SMART",
+        "Fase 1",
+        "Build",
+        "QA & Testing"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_20_1",
+          "task_id": "task_imp_20",
+          "title": "Review spesifikasi teknis: 2. Download / Ekstraksi Data",
+          "is_done": true
+        },
+        {
+          "id": "sub_20_2",
+          "task_id": "task_imp_20",
+          "title": "Implementasi deliverable: Laporan QA Validasi Ekstraksi Data",
+          "is_done": false
+        },
+        {
+          "id": "sub_20_3",
+          "task_id": "task_imp_20",
+          "title": "QA verification & acceptance testing (24h)",
+          "is_done": false
+        }
+      ],
+      "comments": [
+        {
+          "id": "com_20_1",
+          "task_id": "task_imp_20",
+          "user_id": "usr_qa",
+          "content": "Deliverable 'Laporan QA Validasi Ekstraksi Data' sudah selesai dan siap diverifikasi oleh lead.",
+          "created_at": "Today at 09:15 AM"
+        }
+      ],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-11-20T08:00:00Z",
+      "updated_at": "2026-11-24T17:00:00Z"
+    },
+    {
+      "id": "task_imp_21",
+      "project_id": "proj_smart",
+      "key": "SMRT-F1-03.1",
+      "title": "Perancangan KPI & agregasi query database untuk metrik riset (jumlah riset, status, tren per tahun/unit)",
+      "description": "[SMRT-F1-03.1] Modul: 3. Dashboard & Visualisasi Data | Deliverable: API Agregasi Data Dashboard SMART | Role/PIC: Backend Dev\n\nDeliverable: API Agregasi Data Dashboard SMART\nEstimasi Waktu: 24h\nFase: Fase 1\nEpic: 3. Dashboard & Visualisasi Data",
+      "category": "Database",
+      "priority": "Medium",
+      "status": "Done",
+      "assignee_id": "usr_be",
+      "due_date": "2026-11-16",
+      "start_date": "2026-11-12",
+      "time_estimate": "24h",
+      "fase": "Fase 1",
+      "epic_modul": "3. Dashboard & Visualisasi Data",
+      "deliverable": "API Agregasi Data Dashboard SMART",
+      "tags": [
+        "SMART",
+        "Fase 1",
+        "Build",
+        "Database"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_21_1",
+          "task_id": "task_imp_21",
+          "title": "Review spesifikasi teknis: 3. Dashboard & Visualisasi Data",
+          "is_done": true
+        },
+        {
+          "id": "sub_21_2",
+          "task_id": "task_imp_21",
+          "title": "Implementasi deliverable: API Agregasi Data Dashboard SMART",
+          "is_done": true
+        },
+        {
+          "id": "sub_21_3",
+          "task_id": "task_imp_21",
+          "title": "QA verification & acceptance testing (24h)",
+          "is_done": true
+        }
+      ],
+      "comments": [],
+      "attachments": [
+        {
+          "id": "att_21",
+          "task_id": "task_imp_21",
+          "file_name": "SMRT-F1-03.1_API_Agregasi_Data_Dashbo.pdf",
+          "file_size": "1.8 MB",
+          "file_type": "pdf",
+          "file_url": "#",
+          "uploaded_at": "2026-11-12"
+        }
+      ],
+      "client_visible": true,
+      "created_at": "2026-11-12T08:00:00Z",
+      "updated_at": "2026-11-16T17:00:00Z"
+    },
+    {
+      "id": "task_imp_22",
+      "project_id": "proj_smart",
+      "key": "SMRT-F1-03.2",
+      "title": "Implementasi Dashboard interaktif (grafik tren, pie/bar chart, filter periode) & export visualisasi",
+      "description": "[SMRT-F1-03.2] Modul: 3. Dashboard & Visualisasi Data | Deliverable: Dashboard Visualisasi Data SMART | Role/PIC: Frontend Dev\n\nDeliverable: Dashboard Visualisasi Data SMART\nEstimasi Waktu: 40h\nFase: Fase 1\nEpic: 3. Dashboard & Visualisasi Data",
+      "category": "Frontend",
+      "priority": "Medium",
+      "status": "Review",
+      "assignee_id": "usr_fe",
+      "due_date": "2026-11-23",
+      "start_date": "2026-11-17",
+      "time_estimate": "40h",
+      "fase": "Fase 1",
+      "epic_modul": "3. Dashboard & Visualisasi Data",
+      "deliverable": "Dashboard Visualisasi Data SMART",
+      "tags": [
+        "SMART",
+        "Fase 1",
+        "Build",
+        "Frontend"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_22_1",
+          "task_id": "task_imp_22",
+          "title": "Review spesifikasi teknis: 3. Dashboard & Visualisasi Data",
+          "is_done": true
+        },
+        {
+          "id": "sub_22_2",
+          "task_id": "task_imp_22",
+          "title": "Implementasi deliverable: Dashboard Visualisasi Data SMART",
+          "is_done": true
+        },
+        {
+          "id": "sub_22_3",
+          "task_id": "task_imp_22",
+          "title": "QA verification & acceptance testing (40h)",
+          "is_done": false
+        }
+      ],
+      "comments": [
+        {
+          "id": "com_22_1",
+          "task_id": "task_imp_22",
+          "user_id": "usr_fe",
+          "content": "Deliverable 'Dashboard Visualisasi Data SMART' sudah selesai dan siap diverifikasi oleh lead.",
+          "created_at": "Today at 09:15 AM"
+        }
+      ],
+      "attachments": [
+        {
+          "id": "att_22",
+          "task_id": "task_imp_22",
+          "file_name": "SMRT-F1-03.2_Dashboard_Visualisasi_Da.pdf",
+          "file_size": "1.8 MB",
+          "file_type": "pdf",
+          "file_url": "#",
+          "uploaded_at": "2026-11-17"
+        }
+      ],
+      "client_visible": true,
+      "created_at": "2026-11-17T08:00:00Z",
+      "updated_at": "2026-11-23T17:00:00Z"
+    },
+    {
+      "id": "task_imp_23",
+      "project_id": "proj_smart",
+      "key": "SMRT-F1-03.3",
+      "title": "Verifikasi kesesuaian angka dashboard dengan database sumber & UAT",
+      "description": "[SMRT-F1-03.3] Modul: 3. Dashboard & Visualisasi Data | Deliverable: Sign-off Dashboard & Visualisasi | Role/PIC: QA Engineer\n\nDeliverable: Sign-off Dashboard & Visualisasi\nEstimasi Waktu: 16h\nFase: Fase 1\nEpic: 3. Dashboard & Visualisasi Data",
+      "category": "QA/Test",
+      "priority": "Medium",
+      "status": "In Progress",
+      "assignee_id": "usr_qa",
+      "due_date": "2026-11-25",
+      "start_date": "2026-11-24",
+      "time_estimate": "16h",
+      "fase": "Fase 1",
+      "epic_modul": "3. Dashboard & Visualisasi Data",
+      "deliverable": "Sign-off Dashboard & Visualisasi",
+      "tags": [
+        "SMART",
+        "Fase 1",
+        "Build",
+        "QA & Testing"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_23_1",
+          "task_id": "task_imp_23",
+          "title": "Review spesifikasi teknis: 3. Dashboard & Visualisasi Data",
+          "is_done": true
+        },
+        {
+          "id": "sub_23_2",
+          "task_id": "task_imp_23",
+          "title": "Implementasi deliverable: Sign-off Dashboard & Visualisasi",
+          "is_done": false
+        },
+        {
+          "id": "sub_23_3",
+          "task_id": "task_imp_23",
+          "title": "QA verification & acceptance testing (16h)",
+          "is_done": false
+        }
+      ],
+      "comments": [
+        {
+          "id": "com_23_1",
+          "task_id": "task_imp_23",
+          "user_id": "usr_qa",
+          "content": "Deliverable 'Sign-off Dashboard & Visualisasi' sudah selesai dan siap diverifikasi oleh lead.",
+          "created_at": "Today at 09:15 AM"
+        }
+      ],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-11-24T08:00:00Z",
+      "updated_at": "2026-11-25T17:00:00Z"
+    },
+    {
+      "id": "task_imp_24",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F2-01.1",
+      "title": "Pengembangan pipeline document ingestion (PDF/DOCX) & prompt engineering untuk ringkasan proposal/jurnal",
+      "description": "[SUST-F2-01.1] Modul: 5. AI-Powered Proposal & Journal Summarizer | Deliverable: Service AI Text Generation Summarizer | Role/PIC: AI/ML Engineer\n\nDeliverable: Service AI Text Generation Summarizer\nEstimasi Waktu: 40h\nFase: Fase 2\nEpic: 5. AI-Powered Proposal & Journal Summarizer",
+      "category": "AI/ML",
+      "priority": "Urgent",
+      "status": "Backlog",
+      "assignee_id": "usr_ai",
+      "due_date": "2026-12-07",
+      "start_date": "2026-12-01",
+      "time_estimate": "40h",
+      "fase": "Fase 2",
+      "epic_modul": "5. AI-Powered Proposal & Journal Summarizer",
+      "deliverable": "Service AI Text Generation Summarizer",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 2",
+        "Enhancement",
+        "AI/ML"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_24_1",
+          "task_id": "task_imp_24",
+          "title": "Review spesifikasi teknis: 5. AI-Powered Proposal & Journal Summarizer",
+          "is_done": false
+        },
+        {
+          "id": "sub_24_2",
+          "task_id": "task_imp_24",
+          "title": "Implementasi deliverable: Service AI Text Generation Summarizer",
+          "is_done": false
+        },
+        {
+          "id": "sub_24_3",
+          "task_id": "task_imp_24",
+          "title": "QA verification & acceptance testing (40h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-01T08:00:00Z",
+      "updated_at": "2026-12-07T17:00:00Z"
+    },
+    {
+      "id": "task_imp_25",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F2-01.2",
+      "title": "Integrasi fitur auto-summary ke halaman Review Proposal (poin utama, metodologi, kebaruan, catatan reviewer)",
+      "description": "[SUST-F2-01.2] Modul: 5. AI-Powered Proposal & Journal Summarizer | Deliverable: UI Review Proposal dengan AI Summarizer | Role/PIC: Fullstack Dev\n\nDeliverable: UI Review Proposal dengan AI Summarizer\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 5. AI-Powered Proposal & Journal Summarizer",
+      "category": "Frontend",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_fs",
+      "due_date": "2026-12-11",
+      "start_date": "2026-12-08",
+      "time_estimate": "32h",
+      "fase": "Fase 2",
+      "epic_modul": "5. AI-Powered Proposal & Journal Summarizer",
+      "deliverable": "UI Review Proposal dengan AI Summarizer",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 2",
+        "Enhancement",
+        "Frontend"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_25_1",
+          "task_id": "task_imp_25",
+          "title": "Review spesifikasi teknis: 5. AI-Powered Proposal & Journal Summarizer",
+          "is_done": false
+        },
+        {
+          "id": "sub_25_2",
+          "task_id": "task_imp_25",
+          "title": "Implementasi deliverable: UI Review Proposal dengan AI Summarizer",
+          "is_done": false
+        },
+        {
+          "id": "sub_25_3",
+          "task_id": "task_imp_25",
+          "title": "QA verification & acceptance testing (32h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-08T08:00:00Z",
+      "updated_at": "2026-12-11T17:00:00Z"
+    },
+    {
+      "id": "task_imp_26",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F2-01.3",
+      "title": "Evaluasi kualitas ringkasan AI (akurasi, halusinasi, latensi) & UAT bersama tim reviewer",
+      "description": "[SUST-F2-01.3] Modul: 5. AI-Powered Proposal & Journal Summarizer | Deliverable: Laporan Evaluasi Akurasi AI Summarizer | Role/PIC: QA Engineer\n\nDeliverable: Laporan Evaluasi Akurasi AI Summarizer\nEstimasi Waktu: 24h\nFase: Fase 2\nEpic: 5. AI-Powered Proposal & Journal Summarizer",
+      "category": "QA/Test",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_qa",
+      "due_date": "2026-12-16",
+      "start_date": "2026-12-14",
+      "time_estimate": "24h",
+      "fase": "Fase 2",
+      "epic_modul": "5. AI-Powered Proposal & Journal Summarizer",
+      "deliverable": "Laporan Evaluasi Akurasi AI Summarizer",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 2",
+        "Enhancement",
+        "QA & Testing"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_26_1",
+          "task_id": "task_imp_26",
+          "title": "Review spesifikasi teknis: 5. AI-Powered Proposal & Journal Summarizer",
+          "is_done": false
+        },
+        {
+          "id": "sub_26_2",
+          "task_id": "task_imp_26",
+          "title": "Implementasi deliverable: Laporan Evaluasi Akurasi AI Summarizer",
+          "is_done": false
+        },
+        {
+          "id": "sub_26_3",
+          "task_id": "task_imp_26",
+          "title": "QA verification & acceptance testing (24h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-14T08:00:00Z",
+      "updated_at": "2026-12-16T17:00:00Z"
+    },
+    {
+      "id": "task_imp_27",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F2-02.1",
+      "title": "Pembangunan Knowledge Base RAG (Retrieval-Augmented Generation) dari konten Sustagri & dokumen pertanian",
+      "description": "[SUST-F2-02.1] Modul: 6. Intelligent Chatbot & Consultant (Conversational AI) | Deliverable: Vector DB & RAG Pipeline Sustagri | Role/PIC: AI/ML Engineer\n\nDeliverable: Vector DB & RAG Pipeline Sustagri\nEstimasi Waktu: 48h\nFase: Fase 2\nEpic: 6. Intelligent Chatbot & Consultant (Conversational AI)",
+      "category": "AI/ML",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_ai",
+      "due_date": "2026-12-14",
+      "start_date": "2026-12-07",
+      "time_estimate": "48h",
+      "fase": "Fase 2",
+      "epic_modul": "6. Intelligent Chatbot & Consultant (Conversational AI)",
+      "deliverable": "Vector DB & RAG Pipeline Sustagri",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 2",
+        "Enhancement",
+        "AI/ML"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_27_1",
+          "task_id": "task_imp_27",
+          "title": "Review spesifikasi teknis: 6. Intelligent Chatbot & Consultant (Conversational AI)",
+          "is_done": false
+        },
+        {
+          "id": "sub_27_2",
+          "task_id": "task_imp_27",
+          "title": "Implementasi deliverable: Vector DB & RAG Pipeline Sustagri",
+          "is_done": false
+        },
+        {
+          "id": "sub_27_3",
+          "task_id": "task_imp_27",
+          "title": "QA verification & acceptance testing (48h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-07T08:00:00Z",
+      "updated_at": "2026-12-14T17:00:00Z"
+    },
+    {
+      "id": "task_imp_28",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F2-02.2",
+      "title": "Implementasi widget Conversational AI / Konsultan di portal Sustagri (riwayat chat, sitasi sumber, feedback)",
+      "description": "[SUST-F2-02.2] Modul: 6. Intelligent Chatbot & Consultant (Conversational AI) | Deliverable: Widget Intelligent Chatbot & Consultant | Role/PIC: Fullstack Dev\n\nDeliverable: Widget Intelligent Chatbot & Consultant\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 6. Intelligent Chatbot & Consultant (Conversational AI)",
+      "category": "Frontend",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_fs",
+      "due_date": "2026-12-18",
+      "start_date": "2026-12-15",
+      "time_estimate": "32h",
+      "fase": "Fase 2",
+      "epic_modul": "6. Intelligent Chatbot & Consultant (Conversational AI)",
+      "deliverable": "Widget Intelligent Chatbot & Consultant",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 2",
+        "Enhancement",
+        "Frontend"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_28_1",
+          "task_id": "task_imp_28",
+          "title": "Review spesifikasi teknis: 6. Intelligent Chatbot & Consultant (Conversational AI)",
+          "is_done": false
+        },
+        {
+          "id": "sub_28_2",
+          "task_id": "task_imp_28",
+          "title": "Implementasi deliverable: Widget Intelligent Chatbot & Consultant",
+          "is_done": false
+        },
+        {
+          "id": "sub_28_3",
+          "task_id": "task_imp_28",
+          "title": "QA verification & acceptance testing (32h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-15T08:00:00Z",
+      "updated_at": "2026-12-18T17:00:00Z"
+    },
+    {
+      "id": "task_imp_29",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F2-02.3",
+      "title": "Pengujian skenario percakapan, guardrail keamanan prompt, & UAT",
+      "description": "[SUST-F2-02.3] Modul: 6. Intelligent Chatbot & Consultant (Conversational AI) | Deliverable: Laporan UAT & Guardrail Testing Chatbot | Role/PIC: QA Engineer\n\nDeliverable: Laporan UAT & Guardrail Testing Chatbot\nEstimasi Waktu: 24h\nFase: Fase 2\nEpic: 6. Intelligent Chatbot & Consultant (Conversational AI)",
+      "category": "QA/Test",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_qa",
+      "due_date": "2026-12-23",
+      "start_date": "2026-12-21",
+      "time_estimate": "24h",
+      "fase": "Fase 2",
+      "epic_modul": "6. Intelligent Chatbot & Consultant (Conversational AI)",
+      "deliverable": "Laporan UAT & Guardrail Testing Chatbot",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 2",
+        "Enhancement",
+        "QA & Testing"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_29_1",
+          "task_id": "task_imp_29",
+          "title": "Review spesifikasi teknis: 6. Intelligent Chatbot & Consultant (Conversational AI)",
+          "is_done": false
+        },
+        {
+          "id": "sub_29_2",
+          "task_id": "task_imp_29",
+          "title": "Implementasi deliverable: Laporan UAT & Guardrail Testing Chatbot",
+          "is_done": false
+        },
+        {
+          "id": "sub_29_3",
+          "task_id": "task_imp_29",
+          "title": "QA verification & acceptance testing (24h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-21T08:00:00Z",
+      "updated_at": "2026-12-23T17:00:00Z"
+    },
+    {
+      "id": "task_imp_30",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F2-03.1",
+      "title": "Pengembangan semantic search & AI-generated overview untuk Repositori Inovasi Fertinnovation",
+      "description": "[SUST-F2-03.1] Modul: 7. AI-Generated Search Engine Repositori Inovasi | Deliverable: Semantic & Generative Search API | Role/PIC: AI/ML Engineer\n\nDeliverable: Semantic & Generative Search API\nEstimasi Waktu: 48h\nFase: Fase 2\nEpic: 7. AI-Generated Search Engine Repositori Inovasi",
+      "category": "AI/ML",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_ai",
+      "due_date": "2027-01-11",
+      "start_date": "2027-01-04",
+      "time_estimate": "48h",
+      "fase": "Fase 2",
+      "epic_modul": "7. AI-Generated Search Engine Repositori Inovasi",
+      "deliverable": "Semantic & Generative Search API",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 2",
+        "Build",
+        "AI/ML"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_30_1",
+          "task_id": "task_imp_30",
+          "title": "Review spesifikasi teknis: 7. AI-Generated Search Engine Repositori Inovasi",
+          "is_done": false
+        },
+        {
+          "id": "sub_30_2",
+          "task_id": "task_imp_30",
+          "title": "Implementasi deliverable: Semantic & Generative Search API",
+          "is_done": false
+        },
+        {
+          "id": "sub_30_3",
+          "task_id": "task_imp_30",
+          "title": "QA verification & acceptance testing (48h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2027-01-04T08:00:00Z",
+      "updated_at": "2027-01-11T17:00:00Z"
+    },
+    {
+      "id": "task_imp_31",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F2-03.2",
+      "title": "Implementasi antarmuka pencarian AI (ringkasan jawaban instan + referensi dokumen inovasi terkait)",
+      "description": "[SUST-F2-03.2] Modul: 7. AI-Generated Search Engine Repositori Inovasi | Deliverable: UI AI Search Engine Fertinnovation | Role/PIC: Frontend Dev\n\nDeliverable: UI AI Search Engine Fertinnovation\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 7. AI-Generated Search Engine Repositori Inovasi",
+      "category": "Frontend",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_fe",
+      "due_date": "2027-01-15",
+      "start_date": "2027-01-12",
+      "time_estimate": "32h",
+      "fase": "Fase 2",
+      "epic_modul": "7. AI-Generated Search Engine Repositori Inovasi",
+      "deliverable": "UI AI Search Engine Fertinnovation",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 2",
+        "Build",
+        "Frontend"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_31_1",
+          "task_id": "task_imp_31",
+          "title": "Review spesifikasi teknis: 7. AI-Generated Search Engine Repositori Inovasi",
+          "is_done": false
+        },
+        {
+          "id": "sub_31_2",
+          "task_id": "task_imp_31",
+          "title": "Implementasi deliverable: UI AI Search Engine Fertinnovation",
+          "is_done": false
+        },
+        {
+          "id": "sub_31_3",
+          "task_id": "task_imp_31",
+          "title": "QA verification & acceptance testing (32h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2027-01-12T08:00:00Z",
+      "updated_at": "2027-01-15T17:00:00Z"
+    },
+    {
+      "id": "task_imp_32",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F2-03.3",
+      "title": "Pengujian relevansi hasil pencarian, performa query, & deployment",
+      "description": "[SUST-F2-03.3] Modul: 7. AI-Generated Search Engine Repositori Inovasi | Deliverable: Laporan Benchmark Relevansi Search Engine | Role/PIC: QA Engineer\n\nDeliverable: Laporan Benchmark Relevansi Search Engine\nEstimasi Waktu: 24h\nFase: Fase 2\nEpic: 7. AI-Generated Search Engine Repositori Inovasi",
+      "category": "QA/Test",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_qa",
+      "due_date": "2027-01-20",
+      "start_date": "2027-01-18",
+      "time_estimate": "24h",
+      "fase": "Fase 2",
+      "epic_modul": "7. AI-Generated Search Engine Repositori Inovasi",
+      "deliverable": "Laporan Benchmark Relevansi Search Engine",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 2",
+        "Build",
+        "QA & Testing"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_32_1",
+          "task_id": "task_imp_32",
+          "title": "Review spesifikasi teknis: 7. AI-Generated Search Engine Repositori Inovasi",
+          "is_done": false
+        },
+        {
+          "id": "sub_32_2",
+          "task_id": "task_imp_32",
+          "title": "Implementasi deliverable: Laporan Benchmark Relevansi Search Engine",
+          "is_done": false
+        },
+        {
+          "id": "sub_32_3",
+          "task_id": "task_imp_32",
+          "title": "QA verification & acceptance testing (24h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2027-01-18T08:00:00Z",
+      "updated_at": "2027-01-20T17:00:00Z"
+    },
+    {
+      "id": "task_imp_33",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F2-04.1",
+      "title": "Analisis alur bisnis program inkubasi (pendaftaran tim, seleksi, mentoring, milestone, & evaluasi)",
+      "description": "[SUST-F2-04.1] Modul: 8. Fitur Inkubasi FertInnovation | Deliverable: Flowchart & Mockup Modul Inkubasi | Role/PIC: UI/UX Designer\n\nDeliverable: Flowchart & Mockup Modul Inkubasi\nEstimasi Waktu: 24h\nFase: Fase 2\nEpic: 8. Fitur Inkubasi FertInnovation",
+      "category": "Design",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_ui",
+      "due_date": "2027-01-11",
+      "start_date": "2027-01-07",
+      "time_estimate": "24h",
+      "fase": "Fase 2",
+      "epic_modul": "8. Fitur Inkubasi FertInnovation",
+      "deliverable": "Flowchart & Mockup Modul Inkubasi",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 2",
+        "Build",
+        "UI/UX"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_33_1",
+          "task_id": "task_imp_33",
+          "title": "Review spesifikasi teknis: 8. Fitur Inkubasi FertInnovation",
+          "is_done": false
+        },
+        {
+          "id": "sub_33_2",
+          "task_id": "task_imp_33",
+          "title": "Implementasi deliverable: Flowchart & Mockup Modul Inkubasi",
+          "is_done": false
+        },
+        {
+          "id": "sub_33_3",
+          "task_id": "task_imp_33",
+          "title": "QA verification & acceptance testing (24h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2027-01-07T08:00:00Z",
+      "updated_at": "2027-01-11T17:00:00Z"
+    },
+    {
+      "id": "task_imp_34",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F2-04.2",
+      "title": "Pengembangan Backend & Database Modul Inkubasi (manajemen cohort, log mentoring, tracking progres)",
+      "description": "[SUST-F2-04.2] Modul: 8. Fitur Inkubasi FertInnovation | Deliverable: API & Database Modul Inkubasi | Role/PIC: Backend Dev\n\nDeliverable: API & Database Modul Inkubasi\nEstimasi Waktu: 48h\nFase: Fase 2\nEpic: 8. Fitur Inkubasi FertInnovation",
+      "category": "Backend",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_be",
+      "due_date": "2027-01-19",
+      "start_date": "2027-01-12",
+      "time_estimate": "48h",
+      "fase": "Fase 2",
+      "epic_modul": "8. Fitur Inkubasi FertInnovation",
+      "deliverable": "API & Database Modul Inkubasi",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 2",
+        "Build",
+        "Backend/CMS"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_34_1",
+          "task_id": "task_imp_34",
+          "title": "Review spesifikasi teknis: 8. Fitur Inkubasi FertInnovation",
+          "is_done": false
+        },
+        {
+          "id": "sub_34_2",
+          "task_id": "task_imp_34",
+          "title": "Implementasi deliverable: API & Database Modul Inkubasi",
+          "is_done": false
+        },
+        {
+          "id": "sub_34_3",
+          "task_id": "task_imp_34",
+          "title": "QA verification & acceptance testing (48h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2027-01-12T08:00:00Z",
+      "updated_at": "2027-01-19T17:00:00Z"
+    },
+    {
+      "id": "task_imp_35",
+      "project_id": "proj_sustagri",
+      "key": "SUST-F2-04.3",
+      "title": "Implementasi Frontend Portal Peserta & Mentor Inkubasi serta pengujian UAT",
+      "description": "[SUST-F2-04.3] Modul: 8. Fitur Inkubasi FertInnovation | Deliverable: Modul Inkubasi FertInnovation Live | Role/PIC: Fullstack Dev\n\nDeliverable: Modul Inkubasi FertInnovation Live\nEstimasi Waktu: 40h\nFase: Fase 2\nEpic: 8. Fitur Inkubasi FertInnovation",
+      "category": "Frontend",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_fs",
+      "due_date": "2027-01-26",
+      "start_date": "2027-01-20",
+      "time_estimate": "40h",
+      "fase": "Fase 2",
+      "epic_modul": "8. Fitur Inkubasi FertInnovation",
+      "deliverable": "Modul Inkubasi FertInnovation Live",
+      "tags": [
+        "SUSTAGRI",
+        "Fase 2",
+        "Build",
+        "Frontend"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_35_1",
+          "task_id": "task_imp_35",
+          "title": "Review spesifikasi teknis: 8. Fitur Inkubasi FertInnovation",
+          "is_done": false
+        },
+        {
+          "id": "sub_35_2",
+          "task_id": "task_imp_35",
+          "title": "Implementasi deliverable: Modul Inkubasi FertInnovation Live",
+          "is_done": false
+        },
+        {
+          "id": "sub_35_3",
+          "task_id": "task_imp_35",
+          "title": "QA verification & acceptance testing (40h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2027-01-20T08:00:00Z",
+      "updated_at": "2027-01-26T17:00:00Z"
+    },
+    {
+      "id": "task_imp_36",
+      "project_id": "proj_smart",
+      "key": "SMRT-F2-01.1",
+      "title": "Pengembangan manajemen akun & hak akses khusus External Reviewer (undang reviewer, NDA, batas akses)",
+      "description": "[SMRT-F2-01.1] Modul: 4. Modul External Reviewer | Deliverable: Sistem RBAC & Manajemen External Reviewer | Role/PIC: Backend Dev\n\nDeliverable: Sistem RBAC & Manajemen External Reviewer\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 4. Modul External Reviewer",
+      "category": "Backend",
+      "priority": "Urgent",
+      "status": "In Progress",
+      "assignee_id": "usr_be",
+      "due_date": "2026-12-04",
+      "start_date": "2026-12-01",
+      "time_estimate": "32h",
+      "fase": "Fase 2",
+      "epic_modul": "4. Modul External Reviewer",
+      "deliverable": "Sistem RBAC & Manajemen External Reviewer",
+      "tags": [
+        "SMART",
+        "Fase 2",
+        "Enhancement",
+        "Backend/CMS"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_36_1",
+          "task_id": "task_imp_36",
+          "title": "Review spesifikasi teknis: 4. Modul External Reviewer",
+          "is_done": true
+        },
+        {
+          "id": "sub_36_2",
+          "task_id": "task_imp_36",
+          "title": "Implementasi deliverable: Sistem RBAC & Manajemen External Reviewer",
+          "is_done": false
+        },
+        {
+          "id": "sub_36_3",
+          "task_id": "task_imp_36",
+          "title": "QA verification & acceptance testing (32h)",
+          "is_done": false
+        }
+      ],
+      "comments": [
+        {
+          "id": "com_36_1",
+          "task_id": "task_imp_36",
+          "user_id": "usr_be",
+          "content": "Deliverable 'Sistem RBAC & Manajemen External Reviewer' sudah selesai dan siap diverifikasi oleh lead.",
+          "created_at": "Today at 09:15 AM"
+        }
+      ],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-01T08:00:00Z",
+      "updated_at": "2026-12-04T17:00:00Z"
+    },
+    {
+      "id": "task_imp_37",
+      "project_id": "proj_smart",
+      "key": "SMRT-F2-01.2",
+      "title": "Pembuatan portal penilaian External Reviewer (assignment proposal, form rubrik penilaian, notifikasi email)",
+      "description": "[SMRT-F2-01.2] Modul: 4. Modul External Reviewer | Deliverable: Portal Penilaian External Reviewer | Role/PIC: Fullstack Dev\n\nDeliverable: Portal Penilaian External Reviewer\nEstimasi Waktu: 40h\nFase: Fase 2\nEpic: 4. Modul External Reviewer",
+      "category": "Frontend",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_fs",
+      "due_date": "2026-12-11",
+      "start_date": "2026-12-07",
+      "time_estimate": "40h",
+      "fase": "Fase 2",
+      "epic_modul": "4. Modul External Reviewer",
+      "deliverable": "Portal Penilaian External Reviewer",
+      "tags": [
+        "SMART",
+        "Fase 2",
+        "Enhancement",
+        "Frontend"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_37_1",
+          "task_id": "task_imp_37",
+          "title": "Review spesifikasi teknis: 4. Modul External Reviewer",
+          "is_done": false
+        },
+        {
+          "id": "sub_37_2",
+          "task_id": "task_imp_37",
+          "title": "Implementasi deliverable: Portal Penilaian External Reviewer",
+          "is_done": false
+        },
+        {
+          "id": "sub_37_3",
+          "task_id": "task_imp_37",
+          "title": "QA verification & acceptance testing (40h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-07T08:00:00Z",
+      "updated_at": "2026-12-11T17:00:00Z"
+    },
+    {
+      "id": "task_imp_38",
+      "project_id": "proj_smart",
+      "key": "SMRT-F2-01.3",
+      "title": "Pengujian keamanan akses eksternal (penetration/access check) & UAT",
+      "description": "[SMRT-F2-01.3] Modul: 4. Modul External Reviewer | Deliverable: Laporan QA & Security Check Reviewer | Role/PIC: QA Engineer\n\nDeliverable: Laporan QA & Security Check Reviewer\nEstimasi Waktu: 24h\nFase: Fase 2\nEpic: 4. Modul External Reviewer",
+      "category": "QA/Test",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_qa",
+      "due_date": "2026-12-16",
+      "start_date": "2026-12-14",
+      "time_estimate": "24h",
+      "fase": "Fase 2",
+      "epic_modul": "4. Modul External Reviewer",
+      "deliverable": "Laporan QA & Security Check Reviewer",
+      "tags": [
+        "SMART",
+        "Fase 2",
+        "Enhancement",
+        "QA & Testing"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_38_1",
+          "task_id": "task_imp_38",
+          "title": "Review spesifikasi teknis: 4. Modul External Reviewer",
+          "is_done": false
+        },
+        {
+          "id": "sub_38_2",
+          "task_id": "task_imp_38",
+          "title": "Implementasi deliverable: Laporan QA & Security Check Reviewer",
+          "is_done": false
+        },
+        {
+          "id": "sub_38_3",
+          "task_id": "task_imp_38",
+          "title": "QA verification & acceptance testing (24h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-14T08:00:00Z",
+      "updated_at": "2026-12-16T17:00:00Z"
+    },
+    {
+      "id": "task_imp_39",
+      "project_id": "proj_smart",
+      "key": "SMRT-F2-02.1",
+      "title": "Pengembangan database profil mitra riset, riwayat kerja sama, & dokumen MoU/PKS",
+      "description": "[SMRT-F2-02.1] Modul: 5. Pengelolaan dan Evaluasi Mitra | Deliverable: Modul Master Data & Dokumen Mitra | Role/PIC: Backend Dev\n\nDeliverable: Modul Master Data & Dokumen Mitra\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 5. Pengelolaan dan Evaluasi Mitra",
+      "category": "Database",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_be",
+      "due_date": "2026-12-10",
+      "start_date": "2026-12-07",
+      "time_estimate": "32h",
+      "fase": "Fase 2",
+      "epic_modul": "5. Pengelolaan dan Evaluasi Mitra",
+      "deliverable": "Modul Master Data & Dokumen Mitra",
+      "tags": [
+        "SMART",
+        "Fase 2",
+        "Enhancement",
+        "Database"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_39_1",
+          "task_id": "task_imp_39",
+          "title": "Review spesifikasi teknis: 5. Pengelolaan dan Evaluasi Mitra",
+          "is_done": false
+        },
+        {
+          "id": "sub_39_2",
+          "task_id": "task_imp_39",
+          "title": "Implementasi deliverable: Modul Master Data & Dokumen Mitra",
+          "is_done": false
+        },
+        {
+          "id": "sub_39_3",
+          "task_id": "task_imp_39",
+          "title": "QA verification & acceptance testing (32h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-07T08:00:00Z",
+      "updated_at": "2026-12-10T17:00:00Z"
+    },
+    {
+      "id": "task_imp_40",
+      "project_id": "proj_smart",
+      "key": "SMRT-F2-02.2",
+      "title": "Implementasi fitur penilaian/evaluasi kinerja mitra (scoring KPI, rekap rating, & rekomendasi)",
+      "description": "[SMRT-F2-02.2] Modul: 5. Pengelolaan dan Evaluasi Mitra | Deliverable: Fitur Evaluasi & Scorecard Mitra | Role/PIC: Fullstack Dev\n\nDeliverable: Fitur Evaluasi & Scorecard Mitra\nEstimasi Waktu: 40h\nFase: Fase 2\nEpic: 5. Pengelolaan dan Evaluasi Mitra",
+      "category": "Frontend",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_fs",
+      "due_date": "2026-12-17",
+      "start_date": "2026-12-11",
+      "time_estimate": "40h",
+      "fase": "Fase 2",
+      "epic_modul": "5. Pengelolaan dan Evaluasi Mitra",
+      "deliverable": "Fitur Evaluasi & Scorecard Mitra",
+      "tags": [
+        "SMART",
+        "Fase 2",
+        "Enhancement",
+        "Frontend"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_40_1",
+          "task_id": "task_imp_40",
+          "title": "Review spesifikasi teknis: 5. Pengelolaan dan Evaluasi Mitra",
+          "is_done": false
+        },
+        {
+          "id": "sub_40_2",
+          "task_id": "task_imp_40",
+          "title": "Implementasi deliverable: Fitur Evaluasi & Scorecard Mitra",
+          "is_done": false
+        },
+        {
+          "id": "sub_40_3",
+          "task_id": "task_imp_40",
+          "title": "QA verification & acceptance testing (40h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-11T08:00:00Z",
+      "updated_at": "2026-12-17T17:00:00Z"
+    },
+    {
+      "id": "task_imp_41",
+      "project_id": "proj_smart",
+      "key": "SMRT-F2-02.3",
+      "title": "Pengujian alur evaluasi mitra & validasi laporan rekapitulasi",
+      "description": "[SMRT-F2-02.3] Modul: 5. Pengelolaan dan Evaluasi Mitra | Deliverable: Sign-off Modul Pengelolaan Mitra | Role/PIC: QA Engineer\n\nDeliverable: Sign-off Modul Pengelolaan Mitra\nEstimasi Waktu: 16h\nFase: Fase 2\nEpic: 5. Pengelolaan dan Evaluasi Mitra",
+      "category": "QA/Test",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_qa",
+      "due_date": "2026-12-21",
+      "start_date": "2026-12-18",
+      "time_estimate": "16h",
+      "fase": "Fase 2",
+      "epic_modul": "5. Pengelolaan dan Evaluasi Mitra",
+      "deliverable": "Sign-off Modul Pengelolaan Mitra",
+      "tags": [
+        "SMART",
+        "Fase 2",
+        "Enhancement",
+        "QA & Testing"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_41_1",
+          "task_id": "task_imp_41",
+          "title": "Review spesifikasi teknis: 5. Pengelolaan dan Evaluasi Mitra",
+          "is_done": false
+        },
+        {
+          "id": "sub_41_2",
+          "task_id": "task_imp_41",
+          "title": "Implementasi deliverable: Sign-off Modul Pengelolaan Mitra",
+          "is_done": false
+        },
+        {
+          "id": "sub_41_3",
+          "task_id": "task_imp_41",
+          "title": "QA verification & acceptance testing (16h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-18T08:00:00Z",
+      "updated_at": "2026-12-21T17:00:00Z"
+    },
+    {
+      "id": "task_imp_42",
+      "project_id": "proj_smart",
+      "key": "SMRT-F2-03.1",
+      "title": "Pengembangan form pengajuan perubahan data topik eksisting (versioning/diff perubahan & alasan)",
+      "description": "[SMRT-F2-03.1] Modul: 6. Update Data Topik Eksisting & Approval Admin | Deliverable: Form Request Update Topik Eksisting | Role/PIC: Fullstack Dev\n\nDeliverable: Form Request Update Topik Eksisting\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 6. Update Data Topik Eksisting & Approval Admin",
+      "category": "Frontend",
+      "priority": "Medium",
+      "status": "Backlog",
+      "assignee_id": "usr_fs",
+      "due_date": "2026-12-17",
+      "start_date": "2026-12-14",
+      "time_estimate": "32h",
+      "fase": "Fase 2",
+      "epic_modul": "6. Update Data Topik Eksisting & Approval Admin",
+      "deliverable": "Form Request Update Topik Eksisting",
+      "tags": [
+        "SMART",
+        "Fase 2",
+        "Enhancement",
+        "Frontend"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_42_1",
+          "task_id": "task_imp_42",
+          "title": "Review spesifikasi teknis: 6. Update Data Topik Eksisting & Approval Admin",
+          "is_done": false
+        },
+        {
+          "id": "sub_42_2",
+          "task_id": "task_imp_42",
+          "title": "Implementasi deliverable: Form Request Update Topik Eksisting",
+          "is_done": false
+        },
+        {
+          "id": "sub_42_3",
+          "task_id": "task_imp_42",
+          "title": "QA verification & acceptance testing (32h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-14T08:00:00Z",
+      "updated_at": "2026-12-17T17:00:00Z"
+    },
+    {
+      "id": "task_imp_43",
+      "project_id": "proj_smart",
+      "key": "SMRT-F2-03.2",
+      "title": "Implementasi workflow approval admin (approve/reject/revisi, audit trail, & notifikasi otomatis)",
+      "description": "[SMRT-F2-03.2] Modul: 6. Update Data Topik Eksisting & Approval Admin | Deliverable: Workflow Approval & Audit Trail Admin | Role/PIC: Backend Dev\n\nDeliverable: Workflow Approval & Audit Trail Admin\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 6. Update Data Topik Eksisting & Approval Admin",
+      "category": "Backend",
+      "priority": "Medium",
+      "status": "Backlog",
+      "assignee_id": "usr_be",
+      "due_date": "2026-12-23",
+      "start_date": "2026-12-18",
+      "time_estimate": "32h",
+      "fase": "Fase 2",
+      "epic_modul": "6. Update Data Topik Eksisting & Approval Admin",
+      "deliverable": "Workflow Approval & Audit Trail Admin",
+      "tags": [
+        "SMART",
+        "Fase 2",
+        "Enhancement",
+        "Backend/CMS"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_43_1",
+          "task_id": "task_imp_43",
+          "title": "Review spesifikasi teknis: 6. Update Data Topik Eksisting & Approval Admin",
+          "is_done": false
+        },
+        {
+          "id": "sub_43_2",
+          "task_id": "task_imp_43",
+          "title": "Implementasi deliverable: Workflow Approval & Audit Trail Admin",
+          "is_done": false
+        },
+        {
+          "id": "sub_43_3",
+          "task_id": "task_imp_43",
+          "title": "QA verification & acceptance testing (32h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2026-12-18T08:00:00Z",
+      "updated_at": "2026-12-23T17:00:00Z"
+    },
+    {
+      "id": "task_imp_44",
+      "project_id": "proj_smart",
+      "key": "SMRT-F2-04.1",
+      "title": "Perancangan instrumen & logika kalkulasi Tingkat Kesiapterapan Riset (TKR) beserta bobot indikator",
+      "description": "[SMRT-F2-04.1] Modul: 7. Modul Evaluasi TKR | Deliverable: Engine Kalkulasi & Indikator TKR | Role/PIC: Backend Dev\n\nDeliverable: Engine Kalkulasi & Indikator TKR\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 7. Modul Evaluasi TKR",
+      "category": "Backend",
+      "priority": "Urgent",
+      "status": "Backlog",
+      "assignee_id": "usr_be",
+      "due_date": "2027-01-07",
+      "start_date": "2027-01-04",
+      "time_estimate": "32h",
+      "fase": "Fase 2",
+      "epic_modul": "7. Modul Evaluasi TKR",
+      "deliverable": "Engine Kalkulasi & Indikator TKR",
+      "tags": [
+        "SMART",
+        "Fase 2",
+        "Enhancement",
+        "Backend/CMS"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_44_1",
+          "task_id": "task_imp_44",
+          "title": "Review spesifikasi teknis: 7. Modul Evaluasi TKR",
+          "is_done": false
+        },
+        {
+          "id": "sub_44_2",
+          "task_id": "task_imp_44",
+          "title": "Implementasi deliverable: Engine Kalkulasi & Indikator TKR",
+          "is_done": false
+        },
+        {
+          "id": "sub_44_3",
+          "task_id": "task_imp_44",
+          "title": "QA verification & acceptance testing (32h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2027-01-04T08:00:00Z",
+      "updated_at": "2027-01-07T17:00:00Z"
+    },
+    {
+      "id": "task_imp_45",
+      "project_id": "proj_smart",
+      "key": "SMRT-F2-04.2",
+      "title": "Implementasi UI pengisian evaluasi TKR, visualisasi level TKR, & riwayat progres penilaian",
+      "description": "[SMRT-F2-04.2] Modul: 7. Modul Evaluasi TKR | Deliverable: Antarmuka Modul Evaluasi TKR | Role/PIC: Fullstack Dev\n\nDeliverable: Antarmuka Modul Evaluasi TKR\nEstimasi Waktu: 40h\nFase: Fase 2\nEpic: 7. Modul Evaluasi TKR",
+      "category": "Frontend",
+      "priority": "Urgent",
+      "status": "Backlog",
+      "assignee_id": "usr_fs",
+      "due_date": "2027-01-14",
+      "start_date": "2027-01-08",
+      "time_estimate": "40h",
+      "fase": "Fase 2",
+      "epic_modul": "7. Modul Evaluasi TKR",
+      "deliverable": "Antarmuka Modul Evaluasi TKR",
+      "tags": [
+        "SMART",
+        "Fase 2",
+        "Enhancement",
+        "Frontend"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_45_1",
+          "task_id": "task_imp_45",
+          "title": "Review spesifikasi teknis: 7. Modul Evaluasi TKR",
+          "is_done": false
+        },
+        {
+          "id": "sub_45_2",
+          "task_id": "task_imp_45",
+          "title": "Implementasi deliverable: Antarmuka Modul Evaluasi TKR",
+          "is_done": false
+        },
+        {
+          "id": "sub_45_3",
+          "task_id": "task_imp_45",
+          "title": "QA verification & acceptance testing (40h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2027-01-08T08:00:00Z",
+      "updated_at": "2027-01-14T17:00:00Z"
+    },
+    {
+      "id": "task_imp_46",
+      "project_id": "proj_smart",
+      "key": "SMRT-F2-04.3",
+      "title": "Validasi rumus perhitungan TKR dengan tim bisnis & UAT",
+      "description": "[SMRT-F2-04.3] Modul: 7. Modul Evaluasi TKR | Deliverable: Laporan UAT Modul Evaluasi TKR | Role/PIC: QA Engineer\n\nDeliverable: Laporan UAT Modul Evaluasi TKR\nEstimasi Waktu: 24h\nFase: Fase 2\nEpic: 7. Modul Evaluasi TKR",
+      "category": "QA/Test",
+      "priority": "Urgent",
+      "status": "Backlog",
+      "assignee_id": "usr_qa",
+      "due_date": "2027-01-19",
+      "start_date": "2027-01-15",
+      "time_estimate": "24h",
+      "fase": "Fase 2",
+      "epic_modul": "7. Modul Evaluasi TKR",
+      "deliverable": "Laporan UAT Modul Evaluasi TKR",
+      "tags": [
+        "SMART",
+        "Fase 2",
+        "Enhancement",
+        "QA & Testing"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_46_1",
+          "task_id": "task_imp_46",
+          "title": "Review spesifikasi teknis: 7. Modul Evaluasi TKR",
+          "is_done": false
+        },
+        {
+          "id": "sub_46_2",
+          "task_id": "task_imp_46",
+          "title": "Implementasi deliverable: Laporan UAT Modul Evaluasi TKR",
+          "is_done": false
+        },
+        {
+          "id": "sub_46_3",
+          "task_id": "task_imp_46",
+          "title": "QA verification & acceptance testing (24h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2027-01-15T08:00:00Z",
+      "updated_at": "2027-01-19T17:00:00Z"
+    },
+    {
+      "id": "task_imp_47",
+      "project_id": "proj_smart",
+      "key": "SMRT-F2-05.1",
+      "title": "Perancangan template & form pengajuan Laporan Kinerja SMART (capaian, luaran, realisasi, lampiran)",
+      "description": "[SMRT-F2-05.1] Modul: 8. Pengajuan Laporan Kinerja SMART | Deliverable: Skema & Form Pengajuan Laporan Kinerja | Role/PIC: Backend Dev\n\nDeliverable: Skema & Form Pengajuan Laporan Kinerja\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 8. Pengajuan Laporan Kinerja SMART",
+      "category": "Backend",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_be",
+      "due_date": "2027-01-14",
+      "start_date": "2027-01-11",
+      "time_estimate": "32h",
+      "fase": "Fase 2",
+      "epic_modul": "8. Pengajuan Laporan Kinerja SMART",
+      "deliverable": "Skema & Form Pengajuan Laporan Kinerja",
+      "tags": [
+        "SMART",
+        "Fase 2",
+        "Build",
+        "Backend/CMS"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_47_1",
+          "task_id": "task_imp_47",
+          "title": "Review spesifikasi teknis: 8. Pengajuan Laporan Kinerja SMART",
+          "is_done": false
+        },
+        {
+          "id": "sub_47_2",
+          "task_id": "task_imp_47",
+          "title": "Implementasi deliverable: Skema & Form Pengajuan Laporan Kinerja",
+          "is_done": false
+        },
+        {
+          "id": "sub_47_3",
+          "task_id": "task_imp_47",
+          "title": "QA verification & acceptance testing (32h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2027-01-11T08:00:00Z",
+      "updated_at": "2027-01-14T17:00:00Z"
+    },
+    {
+      "id": "task_imp_48",
+      "project_id": "proj_smart",
+      "key": "SMRT-F2-05.2",
+      "title": "Implementasi alur verifikasi/approval berjenjang & fitur generate/export laporan kinerja (PDF/Excel)",
+      "description": "[SMRT-F2-05.2] Modul: 8. Pengajuan Laporan Kinerja SMART | Deliverable: Modul Pengajuan & Export Laporan Kinerja | Role/PIC: Fullstack Dev\n\nDeliverable: Modul Pengajuan & Export Laporan Kinerja\nEstimasi Waktu: 40h\nFase: Fase 2\nEpic: 8. Pengajuan Laporan Kinerja SMART",
+      "category": "Frontend",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_fs",
+      "due_date": "2027-01-21",
+      "start_date": "2027-01-15",
+      "time_estimate": "40h",
+      "fase": "Fase 2",
+      "epic_modul": "8. Pengajuan Laporan Kinerja SMART",
+      "deliverable": "Modul Pengajuan & Export Laporan Kinerja",
+      "tags": [
+        "SMART",
+        "Fase 2",
+        "Build",
+        "Frontend"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_48_1",
+          "task_id": "task_imp_48",
+          "title": "Review spesifikasi teknis: 8. Pengajuan Laporan Kinerja SMART",
+          "is_done": false
+        },
+        {
+          "id": "sub_48_2",
+          "task_id": "task_imp_48",
+          "title": "Implementasi deliverable: Modul Pengajuan & Export Laporan Kinerja",
+          "is_done": false
+        },
+        {
+          "id": "sub_48_3",
+          "task_id": "task_imp_48",
+          "title": "QA verification & acceptance testing (40h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2027-01-15T08:00:00Z",
+      "updated_at": "2027-01-21T17:00:00Z"
+    },
+    {
+      "id": "task_imp_49",
+      "project_id": "proj_smart",
+      "key": "SMRT-F2-05.3",
+      "title": "End-to-end testing seluruh alur pelaporan kinerja, deployment produksi, & serah terima (BAST)",
+      "description": "[SMRT-F2-05.3] Modul: 8. Pengajuan Laporan Kinerja SMART | Deliverable: Dokumen UAT Final & BAST Fase 2 | Role/PIC: DevOps & QA\n\nDeliverable: Dokumen UAT Final & BAST Fase 2\nEstimasi Waktu: 24h\nFase: Fase 2\nEpic: 8. Pengajuan Laporan Kinerja SMART",
+      "category": "Feature",
+      "priority": "High",
+      "status": "Backlog",
+      "assignee_id": "usr_devops",
+      "due_date": "2027-01-26",
+      "start_date": "2027-01-22",
+      "time_estimate": "24h",
+      "fase": "Fase 2",
+      "epic_modul": "8. Pengajuan Laporan Kinerja SMART",
+      "deliverable": "Dokumen UAT Final & BAST Fase 2",
+      "tags": [
+        "SMART",
+        "Fase 2",
+        "Build",
+        "Deployment"
+      ],
+      "subtasks": [
+        {
+          "id": "sub_49_1",
+          "task_id": "task_imp_49",
+          "title": "Review spesifikasi teknis: 8. Pengajuan Laporan Kinerja SMART",
+          "is_done": false
+        },
+        {
+          "id": "sub_49_2",
+          "task_id": "task_imp_49",
+          "title": "Implementasi deliverable: Dokumen UAT Final & BAST Fase 2",
+          "is_done": false
+        },
+        {
+          "id": "sub_49_3",
+          "task_id": "task_imp_49",
+          "title": "QA verification & acceptance testing (24h)",
+          "is_done": false
+        }
+      ],
+      "comments": [],
+      "attachments": [],
+      "client_visible": true,
+      "created_at": "2027-01-22T08:00:00Z",
+      "updated_at": "2027-01-26T17:00:00Z"
+    }
+  ]
+}

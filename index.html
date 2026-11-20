@@ -1,0 +1,3519 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pulse | Modern Project Workspace & Client Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#EEF2FF',
+              100: '#E0E7FF',
+              200: '#C7D2FE',
+              300: '#A5B4FC',
+              400: '#818CF8',
+              500: '#6366F1',
+              600: '#4F46E5', // Primary Accent
+              700: '#4338CA',
+              800: '#3730A3',
+              900: '#312E81',
+            },
+            canvas: {
+              light: '#F8FAFC', // Slate-50 off-white
+              dark: '#0B0F19',  // Deep Slate / Obsidian
+            },
+            surface: {
+              light: '#FFFFFF',
+              dark: '#131B2E',
+              darkHover: '#1B253D',
+              borderLight: '#E2E8F0',
+              borderDark: '#1E293B',
+            }
+          },
+          boxShadow: {
+            'subtle': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+            'card': '0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.04)',
+            'card-hover': '0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)',
+            'card-hover-dark': '0 8px 24px -4px rgba(0, 0, 0, 0.4), 0 2px 6px -1px rgba(0, 0, 0, 0.2)',
+            'drawer': '-8px 0 32px 0 rgba(15, 23, 42, 0.12)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Scrollbar for High-Density Linear/Notion feel */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.35);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(148, 163, 184, 0.6);
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: rgba(71, 85, 105, 0.45);
+    }
+    .dark ::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.7);
+    }
+
+    /* Selection Styling */
+    ::selection {
+      background-color: #4F46E5;
+      color: #FFFFFF;
+    }
+
+    /* Subtle smooth transitions */
+    .transition-workspace {
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Drag over feedback */
+    .kanban-col.drag-over {
+      background-color: rgba(99, 102, 241, 0.06);
+      border-color: #6366F1 !important;
+    }
+
+    /* Slide drawer animation */
+    #taskDrawer {
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease-in-out;
+    }
+    #drawerBackdrop {
+      transition: opacity 0.24s ease-in-out;
+    }
+    
+    /* Cmd+K Modal Animation */
+    #commandModal {
+      transition: opacity 0.18s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  </style>
+</head>
+<body class="h-full bg-[#F8FAFC] dark:bg-[#0B0F19] text-slate-800 dark:text-slate-100 antialiased font-sans selection:bg-brand-600 selection:text-white flex flex-col overflow-hidden">
+
+  <!-- APP SHELL CONTAINER -->
+  <div class="flex h-full w-full overflow-hidden">
+
+    <!-- COLLAPSIBLE LEFT SIDEBAR -->
+    <aside id="sidebar" class="w-64 bg-white dark:bg-[#0F172A] border-r border-slate-200 dark:border-slate-800/80 flex flex-col justify-between flex-shrink-0 z-30 transition-all duration-300 ease-in-out select-none">
+      <!-- Top Workspace Section -->
+      <div class="flex flex-col flex-1 min-h-0">
+        <!-- Workspace Switcher -->
+        <div class="p-3 border-b border-slate-100 dark:border-slate-800/60">
+          <button id="workspaceDropdownBtn" class="w-full flex items-center justify-between p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/70 transition-colors group text-left">
+            <div class="flex items-center space-x-2.5 min-w-0">
+              <div class="w-7 h-7 rounded-md bg-brand-600 flex items-center justify-center text-white font-display font-bold text-xs shadow-sm ring-1 ring-brand-500/30">
+                P
+              </div>
+              <div class="truncate">
+                <div class="text-xs font-semibold tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <span class="truncate">Pulse HQ</span>
+                  <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 font-medium border border-brand-200/50 dark:border-brand-800/40">PRO</span>
+                </div>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400 truncate">acme-corp.workspace</div>
+              </div>
+            </div>
+            <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 flex-shrink-0"></i>
+          </button>
+        </div>
+
+        <!-- Scrollable Navigation Items -->
+        <div class="flex-1 overflow-y-auto px-2 py-3 space-y-5">
+          <!-- Main Nav -->
+          <div>
+            <div class="px-2 mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 font-mono">
+              Core Workspace
+            </div>
+            <nav class="space-y-0.5 text-xs font-medium">
+              <button onclick="switchView('dashboard')" id="nav-dashboard" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors group">
+                <div class="flex items-center space-x-2.5">
+                  <i data-lucide="layout-dashboard" class="w-4 h-4 text-slate-500 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors"></i>
+                  <span>Executive Dashboard</span>
+                </div>
+                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">Live</span>
+              </button>
+
+              <button onclick="switchView('tasks')" id="nav-tasks" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-brand-600 dark:text-brand-400 bg-brand-50/70 dark:bg-brand-950/40 font-semibold transition-colors group">
+                <div class="flex items-center space-x-2.5">
+                  <i data-lucide="check-square" class="w-4 h-4 text-brand-600 dark:text-brand-400"></i>
+                  <span>Project Tasks</span>
+                </div>
+                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-brand-100 dark:bg-brand-900/60 text-brand-700 dark:text-brand-300">18</span>
+              </button>
+
+              <button onclick="switchView('milestones')" id="nav-milestones" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors group">
+                <div class="flex items-center space-x-2.5">
+                  <i data-lucide="milestone" class="w-4 h-4 text-slate-500 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors"></i>
+                  <span>Milestones</span>
+                </div>
+                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/40">3 Active</span>
+              </button>
+
+              <button onclick="switchView('team')" id="nav-team" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors group">
+                <div class="flex items-center space-x-2.5">
+                  <i data-lucide="users" class="w-4 h-4 text-slate-500 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors"></i>
+                  <span>Team & Capacity</span>
+                </div>
+                <span class="text-[10px] font-mono text-slate-400">8</span>
+              </button>
+
+              <button onclick="switchView('client-portal')" id="nav-client-portal" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors group">
+                <div class="flex items-center space-x-2.5">
+                  <i data-lucide="shield-check" class="w-4 h-4 text-indigo-500 group-hover:text-indigo-600 transition-colors"></i>
+                  <span class="flex items-center gap-1.5">Client Portal</span>
+                </div>
+                <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-800/40">External</span>
+              </button>
+            </nav>
+          </div>
+
+          <!-- Pinned Active Projects List -->
+          <div>
+            <div class="px-2 mb-1.5 flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 font-mono">
+              <span>Pinned Projects</span>
+              <button onclick="openNewProjectModal()" class="hover:text-slate-700 dark:hover:text-slate-300 transition-colors" title="Create Project">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+            <div class="space-y-0.5 text-xs">
+              <a href="javascript:void(0)" onclick="selectProject('sustagri')" class="flex items-center justify-between px-2.5 py-1.5 rounded-md bg-slate-100/70 dark:bg-slate-800/50 text-slate-900 dark:text-white font-medium group">
+                <div class="flex items-center space-x-2 truncate">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0 ring-2 ring-emerald-500/20"></span>
+                  <span class="truncate">SUSTAGRI CMS & AI</span>
+                </div>
+                <span class="text-[10px] font-mono text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">52%</span>
+              </a>
+
+              <a href="javascript:void(0)" onclick="selectProject('smart')" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-slate-600 dark:text-slate-400 hover:bg-slate-100/60 dark:hover:bg-slate-800/40 hover:text-slate-900 dark:hover:text-white transition-colors group">
+                <div class="flex items-center space-x-2 truncate">
+                  <span class="w-2 h-2 rounded-full bg-indigo-500 flex-shrink-0 ring-2 ring-indigo-500/20"></span>
+                  <span class="truncate">SMART Riset & Mining</span>
+                </div>
+                <span class="text-[10px] font-mono text-slate-400">43%</span>
+              </a>
+
+              <a href="javascript:void(0)" onclick="selectProject('mobile-v2')" class="flex items-center justify-between px-2.5 py-1.5 rounded-md text-slate-600 dark:text-slate-400 hover:bg-slate-100/60 dark:hover:bg-slate-800/40 hover:text-slate-900 dark:hover:text-white transition-colors group">
+                <div class="flex items-center space-x-2 truncate">
+                  <span class="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0 ring-2 ring-blue-500/20"></span>
+                  <span class="truncate">Mobile App v2.4</span>
+                </div>
+                <span class="text-[10px] font-mono text-slate-400">74%</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Footer (Settings & Quick Toggle) -->
+      <div class="p-2.5 border-t border-slate-100 dark:border-slate-800/60 space-y-1">
+        <button onclick="toggleTheme()" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">
+          <div class="flex items-center space-x-2.5">
+            <i id="themeIcon" data-lucide="moon" class="w-4 h-4 text-slate-500"></i>
+            <span id="themeLabel">Dark Appearance</span>
+          </div>
+          <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-400">D</span>
+        </button>
+
+        <button onclick="switchView('settings')" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">
+          <div class="flex items-center space-x-2.5">
+            <i data-lucide="settings" class="w-4 h-4 text-slate-500"></i>
+            <span>Settings & Access</span>
+          </div>
+          <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5 text-slate-400"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN STAGE -->
+    <div class="flex-1 flex flex-col min-w-0 bg-[#F8FAFC] dark:bg-[#0B0F19] overflow-hidden">
+
+      <!-- TOP HEADER BAR -->
+      <header class="h-14 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-[#0F172A]/80 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between flex-shrink-0 z-20">
+        <!-- Left: Toggle & Breadcrumbs -->
+        <div class="flex items-center space-x-3 min-w-0">
+          <button id="toggleSidebarBtn" onclick="toggleSidebar()" class="p-1.5 rounded-md text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Toggle Sidebar">
+            <i data-lucide="panel-left-close" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Breadcrumbs -->
+          <nav aria-label="Breadcrumb" class="flex items-center space-x-1.5 text-xs text-slate-500 dark:text-slate-400 truncate">
+            <span class="font-medium text-slate-700 dark:text-slate-300">Pulse Workspace</span>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i>
+            <span class="text-slate-500">Projects</span>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i>
+            <span id="breadcrumbCurrentProject" class="font-semibold text-slate-900 dark:text-white truncate">Mobile App v2.4</span>
+            <span class="hidden md:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-500 ml-1.5">Sprint 38</span>
+          </nav>
+        </div>
+
+        <!-- Center / Right: Global Search & Actions -->
+        <div class="flex items-center space-x-3 flex-shrink-0">
+          <!-- Global Search trigger (Linear Cmd+K style) -->
+          <button onclick="openCommandModal()" class="hidden sm:flex items-center space-x-2 text-xs text-slate-400 bg-slate-100/90 dark:bg-slate-800/60 hover:bg-slate-200/60 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/60 px-3 py-1.5 rounded-lg transition-colors w-48 lg:w-64 justify-between group">
+            <div class="flex items-center space-x-2 truncate">
+              <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300"></i>
+              <span class="truncate">Search tasks, files...</span>
+            </div>
+            <kbd class="font-mono text-[10px] px-1.5 py-0.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded shadow-2xs text-slate-500 dark:text-slate-400">⌘K</kbd>
+          </button>
+
+          <!-- Quick "+ New Task" Button -->
+          <button onclick="openCreateTaskModal()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-sm transition-all hover:shadow hover:shadow-brand-600/20 active:scale-[0.98]">
+            <i data-lucide="plus" class="w-3.5 h-3.5 stroke-[2.5]"></i>
+            <span class="hidden sm:inline">New Task</span>
+          </button>
+
+          <!-- Notification Bell -->
+          <div class="relative">
+            <button onclick="toggleNotifications()" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors relative" title="Notifications">
+              <i data-lucide="bell" class="w-4 h-4"></i>
+              <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white dark:ring-slate-900"></span>
+            </button>
+            <!-- Dropdown Notification Popover -->
+            <div id="notificationsPopover" class="hidden absolute right-0 mt-2 w-80 bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-50 p-3 space-y-2">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                <span class="text-xs font-bold text-slate-900 dark:text-white">Notifications</span>
+                <span class="text-[10px] text-brand-600 dark:text-brand-400 hover:underline cursor-pointer">Mark all read</span>
+              </div>
+              <div class="space-y-2 text-xs">
+                <div class="flex items-start space-x-2.5 p-2 rounded-lg bg-brand-50/50 dark:bg-brand-950/20">
+                  <span class="w-2 h-2 rounded-full bg-brand-600 mt-1 flex-shrink-0"></span>
+                  <div>
+                    <p class="text-slate-800 dark:text-slate-200"><span class="font-semibold">Sarah Connor</span> mentioned you in <span class="text-brand-600 dark:text-brand-400 font-medium">Stripe webhook verification</span></p>
+                    <span class="text-[10px] text-slate-400">12 mins ago</span>
+                  </div>
+                </div>
+                <div class="flex items-start space-x-2.5 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 mt-1 flex-shrink-0"></span>
+                  <div>
+                    <p class="text-slate-800 dark:text-slate-200"><span class="font-semibold">Client Approval</span>: Nike Design team signed off on Milestone 2</p>
+                    <span class="text-[10px] text-slate-400">1 hour ago</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- User Avatar -->
+          <div class="flex items-center space-x-2 pl-1 border-l border-slate-200 dark:border-slate-800">
+            <button class="relative rounded-full ring-2 ring-slate-200 dark:ring-slate-700/80 hover:ring-brand-500 transition-all">
+              <img class="w-7 h-7 rounded-full object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar">
+              <span class="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900"></span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- SECONDARY WORKSPACE SUBHEADER (View Switcher & Filters) -->
+      <section id="projectSubheader" class="px-6 py-2.5 bg-white/50 dark:bg-[#0F172A]/50 border-b border-slate-200/70 dark:border-slate-800/70 flex flex-wrap items-center justify-between gap-3 flex-shrink-0">
+        <!-- View Switcher Tabs (Kanban, List, Timeline/Gantt) -->
+        <div class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800/80 p-0.5 rounded-lg text-xs font-medium">
+          <button onclick="switchProjectView('kanban')" id="tab-kanban" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-md bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs font-semibold transition-all">
+            <i data-lucide="kanban" class="w-3.5 h-3.5 text-brand-600 dark:text-brand-400"></i>
+            <span>Kanban Board</span>
+          </button>
+          <button onclick="switchProjectView('list')" id="tab-list" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
+            <i data-lucide="list-todo" class="w-3.5 h-3.5"></i>
+            <span>List View</span>
+          </button>
+          <button onclick="switchProjectView('timeline')" id="tab-timeline" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
+            <i data-lucide="git-commit" class="w-3.5 h-3.5"></i>
+            <span>Timeline (Gantt)</span>
+          </button>
+        </div>
+
+        <!-- Filter, Group, and Client Portal Visibility Controls -->
+        <div class="flex items-center space-x-2 text-xs">
+          <!-- Priority Filter Dropdown -->
+          <div class="relative">
+            <button onclick="toggleFilterMenu()" class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors">
+              <i data-lucide="filter" class="w-3.5 h-3.5 text-slate-400"></i>
+              <span>Filter</span>
+              <span id="activeFilterBadge" class="hidden text-[10px] bg-brand-100 dark:bg-brand-900/60 text-brand-700 dark:text-brand-300 font-mono px-1 rounded">1</span>
+            </button>
+          </div>
+
+          <!-- Client Access Badge indicator -->
+          <div class="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/40 text-[11px] text-emerald-700 dark:text-emerald-300 font-medium">
+            <i data-lucide="eye" class="w-3 h-3 text-emerald-600 dark:text-emerald-400"></i>
+            <span>Client Sync: Active</span>
+          </div>
+
+          <!-- Share / Export Button -->
+          <button onclick="shareProjectReport()" class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700/80 bg-white dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors">
+            <i data-lucide="share-2" class="w-3.5 h-3.5 text-slate-400"></i>
+            <span class="hidden md:inline">Share</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- VIEW CANVAS CONTAINER -->
+      <main id="mainCanvas" class="flex-1 overflow-y-auto overflow-x-hidden p-6 relative">
+        <!-- VIEW 1: EXECUTIVE DASHBOARD (Rendered dynamically or via switchView) -->
+        <div id="view-dashboard" class="hidden space-y-6 max-w-7xl mx-auto">
+          <!-- Welcome & Timeframe Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h1 class="text-xl font-bold font-display text-slate-900 dark:text-white tracking-tight">Executive Dashboard</h1>
+              <p class="text-xs text-slate-500 dark:text-slate-400">High-level operational overview across internal workflows and client engagements.</p>
+            </div>
+            <div class="flex items-center space-x-2 text-xs">
+              <span class="text-slate-400">Sprint Period:</span>
+              <span class="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-slate-700 dark:text-slate-300 font-medium">Nov 15 - Nov 28, 2026</span>
+              <button onclick="exportDashboardSummary()" class="px-3 py-1 rounded-md bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 font-medium transition-colors">Export Report</button>
+            </div>
+          </div>
+
+          <!-- 4 KPI SUMMARY CARDS -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- KPI 1: Active Projects -->
+            <div class="p-4 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200/80 dark:border-slate-800/80 shadow-subtle hover:shadow-card transition-shadow">
+              <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2">
+                <span class="font-medium">Active Projects</span>
+                <span class="p-1 rounded bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-400"><i data-lucide="folder-kanban" class="w-4 h-4"></i></span>
+              </div>
+              <div class="flex items-baseline space-x-2">
+                <span class="text-2xl font-bold font-display text-slate-900 dark:text-white">12</span>
+                <span class="text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center">
+                  <i data-lucide="trending-up" class="w-3 h-3 mr-0.5"></i> +2 this month
+                </span>
+              </div>
+              <div class="mt-2.5 flex items-center text-[11px] text-slate-400">
+                <span class="font-mono">8 Client</span>
+                <span class="mx-1.5">•</span>
+                <span class="font-mono">4 Internal</span>
+              </div>
+            </div>
+
+            <!-- KPI 2: Tasks Due This Week -->
+            <div class="p-4 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200/80 dark:border-slate-800/80 shadow-subtle hover:shadow-card transition-shadow">
+              <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2">
+                <span class="font-medium">Tasks Due This Week</span>
+                <span class="p-1 rounded bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400"><i data-lucide="calendar-clock" class="w-4 h-4"></i></span>
+              </div>
+              <div class="flex items-baseline space-x-2">
+                <span class="text-2xl font-bold font-display text-slate-900 dark:text-white">28</span>
+                <span class="text-xs text-slate-500 font-medium">Across 4 teams</span>
+              </div>
+              <div class="mt-2.5 flex items-center text-[11px] text-amber-600 dark:text-amber-400">
+                <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i>
+                <span>9 due in the next 48h</span>
+              </div>
+            </div>
+
+            <!-- KPI 3: Overdue Tasks -->
+            <div class="p-4 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200/80 dark:border-slate-800/80 shadow-subtle hover:shadow-card transition-shadow">
+              <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2">
+                <span class="font-medium">Overdue Tasks</span>
+                <span class="p-1 rounded bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400"><i data-lucide="flame" class="w-4 h-4"></i></span>
+              </div>
+              <div class="flex items-baseline space-x-2">
+                <span class="text-2xl font-bold font-display text-rose-600 dark:text-rose-500">3</span>
+                <span class="text-xs text-rose-500/80 font-medium font-mono">-1 vs yesterday</span>
+              </div>
+              <div class="mt-2.5 flex items-center text-[11px] text-slate-400">
+                <span>Requires immediate triage</span>
+              </div>
+            </div>
+
+            <!-- KPI 4: Overall Completion Rate -->
+            <div class="p-4 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200/80 dark:border-slate-800/80 shadow-subtle hover:shadow-card transition-shadow">
+              <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2">
+                <span class="font-medium">Overall Sprint Velocity</span>
+                <span class="p-1 rounded bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400"><i data-lucide="gauge" class="w-4 h-4"></i></span>
+              </div>
+              <div class="flex items-baseline space-x-2">
+                <span class="text-2xl font-bold font-display text-slate-900 dark:text-white">88.4%</span>
+                <span class="text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center">
+                  <i data-lucide="trending-up" class="w-3 h-3 mr-0.5"></i> +4.2%
+                </span>
+              </div>
+              <!-- Mini progress bar in card -->
+              <div class="mt-3 w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                <div class="bg-brand-600 h-full rounded-full" style="width: 88.4%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TWO-COLUMN SECTION: PROJECT PROGRESS & RECENT ACTIVITY FEED -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Project Progress List (2 cols) -->
+            <div class="lg:col-span-2 p-5 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200/80 dark:border-slate-800/80 shadow-subtle space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-sm font-bold text-slate-900 dark:text-white font-display">Active Projects Portfolio</h2>
+                  <p class="text-xs text-slate-400">Health status, deliverables completion, and client badges</p>
+                </div>
+                <button onclick="switchView('tasks')" class="text-xs text-brand-600 dark:text-brand-400 hover:underline font-medium">View all 12 →</button>
+              </div>
+
+              <!-- Project Items Table-like Rows -->
+              <div class="space-y-3 pt-1">
+                <!-- Project 1 -->
+                <div class="p-3 rounded-lg border border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/40 hover:bg-slate-100/60 dark:hover:bg-slate-800/60 transition-colors">
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center space-x-2">
+                      <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                      <span class="text-xs font-bold text-slate-900 dark:text-white">Mobile App v2.4 (React Native)</span>
+                      <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/40">Client: Nike Tech</span>
+                    </div>
+                    <span class="text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-400">On Track • 74%</span>
+                  </div>
+                  <div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 74%"></div>
+                  </div>
+                  <div class="mt-2 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                    <span>18 of 24 tasks completed</span>
+                    <span>Deadline: Dec 04, 2026</span>
+                  </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="p-3 rounded-lg border border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/40 hover:bg-slate-100/60 dark:hover:bg-slate-800/60 transition-colors">
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center space-x-2">
+                      <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                      <span class="text-xs font-bold text-slate-900 dark:text-white">Stripe Billing & Subscriptions</span>
+                      <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Internal SaaS</span>
+                    </div>
+                    <span class="text-xs font-mono font-semibold text-amber-500">Review Blocked • 42%</span>
+                  </div>
+                  <div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 42%"></div>
+                  </div>
+                  <div class="mt-2 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                    <span>8 of 19 tasks completed</span>
+                    <span>Deadline: Dec 12, 2026</span>
+                  </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="p-3 rounded-lg border border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/40 hover:bg-slate-100/60 dark:hover:bg-slate-800/60 transition-colors">
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center space-x-2">
+                      <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                      <span class="text-xs font-bold text-slate-900 dark:text-white">Brand Refresh & Design System</span>
+                      <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/40">Client: Fintech Global</span>
+                    </div>
+                    <span class="text-xs font-mono font-semibold text-indigo-500">Final Signoff • 89%</span>
+                  </div>
+                  <div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div class="bg-indigo-600 h-full rounded-full transition-all duration-500" style="width: 89%"></div>
+                  </div>
+                  <div class="mt-2 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                    <span>23 of 26 tasks completed</span>
+                    <span>Deadline: Nov 24, 2026</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Activity Feed & Upcoming Deadlines (1 col) -->
+            <div class="p-5 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200/80 dark:border-slate-800/80 shadow-subtle space-y-4">
+              <div class="flex items-center justify-between">
+                <h2 class="text-sm font-bold text-slate-900 dark:text-white font-display">Recent Activity Feed</h2>
+                <span class="text-[10px] font-mono text-emerald-500 flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live
+                </span>
+              </div>
+
+              <!-- Activity Stream -->
+              <div class="space-y-3.5 text-xs">
+                <div class="flex items-start space-x-3">
+                  <img class="w-6 h-6 rounded-full object-cover mt-0.5 ring-1 ring-slate-200 dark:ring-slate-700" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80" alt="Sarah">
+                  <div class="space-y-0.5">
+                    <p class="text-slate-800 dark:text-slate-200">
+                      <span class="font-semibold text-slate-900 dark:text-white">Sarah C.</span> moved <span class="font-medium text-brand-600 dark:text-brand-400">Biometric Auth</span> to <span class="text-emerald-600 dark:text-emerald-400 font-medium">Done</span>
+                    </p>
+                    <span class="text-[10px] text-slate-400 font-mono">14m ago</span>
+                  </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                  <img class="w-6 h-6 rounded-full object-cover mt-0.5 ring-1 ring-slate-200 dark:ring-slate-700" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&auto=format&fit=crop&q=80" alt="Marcus">
+                  <div class="space-y-0.5">
+                    <p class="text-slate-800 dark:text-slate-200">
+                      <span class="font-semibold text-slate-900 dark:text-white">Marcus V.</span> uploaded 3 Figma export assets to <span class="font-medium text-slate-700 dark:text-slate-300">Checkout Redesign</span>
+                    </p>
+                    <span class="text-[10px] text-slate-400 font-mono">42m ago</span>
+                  </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                  <div class="w-6 h-6 rounded-full bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400 text-xs font-bold mt-0.5">
+                    CL
+                  </div>
+                  <div class="space-y-0.5">
+                    <p class="text-slate-800 dark:text-slate-200">
+                      <span class="font-semibold text-slate-900 dark:text-white">Nike Client Lead</span> commented on <span class="font-medium text-indigo-600 dark:text-indigo-400">Milestone 2 Delivery</span>
+                    </p>
+                    <span class="text-[10px] text-slate-400 font-mono">2h ago</span>
+                  </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                  <img class="w-6 h-6 rounded-full object-cover mt-0.5 ring-1 ring-slate-200 dark:ring-slate-700" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&auto=format&fit=crop&q=80" alt="Elena">
+                  <div class="space-y-0.5">
+                    <p class="text-slate-800 dark:text-slate-200">
+                      <span class="font-semibold text-slate-900 dark:text-white">Elena R.</span> updated status of <span class="font-medium text-rose-500">SOC2 Cryptographic keys</span>
+                    </p>
+                    <span class="text-[10px] text-slate-400 font-mono">3h ago</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Upcoming Deadlines Micro Widget -->
+              <div class="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
+                <span class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-500"></i>
+                  Upcoming Critical Deadlines
+                </span>
+                <div class="space-y-1.5 text-[11px] font-mono">
+                  <div class="flex items-center justify-between p-2 rounded bg-rose-50/60 dark:bg-rose-950/20 text-rose-700 dark:text-rose-300">
+                    <span>iOS App Store Submission</span>
+                    <span class="font-bold">Tomorrow</span>
+                  </div>
+                  <div class="flex items-center justify-between p-2 rounded bg-slate-50 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400">
+                    <span>Stripe Live Webhook test</span>
+                    <span>In 3 days</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 2: PROJECT WORKSPACE - KANBAN BOARD -->
+        <div id="view-kanban" class="h-full flex flex-col space-y-4">
+          <!-- Filter chips bar -->
+          <div class="flex items-center justify-between flex-shrink-0">
+            <div class="flex items-center space-x-2 text-xs">
+              <span class="text-slate-400 font-medium">Filter By:</span>
+              <button onclick="filterTasks('all')" id="btn-filter-all" class="px-2.5 py-1 rounded-md bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-semibold text-[11px] transition-colors">All (8)</button>
+              <button onclick="filterTasks('Design')" id="btn-filter-design" class="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[11px] hover:border-slate-300 transition-colors">Design</button>
+              <button onclick="filterTasks('Backend')" id="btn-filter-backend" class="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[11px] hover:border-slate-300 transition-colors">Backend</button>
+              <button onclick="filterTasks('Security')" id="btn-filter-security" class="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[11px] hover:border-slate-300 transition-colors">Security</button>
+            </div>
+            <div class="text-xs text-slate-400 font-mono hidden sm:block">
+              Drag cards between columns to update status
+            </div>
+          </div>
+
+          <!-- KANBAN BOARD 4 COLUMNS -->
+          <div class="flex-1 flex space-x-4 overflow-x-auto pb-4 items-start select-none">
+            <!-- COLUMN 1: BACKLOG -->
+            <div class="kanban-col w-72 lg:w-80 flex-shrink-0 bg-slate-100/60 dark:bg-[#131B2E]/60 rounded-xl p-3 border border-slate-200/60 dark:border-slate-800/60 flex flex-col max-h-full"
+                 ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'Backlog')">
+              <div class="flex items-center justify-between pb-3 flex-shrink-0">
+                <div class="flex items-center space-x-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                  <span class="text-xs font-bold text-slate-800 dark:text-slate-200 tracking-tight">Backlog</span>
+                  <span id="count-Backlog" class="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium">2</span>
+                </div>
+                <button onclick="openCreateTaskModal('Backlog')" class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+
+              <!-- Column Cards Container -->
+              <div id="col-Backlog" class="flex-1 overflow-y-auto space-y-2.5 pr-1 min-h-[140px]">
+                <!-- Task Card 1 -->
+                <div id="card-1" draggable="true" ondragstart="handleDragStart(event, '1')" onclick="openTaskDetail('1')"
+                     class="task-card group p-3.5 rounded-lg bg-white dark:bg-[#1A2338] border border-slate-200/80 dark:border-slate-800 shadow-card hover:shadow-card-hover dark:hover:shadow-card-hover-dark hover:border-brand-500/50 dark:hover:border-brand-500/50 cursor-pointer transition-all space-y-2.5 relative">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-200/40">Urgent</span>
+                    <span class="text-[10px] font-mono text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">#EGN-104</span>
+                  </div>
+                  <h3 class="text-xs font-semibold text-slate-900 dark:text-white leading-snug">Implement biometric FaceID authentication flow</h3>
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">Security</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400">Client Facing</span>
+                  </div>
+                  <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                    <div class="flex items-center space-x-3">
+                      <span class="flex items-center gap-1"><i data-lucide="check-square" class="w-3 h-3 text-brand-500"></i> 1/4</span>
+                      <span class="flex items-center gap-1"><i data-lucide="message-square" class="w-3 h-3"></i> 3</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                      <span class="text-rose-500 font-medium flex items-center gap-0.5"><i data-lucide="calendar" class="w-3 h-3"></i> Nov 22</span>
+                      <img class="w-5 h-5 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80" alt="Sarah">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Task Card 2 -->
+                <div id="card-2" draggable="true" ondragstart="handleDragStart(event, '2')" onclick="openTaskDetail('2')"
+                     class="task-card group p-3.5 rounded-lg bg-white dark:bg-[#1A2338] border border-slate-200/80 dark:border-slate-800 shadow-card hover:shadow-card-hover dark:hover:shadow-card-hover-dark hover:border-brand-500/50 dark:hover:border-brand-500/50 cursor-pointer transition-all space-y-2.5 relative">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200/40">Medium</span>
+                    <span class="text-[10px] font-mono text-slate-400">#EGN-108</span>
+                  </div>
+                  <h3 class="text-xs font-semibold text-slate-900 dark:text-white leading-snug">Design offline queue sync banner & retry toasts</h3>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">Design</span>
+                  </div>
+                  <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                    <div class="flex items-center space-x-3">
+                      <span class="flex items-center gap-1"><i data-lucide="check-square" class="w-3 h-3 text-slate-400"></i> 0/2</span>
+                      <span class="flex items-center gap-1"><i data-lucide="message-square" class="w-3 h-3"></i> 0</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                      <span>Nov 29</span>
+                      <img class="w-5 h-5 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop&q=80" alt="Marcus">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- COLUMN 2: IN PROGRESS -->
+            <div class="kanban-col w-72 lg:w-80 flex-shrink-0 bg-slate-100/60 dark:bg-[#131B2E]/60 rounded-xl p-3 border border-slate-200/60 dark:border-slate-800/60 flex flex-col max-h-full"
+                 ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'In Progress')">
+              <div class="flex items-center justify-between pb-3 flex-shrink-0">
+                <div class="flex items-center space-x-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  <span class="text-xs font-bold text-slate-800 dark:text-slate-200 tracking-tight">In Progress</span>
+                  <span id="count-InProgress" class="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 font-medium">3</span>
+                </div>
+                <button onclick="openCreateTaskModal('In Progress')" class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+
+              <!-- Column Cards Container -->
+              <div id="col-InProgress" class="flex-1 overflow-y-auto space-y-2.5 pr-1 min-h-[140px]">
+                <!-- Task Card 3 -->
+                <div id="card-3" draggable="true" ondragstart="handleDragStart(event, '3')" onclick="openTaskDetail('3')"
+                     class="task-card group p-3.5 rounded-lg bg-white dark:bg-[#1A2338] border border-slate-200/80 dark:border-slate-800 shadow-card hover:shadow-card-hover dark:hover:shadow-card-hover-dark hover:border-brand-500/50 dark:hover:border-brand-500/50 cursor-pointer transition-all space-y-2.5 relative">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200/40">High</span>
+                    <span class="text-[10px] font-mono text-slate-400">#EGN-92</span>
+                  </div>
+                  <h3 class="text-xs font-semibold text-slate-900 dark:text-white leading-snug">Implement Webhook idempotency key verification</h3>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">Backend</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400">Stripe API</span>
+                  </div>
+                  <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                    <div class="flex items-center space-x-3">
+                      <span class="flex items-center gap-1"><i data-lucide="check-square" class="w-3 h-3 text-brand-500"></i> 2/3</span>
+                      <span class="flex items-center gap-1"><i data-lucide="message-square" class="w-3 h-3"></i> 5</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                      <span class="text-amber-500 font-medium">Nov 23</span>
+                      <img class="w-5 h-5 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=60&auto=format&fit=crop&q=80" alt="Elena">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Task Card 4 -->
+                <div id="card-4" draggable="true" ondragstart="handleDragStart(event, '4')" onclick="openTaskDetail('4')"
+                     class="task-card group p-3.5 rounded-lg bg-white dark:bg-[#1A2338] border border-slate-200/80 dark:border-slate-800 shadow-card hover:shadow-card-hover dark:hover:shadow-card-hover-dark hover:border-brand-500/50 dark:hover:border-brand-500/50 cursor-pointer transition-all space-y-2.5 relative">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200/40">High</span>
+                    <span class="text-[10px] font-mono text-slate-400">#EGN-99</span>
+                  </div>
+                  <h3 class="text-xs font-semibold text-slate-900 dark:text-white leading-snug">Revamp checkout step 2: 1-click Apple Pay & Google Pay</h3>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">Frontend</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400">Nike Tech</span>
+                  </div>
+                  <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                    <div class="flex items-center space-x-3">
+                      <span class="flex items-center gap-1"><i data-lucide="check-square" class="w-3 h-3 text-brand-500"></i> 3/4</span>
+                      <span class="flex items-center gap-1"><i data-lucide="message-square" class="w-3 h-3"></i> 2</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                      <span>Nov 25</span>
+                      <img class="w-5 h-5 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80" alt="Sarah">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Task Card 5 -->
+                <div id="card-5" draggable="true" ondragstart="handleDragStart(event, '5')" onclick="openTaskDetail('5')"
+                     class="task-card group p-3.5 rounded-lg bg-white dark:bg-[#1A2338] border border-slate-200/80 dark:border-slate-800 shadow-card hover:shadow-card-hover dark:hover:shadow-card-hover-dark hover:border-brand-500/50 dark:hover:border-brand-500/50 cursor-pointer transition-all space-y-2.5 relative">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Low</span>
+                    <span class="text-[10px] font-mono text-slate-400">#EGN-110</span>
+                  </div>
+                  <h3 class="text-xs font-semibold text-slate-900 dark:text-white leading-snug">Dark mode token contrast audits for WCAG AA compliance</h3>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">Design</span>
+                  </div>
+                  <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                    <div class="flex items-center space-x-3">
+                      <span class="flex items-center gap-1"><i data-lucide="check-square" class="w-3 h-3 text-brand-500"></i> 1/2</span>
+                      <span class="flex items-center gap-1"><i data-lucide="message-square" class="w-3 h-3"></i> 1</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                      <span>Nov 30</span>
+                      <img class="w-5 h-5 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop&q=80" alt="Marcus">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- COLUMN 3: IN REVIEW -->
+            <div class="kanban-col w-72 lg:w-80 flex-shrink-0 bg-slate-100/60 dark:bg-[#131B2E]/60 rounded-xl p-3 border border-slate-200/60 dark:border-slate-800/60 flex flex-col max-h-full"
+                 ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'Review')">
+              <div class="flex items-center justify-between pb-3 flex-shrink-0">
+                <div class="flex items-center space-x-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                  <span class="text-xs font-bold text-slate-800 dark:text-slate-200 tracking-tight">Review / QA</span>
+                  <span id="count-Review" class="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 font-medium">1</span>
+                </div>
+                <button onclick="openCreateTaskModal('Review')" class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+
+              <!-- Column Cards Container -->
+              <div id="col-Review" class="flex-1 overflow-y-auto space-y-2.5 pr-1 min-h-[140px]">
+                <!-- Task Card 6 -->
+                <div id="card-6" draggable="true" ondragstart="handleDragStart(event, '6')" onclick="openTaskDetail('6')"
+                     class="task-card group p-3.5 rounded-lg bg-white dark:bg-[#1A2338] border border-slate-200/80 dark:border-slate-800 shadow-card hover:shadow-card-hover dark:hover:shadow-card-hover-dark hover:border-brand-500/50 dark:hover:border-brand-500/50 cursor-pointer transition-all space-y-2.5 relative">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200/40">In QA</span>
+                    <span class="text-[10px] font-mono text-slate-400">#EGN-84</span>
+                  </div>
+                  <h3 class="text-xs font-semibold text-slate-900 dark:text-white leading-snug">Multi-tenant client permissions audit & role validation</h3>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">Security</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400">Client Ready</span>
+                  </div>
+                  <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                    <div class="flex items-center space-x-3">
+                      <span class="flex items-center gap-1"><i data-lucide="check-square" class="w-3 h-3 text-emerald-500"></i> 4/4</span>
+                      <span class="flex items-center gap-1"><i data-lucide="message-square" class="w-3 h-3"></i> 6</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                      <span>Nov 24</span>
+                      <img class="w-5 h-5 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=60&auto=format&fit=crop&q=80" alt="Elena">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- COLUMN 4: DONE -->
+            <div class="kanban-col w-72 lg:w-80 flex-shrink-0 bg-slate-100/60 dark:bg-[#131B2E]/60 rounded-xl p-3 border border-slate-200/60 dark:border-slate-800/60 flex flex-col max-h-full"
+                 ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'Done')">
+              <div class="flex items-center justify-between pb-3 flex-shrink-0">
+                <div class="flex items-center space-x-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                  <span class="text-xs font-bold text-slate-800 dark:text-slate-200 tracking-tight">Done</span>
+                  <span id="count-Done" class="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-medium">2</span>
+                </div>
+                <button onclick="openCreateTaskModal('Done')" class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+
+              <!-- Column Cards Container -->
+              <div id="col-Done" class="flex-1 overflow-y-auto space-y-2.5 pr-1 min-h-[140px]">
+                <!-- Task Card 7 -->
+                <div id="card-7" draggable="true" ondragstart="handleDragStart(event, '7')" onclick="openTaskDetail('7')"
+                     class="task-card group p-3.5 rounded-lg bg-white/70 dark:bg-[#1A2338]/70 border border-slate-200/60 dark:border-slate-800/60 shadow-card hover:shadow-card-hover dark:hover:shadow-card-hover-dark hover:border-emerald-500/50 cursor-pointer transition-all space-y-2.5 opacity-90">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200/40">Shipped</span>
+                    <span class="text-[10px] font-mono text-slate-400">#EGN-77</span>
+                  </div>
+                  <h3 class="text-xs font-semibold text-slate-700 dark:text-slate-300 line-through">Production DB Migration to Neon Postgres with branch staging</h3>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">DevOps</span>
+                  </div>
+                  <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                    <div class="flex items-center space-x-3">
+                      <span class="flex items-center gap-1 text-emerald-600 dark:text-emerald-400"><i data-lucide="check" class="w-3 h-3"></i> Completed</span>
+                    </div>
+                    <img class="w-5 h-5 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=60&auto=format&fit=crop&q=80" alt="Elena">
+                  </div>
+                </div>
+
+                <!-- Task Card 8 -->
+                <div id="card-8" draggable="true" ondragstart="handleDragStart(event, '8')" onclick="openTaskDetail('8')"
+                     class="task-card group p-3.5 rounded-lg bg-white/70 dark:bg-[#1A2338]/70 border border-slate-200/60 dark:border-slate-800/60 shadow-card hover:shadow-card-hover dark:hover:shadow-card-hover-dark hover:border-emerald-500/50 cursor-pointer transition-all space-y-2.5 opacity-90">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200/40">Approved</span>
+                    <span class="text-[10px] font-mono text-slate-400">#EGN-72</span>
+                  </div>
+                  <h3 class="text-xs font-semibold text-slate-700 dark:text-slate-300 line-through">Brand iconography SVG sprite sheet bundle export</h3>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">Design</span>
+                  </div>
+                  <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                    <span class="text-emerald-600 dark:text-emerald-400">Signoff Recv'd</span>
+                    <img class="w-5 h-5 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop&q=80" alt="Marcus">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 3: PROJECT WORKSPACE - LIST VIEW -->
+        <div id="view-list" class="hidden space-y-4 max-w-7xl mx-auto">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-base font-bold text-slate-900 dark:text-white font-display">Sprint 38 Task Master List</h2>
+              <p class="text-xs text-slate-400">Dense tabular view with inline triage and client portal status switches</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button onclick="openCreateTaskModal()" class="px-2.5 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold flex items-center gap-1">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Row
+              </button>
+            </div>
+          </div>
+
+          <!-- High-density Table -->
+          <div class="rounded-xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-[#131B2E] overflow-hidden shadow-subtle">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50/80 dark:bg-slate-900/60 border-b border-slate-200/80 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-mono text-[11px] uppercase tracking-wider">
+                  <tr>
+                    <th class="py-2.5 px-3 w-10 text-center"><input type="checkbox" class="rounded text-brand-600 focus:ring-0"></th>
+                    <th class="py-2.5 px-3">Key & Task Name</th>
+                    <th class="py-2.5 px-3">Status</th>
+                    <th class="py-2.5 px-3">Priority</th>
+                    <th class="py-2.5 px-3">Assignee</th>
+                    <th class="py-2.5 px-3">Due Date</th>
+                    <th class="py-2.5 px-3 text-center">Subtasks</th>
+                    <th class="py-2.5 px-3 text-right">Client Visible</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800/80 font-sans" id="listViewTableBody">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 4: PROJECT WORKSPACE - TIMELINE (GANTT) -->
+        <div id="view-timeline" class="hidden space-y-4 max-w-7xl mx-auto">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-base font-bold text-slate-900 dark:text-white font-display">Sprint & Milestone Gantt Timeline</h2>
+              <p class="text-xs text-slate-400">Horizontal visual roadmap, critical path dependencies, and client milestone delivery gates.</p>
+            </div>
+            <div class="flex items-center space-x-2 text-xs font-mono">
+              <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">Week 47</span>
+              <span class="px-2 py-1 rounded bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 font-semibold border border-brand-200/50">Current Week 48</span>
+              <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">Week 49</span>
+            </div>
+          </div>
+
+          <!-- Interactive Gantt Container -->
+          <div class="rounded-xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-[#131B2E] p-4 shadow-subtle overflow-x-auto">
+            <!-- Timeline Headers -->
+            <div class="min-w-[700px]">
+              <div class="grid grid-cols-12 gap-1 text-[11px] font-mono text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-2 mb-4">
+                <div class="col-span-4 font-semibold text-slate-700 dark:text-slate-300">Deliverable / Task</div>
+                <div class="col-span-2 text-center">Nov 16 - Nov 20</div>
+                <div class="col-span-3 text-center bg-brand-50/50 dark:bg-brand-950/30 rounded py-0.5 text-brand-600 dark:text-brand-400 font-bold">Nov 21 - Nov 27 (Now)</div>
+                <div class="col-span-3 text-center">Nov 28 - Dec 04</div>
+              </div>
+
+              <!-- Gantt Bars -->
+              <div class="space-y-4 text-xs">
+                <!-- Bar 1: Biometric Auth -->
+                <div class="grid grid-cols-12 gap-1 items-center">
+                  <div class="col-span-4 flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                    <span class="font-medium text-slate-900 dark:text-white truncate">FaceID Auth Flow</span>
+                  </div>
+                  <div class="col-span-8 relative h-7 bg-slate-50 dark:bg-slate-900/40 rounded-lg flex items-center">
+                    <div class="absolute left-[30%] w-[35%] h-5 bg-gradient-to-r from-rose-500 to-rose-600 rounded-md shadow-sm flex items-center justify-between px-2 text-[10px] text-white font-mono font-medium cursor-pointer hover:opacity-95 transition-opacity" onclick="openTaskDetail('1')">
+                      <span>#EGN-104</span>
+                      <span>25%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bar 2: Checkout Redesign -->
+                <div class="grid grid-cols-12 gap-1 items-center">
+                  <div class="col-span-4 flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    <span class="font-medium text-slate-900 dark:text-white truncate">1-Click Apple/Google Pay</span>
+                  </div>
+                  <div class="col-span-8 relative h-7 bg-slate-50 dark:bg-slate-900/40 rounded-lg flex items-center">
+                    <div class="absolute left-[20%] w-[55%] h-5 bg-gradient-to-r from-amber-500 to-amber-600 rounded-md shadow-sm flex items-center justify-between px-2 text-[10px] text-white font-mono font-medium cursor-pointer hover:opacity-95 transition-opacity" onclick="openTaskDetail('4')">
+                      <span>#EGN-99</span>
+                      <span>75%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bar 3: Webhook Verification -->
+                <div class="grid grid-cols-12 gap-1 items-center">
+                  <div class="col-span-4 flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-brand-500"></span>
+                    <span class="font-medium text-slate-900 dark:text-white truncate">Stripe Webhook Idempotency</span>
+                  </div>
+                  <div class="col-span-8 relative h-7 bg-slate-50 dark:bg-slate-900/40 rounded-lg flex items-center">
+                    <div class="absolute left-[15%] w-[40%] h-5 bg-brand-600 rounded-md shadow-sm flex items-center justify-between px-2 text-[10px] text-white font-mono font-medium cursor-pointer hover:opacity-95 transition-opacity" onclick="openTaskDetail('3')">
+                      <span>#EGN-92</span>
+                      <span>66%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Milestone Marker Gate -->
+                <div class="grid grid-cols-12 gap-1 items-center py-2 border-y border-dashed border-indigo-200 dark:border-indigo-900/60 bg-indigo-50/30 dark:bg-indigo-950/20 rounded">
+                  <div class="col-span-4 flex items-center space-x-2 pl-2">
+                    <i data-lucide="flag" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"></i>
+                    <span class="font-bold text-indigo-700 dark:text-indigo-300">Milestone 2 Delivery Gate</span>
+                  </div>
+                  <div class="col-span-8 relative h-5 flex items-center">
+                    <div class="absolute left-[65%] w-3 h-3 rotate-45 bg-indigo-600 rounded-xs ring-4 ring-indigo-200 dark:ring-indigo-900" title="Milestone Deadline: Nov 28"></div>
+                    <span class="absolute left-[68%] text-[10px] font-mono text-indigo-600 dark:text-indigo-400 font-bold">Client Review Signoff (Nov 28)</span>
+                  </div>
+                </div>
+
+                <!-- Bar 4: Neon DB Migration -->
+                <div class="grid grid-cols-12 gap-1 items-center">
+                  <div class="col-span-4 flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span class="font-medium text-slate-900 dark:text-white truncate">Neon Postgres Staging</span>
+                  </div>
+                  <div class="col-span-8 relative h-7 bg-slate-50 dark:bg-slate-900/40 rounded-lg flex items-center">
+                    <div class="absolute left-[0%] w-[35%] h-5 bg-emerald-600 rounded-md shadow-sm flex items-center justify-between px-2 text-[10px] text-white font-mono font-medium cursor-pointer" onclick="openTaskDetail('7')">
+                      <span>#EGN-77</span>
+                      <span>100% (Shipped)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 5: CLIENT PORTAL VIEW -->
+        <div id="view-client-portal" class="hidden space-y-6 max-w-5xl mx-auto">
+          <div class="p-6 rounded-2xl bg-gradient-to-br from-indigo-900 via-brand-900 to-slate-900 text-white shadow-xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+              <div class="space-y-1">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider bg-white/20 text-white font-semibold">Client External Portal</span>
+                <h2 class="text-2xl font-bold font-display">Nike Tech Mobile App v2.4</h2>
+                <p class="text-xs text-indigo-200">Shared workspace with verified client leads: John Appleseed & Maya Lin</p>
+              </div>
+              <div class="flex items-center space-x-2">
+                <button onclick="copyClientShareLink()" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-sm border border-white/20 transition-all flex items-center gap-1.5">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Public Link
+                </button>
+                <button class="px-3.5 py-1.5 rounded-lg bg-white text-brand-900 hover:bg-slate-100 text-xs font-bold transition-all shadow-md">
+                  Approve Milestone 2
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Client Deliverables Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 shadow-subtle space-y-2">
+              <div class="flex items-center justify-between text-xs text-slate-500">
+                <span>Deliverable #1</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-50 dark:bg-emerald-950 text-emerald-600">Approved</span>
+              </div>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white">Figma Design Token Spec v2</h3>
+              <p class="text-xs text-slate-400">Complete responsive component specs and typography tokens delivered.</p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 shadow-subtle space-y-2">
+              <div class="flex items-center justify-between text-xs text-slate-500">
+                <span>Deliverable #2</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-50 dark:bg-amber-950 text-amber-600">Under Review</span>
+              </div>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white">Staging TestFlight Build v2.4.1</h3>
+              <p class="text-xs text-slate-400">iOS sandbox with Stripe sandbox keys active for QA walkthrough.</p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 shadow-subtle space-y-2">
+              <div class="flex items-center justify-between text-xs text-slate-500">
+                <span>Deliverable #3</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-400">Queued</span>
+              </div>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white">SOC2 Compliance Verification</h3>
+              <p class="text-xs text-slate-400">Scheduled for final security signoff on Dec 04, 2026.</p>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- MOBILE BOTTOM NAVIGATION (PWA ERGONOMICS) -->
+      <nav class="md:hidden border-t border-slate-200/80 dark:border-slate-800/80 bg-white/90 dark:bg-[#0F172A]/90 backdrop-blur-md px-4 py-2 flex items-center justify-around text-xs font-medium z-30">
+        <button onclick="switchView('dashboard')" class="flex flex-col items-center space-y-1 text-slate-500">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span class="text-[10px]">Dashboard</span>
+        </button>
+        <button onclick="switchView('tasks')" class="flex flex-col items-center space-y-1 text-brand-600 font-semibold">
+          <i data-lucide="check-square" class="w-4 h-4"></i>
+          <span class="text-[10px]">Tasks</span>
+        </button>
+        <button onclick="openCreateTaskModal()" class="w-9 h-9 rounded-full bg-brand-600 text-white flex items-center justify-center -mt-4 shadow-lg ring-4 ring-white dark:ring-slate-900">
+          <i data-lucide="plus" class="w-5 h-5"></i>
+        </button>
+        <button onclick="switchView('client-portal')" class="flex flex-col items-center space-y-1 text-slate-500">
+          <i data-lucide="shield-check" class="w-4 h-4"></i>
+          <span class="text-[10px]">Client</span>
+        </button>
+        <button onclick="toggleSidebar()" class="flex flex-col items-center space-y-1 text-slate-500">
+          <i data-lucide="menu" class="w-4 h-4"></i>
+          <span class="text-[10px]">Menu</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- TASK DETAIL SLIDE-OVER DRAWER (RIGHT PANEL) -->
+    <div id="drawerBackdrop" onclick="closeTaskDetail()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-[2px] z-40 hidden opacity-0 pointer-events-none"></div>
+
+    <aside id="taskDrawer" class="fixed top-0 right-0 bottom-0 w-full sm:w-[480px] lg:w-[540px] bg-white dark:bg-[#131B2E] border-l border-slate-200 dark:border-slate-800 shadow-drawer z-50 flex flex-col transform translate-x-full overflow-hidden">
+      <!-- Drawer Top Bar -->
+      <div class="h-14 border-b border-slate-100 dark:border-slate-800/80 px-5 flex items-center justify-between flex-shrink-0 bg-slate-50/50 dark:bg-slate-900/30">
+        <div class="flex items-center space-x-2 text-xs font-mono text-slate-500 dark:text-slate-400">
+          <i data-lucide="check-circle-2" class="w-4 h-4 text-brand-600"></i>
+          <span id="drawerTaskKey" class="font-bold text-slate-800 dark:text-slate-200">#EGN-104</span>
+          <span>•</span>
+          <span id="drawerCategoryTag" class="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Security</span>
+        </div>
+
+        <div class="flex items-center space-x-1">
+          <!-- Copy Link -->
+          <button onclick="copyTaskLink()" class="p-1.5 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Copy Task Link">
+            <i data-lucide="link" class="w-4 h-4"></i>
+          </button>
+          <!-- Fullscreen toggle -->
+          <button class="p-1.5 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Expand">
+            <i data-lucide="maximize-2" class="w-4 h-4"></i>
+          </button>
+          <!-- Close Drawer (ESC) -->
+          <button onclick="closeTaskDetail()" class="p-1.5 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors" title="Close Drawer (Esc)">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Drawer Scrollable Content -->
+      <div class="flex-1 overflow-y-auto p-6 space-y-6">
+        <!-- Editable Task Title -->
+        <div>
+          <input type="text" id="drawerTitleInput" value="Implement biometric FaceID authentication flow" 
+                 class="w-full text-lg sm:text-xl font-bold font-display text-slate-900 dark:text-white bg-transparent border-b border-transparent hover:border-slate-200 dark:hover:border-slate-700 focus:border-brand-500 focus:outline-none transition-colors pb-1">
+        </div>
+
+        <!-- Metadata Grid (Status, Priority, Assignee, Due Date) -->
+        <div class="grid grid-cols-2 gap-3 text-xs bg-slate-50 dark:bg-slate-900/50 p-3.5 rounded-xl border border-slate-100 dark:border-slate-800/80">
+          <!-- Status Dropdown -->
+          <div class="space-y-1">
+            <label class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold">Status</label>
+            <select id="drawerStatusSelect" onchange="updateTaskStatusFromDrawer(this.value)" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-800 dark:text-slate-200 font-medium focus:ring-1 focus:ring-brand-500 focus:outline-none">
+              <option value="Backlog">Backlog</option>
+              <option value="In Progress" selected>In Progress</option>
+              <option value="Review">Review / QA</option>
+              <option value="Done">Done</option>
+            </select>
+          </div>
+
+          <!-- Priority Dropdown -->
+          <div class="space-y-1">
+            <label class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold">Priority</label>
+            <select id="drawerPrioritySelect" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-800 dark:text-slate-200 font-medium focus:ring-1 focus:ring-brand-500 focus:outline-none">
+              <option value="Urgent" selected>Urgent (P0)</option>
+              <option value="High">High (P1)</option>
+              <option value="Medium">Medium (P2)</option>
+              <option value="Low">Low (P3)</option>
+            </select>
+          </div>
+
+          <!-- Assignee Selector -->
+          <div class="space-y-1">
+            <label class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold">Assignee</label>
+            <div class="flex items-center space-x-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 cursor-pointer">
+              <img id="drawerAssigneeImg" class="w-5 h-5 rounded-full object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80" alt="Sarah">
+              <span id="drawerAssigneeName" class="font-medium text-slate-800 dark:text-slate-200 truncate">Sarah Connor</span>
+            </div>
+          </div>
+
+          <!-- Due Date Picker -->
+          <div class="space-y-1">
+            <label class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold">Due Date</label>
+            <div class="flex items-center space-x-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5">
+              <i data-lucide="calendar" class="w-3.5 h-3.5 text-rose-500"></i>
+              <input type="date" value="2026-11-22" class="bg-transparent text-slate-800 dark:text-slate-200 focus:outline-none w-full text-xs font-mono">
+            </div>
+          </div>
+        </div>
+
+        <!-- Rich-Text Description with Micro-Toolbar -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-slate-900 dark:text-white font-display">Description</label>
+            <!-- Formatting Toolbar -->
+            <div class="flex items-center space-x-1 text-slate-400">
+              <button class="p-1 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded" title="Bold"><b>B</b></button>
+              <button class="p-1 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded italic" title="Italic"><i>I</i></button>
+              <button class="p-1 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded font-mono" title="Code">&lt;/&gt;</button>
+              <button class="p-1 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded" title="Link"><i data-lucide="link" class="w-3 h-3"></i></button>
+            </div>
+          </div>
+          <div class="relative">
+            <textarea id="drawerDescTextarea" rows="4" 
+                      class="w-full text-xs text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 rounded-xl p-3 focus:ring-1 focus:ring-brand-500 focus:outline-none leading-relaxed resize-none">
+Support local hardware security enclave integration on both iOS (FaceID / TouchID via LocalAuthentication framework) and Android (BiometricPrompt API).
+Fallback to tenant PIN code when biometric failure count exceeds 3 tries.</textarea>
+          </div>
+        </div>
+
+        <!-- Interactive Sub-task Checklist -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="text-xs font-bold text-slate-900 dark:text-white font-display">Sub-tasks</span>
+              <span id="subtaskProgressRatio" class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 font-semibold">1 of 4 completed</span>
+            </div>
+            <!-- Progress Bar -->
+            <div class="w-24 bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div id="subtaskProgressBar" class="bg-brand-600 h-full rounded-full transition-all duration-300" style="width: 25%"></div>
+            </div>
+          </div>
+
+          <!-- Checklist Items -->
+          <div id="subtaskListContainer" class="space-y-2 text-xs">
+            <label class="flex items-center space-x-2.5 p-2 rounded-lg bg-slate-50/70 dark:bg-slate-900/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
+              <input type="checkbox" checked onchange="toggleSubtask(this)" class="w-4 h-4 rounded text-brand-600 focus:ring-0 cursor-pointer">
+              <span class="line-through text-slate-400">Audit LocalAuthentication entitlement plist keys</span>
+            </label>
+            <label class="flex items-center space-x-2.5 p-2 rounded-lg bg-slate-50/70 dark:bg-slate-900/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
+              <input type="checkbox" onchange="toggleSubtask(this)" class="w-4 h-4 rounded text-brand-600 focus:ring-0 cursor-pointer">
+              <span class="text-slate-800 dark:text-slate-200">Handle BiometricPrompt hardware unavailable error code</span>
+            </label>
+            <label class="flex items-center space-x-2.5 p-2 rounded-lg bg-slate-50/70 dark:bg-slate-900/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
+              <input type="checkbox" onchange="toggleSubtask(this)" class="w-4 h-4 rounded text-brand-600 focus:ring-0 cursor-pointer">
+              <span class="text-slate-800 dark:text-slate-200">Connect encrypted keychain token refresh query</span>
+            </label>
+            <label class="flex items-center space-x-2.5 p-2 rounded-lg bg-slate-50/70 dark:bg-slate-900/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
+              <input type="checkbox" onchange="toggleSubtask(this)" class="w-4 h-4 rounded text-brand-600 focus:ring-0 cursor-pointer">
+              <span class="text-slate-800 dark:text-slate-200">Test with iOS simulator enroll biometric menu</span>
+            </label>
+          </div>
+
+          <!-- Add new subtask input -->
+          <div class="flex items-center space-x-2">
+            <input type="text" id="newSubtaskInput" placeholder="+ Add a subtask..." onkeydown="if(event.key === 'Enter') addNewSubtask()"
+                   class="flex-1 text-xs bg-transparent border-b border-slate-200 dark:border-slate-700/80 px-2 py-1.5 focus:border-brand-500 focus:outline-none text-slate-800 dark:text-slate-200">
+            <button onclick="addNewSubtask()" class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs text-slate-700 dark:text-slate-300 font-medium transition-colors">Add</button>
+          </div>
+        </div>
+
+        <!-- File Attachment Dropzone -->
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-slate-900 dark:text-white font-display">Attachments (2)</label>
+          <div class="border-2 border-dashed border-slate-200 dark:border-slate-800 hover:border-brand-500/60 dark:hover:border-brand-500/60 rounded-xl p-4 text-center cursor-pointer transition-colors group">
+            <i data-lucide="cloud-upload" class="w-6 h-6 mx-auto text-slate-400 group-hover:text-brand-500 transition-colors"></i>
+            <p class="text-xs text-slate-600 dark:text-slate-400 mt-1"><span class="font-semibold text-brand-600 dark:text-brand-400">Click to upload</span> or drag and drop</p>
+            <span class="text-[10px] text-slate-400 font-mono">PNG, SVG, PDF up to 25MB</span>
+          </div>
+
+          <!-- Uploaded files list -->
+          <div class="space-y-1.5 text-xs">
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/80">
+              <div class="flex items-center space-x-2 truncate">
+                <i data-lucide="file-text" class="w-4 h-4 text-indigo-500 flex-shrink-0"></i>
+                <span class="font-medium text-slate-800 dark:text-slate-200 truncate">FaceID_UserFlow_v3.pdf</span>
+                <span class="text-[10px] font-mono text-slate-400">2.4 MB</span>
+              </div>
+              <div class="flex items-center space-x-1">
+                <button class="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"><i data-lucide="download" class="w-3.5 h-3.5"></i></button>
+                <button class="p-1 text-slate-400 hover:text-rose-600"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/80">
+              <div class="flex items-center space-x-2 truncate">
+                <i data-lucide="image" class="w-4 h-4 text-emerald-500 flex-shrink-0"></i>
+                <span class="font-medium text-slate-800 dark:text-slate-200 truncate">biometric_prompt_mockup.png</span>
+                <span class="text-[10px] font-mono text-slate-400">840 KB</span>
+              </div>
+              <div class="flex items-center space-x-1">
+                <button class="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"><i data-lucide="download" class="w-3.5 h-3.5"></i></button>
+                <button class="p-1 text-slate-400 hover:text-rose-600"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comments & Activity Stream -->
+        <div class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-900 dark:text-white font-display">Discussion & @Mentions</span>
+            <span class="text-[10px] font-mono text-slate-400">3 comments</span>
+          </div>
+
+          <!-- Existing Comments -->
+          <div id="drawerCommentsStream" class="space-y-3 text-xs">
+            <div class="flex items-start space-x-2.5">
+              <img class="w-6 h-6 rounded-full object-cover mt-0.5" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&auto=format&fit=crop&q=80" alt="Marcus">
+              <div class="flex-1 bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/80 space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-slate-900 dark:text-white">Marcus Vance</span>
+                  <span class="text-[10px] font-mono text-slate-400">Yesterday at 4:15 PM</span>
+                </div>
+                <p class="text-slate-700 dark:text-slate-300">
+                  <span class="text-brand-600 dark:text-brand-400 font-semibold">@Sarah</span> ensure we pass the tenant encryption salt into KeychainItem wrapper or iOS 18 sandboxing will complain.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start space-x-2.5">
+              <img class="w-6 h-6 rounded-full object-cover mt-0.5" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80" alt="Sarah">
+              <div class="flex-1 bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/80 space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-slate-900 dark:text-white">Sarah Connor</span>
+                  <span class="text-[10px] font-mono text-slate-400">Today at 10:20 AM</span>
+                </div>
+                <p class="text-slate-700 dark:text-slate-300">
+                  Good catch! Verified and added unit tests in commit <span class="font-mono text-brand-600 bg-brand-50 dark:bg-brand-950 px-1 py-0.5 rounded text-[10px]">#7df819</span>.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- New Comment Input with @Mention Helper -->
+          <div class="pt-2">
+            <div class="relative rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 space-y-2 focus-within:border-brand-500">
+              <textarea id="drawerNewCommentText" rows="2" placeholder="Write a comment... use @ to mention teammates" 
+                        class="w-full text-xs text-slate-800 dark:text-slate-200 bg-transparent focus:outline-none resize-none"></textarea>
+              <div class="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800 text-[11px]">
+                <div class="flex items-center space-x-1.5 text-slate-400">
+                  <button class="hover:text-slate-600 dark:hover:text-slate-300 p-1" title="Mention teammate">@</button>
+                  <button class="hover:text-slate-600 dark:hover:text-slate-300 p-1"><i data-lucide="paperclip" class="w-3.5 h-3.5"></i></button>
+                  <button class="hover:text-slate-600 dark:hover:text-slate-300 p-1"><i data-lucide="smile" class="w-3.5 h-3.5"></i></button>
+                </div>
+                <button onclick="postComment()" class="px-3 py-1 rounded-lg bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs shadow-2xs transition-colors">
+                  Send
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- COMMAND PALETTE MODAL (CMD + K) -->
+    <div id="commandModalBackdrop" onclick="closeCommandModal()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity">
+      <div class="min-h-full flex items-start justify-center p-4 pt-20">
+        <div id="commandModal" onclick="event.stopPropagation()" class="w-full max-w-lg bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-all">
+          <!-- Search Input -->
+          <div class="p-3 border-b border-slate-100 dark:border-slate-800 flex items-center space-x-3">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+            <input type="text" id="commandInput" placeholder="Type a command or search tasks, projects..." oninput="handleCommandSearch(this.value)"
+                   class="w-full bg-transparent text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none">
+            <kbd class="font-mono text-[10px] px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-slate-400">ESC</kbd>
+          </div>
+
+          <!-- Suggested Actions -->
+          <div class="p-2 space-y-1 text-xs" id="commandList">
+            <div class="px-2 py-1 text-[10px] font-mono uppercase text-slate-400 font-semibold">Quick Actions</div>
+            <button onclick="openCreateTaskModal(); closeCommandModal();" class="w-full flex items-center justify-between p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors">
+              <span class="flex items-center gap-2"><i data-lucide="plus-circle" class="w-3.5 h-3.5 text-brand-600"></i> Create New Task</span>
+              <kbd class="font-mono text-[10px] text-slate-400">N</kbd>
+            </button>
+            <button onclick="switchView('dashboard'); closeCommandModal();" class="w-full flex items-center justify-between p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors">
+              <span class="flex items-center gap-2"><i data-lucide="layout-dashboard" class="w-3.5 h-3.5 text-emerald-500"></i> Go to Executive Dashboard</span>
+              <kbd class="font-mono text-[10px] text-slate-400">G D</kbd>
+            </button>
+            <button onclick="switchView('client-portal'); closeCommandModal();" class="w-full flex items-center justify-between p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors">
+              <span class="flex items-center gap-2"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-500"></i> Open Client Portal View</span>
+              <kbd class="font-mono text-[10px] text-slate-400">G C</kbd>
+            </button>
+            <button onclick="toggleTheme(); closeCommandModal();" class="w-full flex items-center justify-between p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors">
+              <span class="flex items-center gap-2"><i data-lucide="moon" class="w-3.5 h-3.5 text-amber-500"></i> Toggle Light/Dark Mode</span>
+              <kbd class="font-mono text-[10px] text-slate-400">T</kbd>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CREATE TASK MODAL -->
+    <div id="createTaskModalBackdrop" onclick="closeCreateTaskModal()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity">
+      <div class="min-h-full flex items-center justify-center p-4">
+        <div onclick="event.stopPropagation()" class="w-full max-w-md bg-white dark:bg-[#131B2E] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white font-display">Create New Task</h3>
+            <button onclick="closeCreateTaskModal()" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"><i data-lucide="x" class="w-4 h-4"></i></button>
+          </div>
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="font-semibold text-slate-700 dark:text-slate-300">Task Title</label>
+              <input type="text" id="newTaskTitle" placeholder="e.g. Implement Apple Pay sandbox checkout flow" class="w-full mt-1 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="font-semibold text-slate-700 dark:text-slate-300">Column</label>
+                <select id="newTaskColumn" class="w-full mt-1 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none">
+                  <option value="Backlog">Backlog</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Review">Review / QA</option>
+                  <option value="Done">Done</option>
+                </select>
+              </div>
+              <div>
+                <label class="font-semibold text-slate-700 dark:text-slate-300">Priority</label>
+                <select id="newTaskPriority" class="w-full mt-1 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none">
+                  <option value="Urgent">Urgent (P0)</option>
+                  <option value="High" selected>High (P1)</option>
+                  <option value="Medium">Medium (P2)</option>
+                  <option value="Low">Low (P3)</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="font-semibold text-slate-700 dark:text-slate-300">Category Tag</label>
+              <input type="text" id="newTaskCategory" value="Frontend" class="w-full mt-1 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none">
+            </div>
+          </div>
+          <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <button onclick="closeCreateTaskModal()" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Cancel</button>
+            <button onclick="createNewTaskSubmit()" class="px-4 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-sm">Create Task</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- APPLICATION LOGIC & STATE MACHINE -->
+  <script>
+    // In-memory Task Database
+    const TASKS = [
+  {
+    "id": "1",
+    "key": "SUST-F1-01.1",
+    "title": "Perancangan struktur skema database & arsitektur CMS modular (Hero, Master Header, Footer, Partner Logo)",
+    "category": "Backend",
+    "priority": "Urgent",
+    "status": "Done",
+    "assignee": {
+      "name": "Budi Santoso",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-11-05",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 1. CMS Landing Page Sustagri",
+        "done": true
+      },
+      {
+        "text": "Implementasi deliverable: ERD & Skema Database CMS Sustagri",
+        "done": true
+      },
+      {
+        "text": "QA verification & acceptance testing (32h)",
+        "done": true
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 1",
+    "deliverable": "ERD & Skema Database CMS Sustagri"
+  },
+  {
+    "id": "2",
+    "key": "SUST-F1-01.2",
+    "title": "Implementasi Frontend Landing Page Sustagri responsif (Master Header, Global Search, Notifikasi, Auth UI, Contact Footer)",
+    "category": "Frontend",
+    "priority": "High",
+    "status": "Done",
+    "assignee": {
+      "name": "Sarah Connor",
+      "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-11-12",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 1. CMS Landing Page Sustagri",
+        "done": true
+      },
+      {
+        "text": "Implementasi deliverable: Halaman Landing Page Sustagri Responsif",
+        "done": true
+      },
+      {
+        "text": "QA verification & acceptance testing (40h)",
+        "done": true
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 1",
+    "deliverable": "Halaman Landing Page Sustagri Responsif"
+  },
+  {
+    "id": "3",
+    "key": "SUST-F1-01.3",
+    "title": "Pembuatan Panel Admin CMS fleksibel (CRUD dinamis banner, section, menu navigasi, & preview konten)",
+    "category": "Backend",
+    "priority": "High",
+    "status": "Review",
+    "assignee": {
+      "name": "Rizky Ramadhan",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-11-19",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 1. CMS Landing Page Sustagri",
+        "done": true
+      },
+      {
+        "text": "Implementasi deliverable: Dashboard CMS Landing Page Sustagri",
+        "done": true
+      },
+      {
+        "text": "QA verification & acceptance testing (40h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 1,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 1",
+    "deliverable": "Dashboard CMS Landing Page Sustagri"
+  },
+  {
+    "id": "4",
+    "key": "SUST-F1-01.4",
+    "title": "QA Testing fungsional, responsivitas multi-device, & UAT Landing Page Sustagri",
+    "category": "QA/Test",
+    "priority": "High",
+    "status": "In Progress",
+    "assignee": {
+      "name": "Rian Pratama",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-11-24",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 1. CMS Landing Page Sustagri",
+        "done": true
+      },
+      {
+        "text": "Implementasi deliverable: Dokumen UAT & Sign-off Landing Page",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (24h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 1,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 1",
+    "deliverable": "Dokumen UAT & Sign-off Landing Page"
+  },
+  {
+    "id": "5",
+    "key": "SUST-F1-02.1",
+    "title": "Integrasi desain UI/UX Landing Page Sustainable Agriculture dengan sistem desain Sustagri (Nunito Sans & Palet Forest Green)",
+    "category": "Frontend",
+    "priority": "Medium",
+    "status": "Done",
+    "assignee": {
+      "name": "Sarah Connor",
+      "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-11-12",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 2. CMS Landing Page Sustainable Agriculture",
+        "done": true
+      },
+      {
+        "text": "Implementasi deliverable: Halaman Landing Page Sustainable Agriculture",
+        "done": true
+      },
+      {
+        "text": "QA verification & acceptance testing (32h)",
+        "done": true
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 1",
+    "deliverable": "Halaman Landing Page Sustainable Agriculture"
+  },
+  {
+    "id": "6",
+    "key": "SUST-F1-02.2",
+    "title": "Pengembangan modul CMS pengelolaan konten dinamis Sustainable Agriculture (artikel highlight, pilar program, galeri)",
+    "category": "Backend",
+    "priority": "Medium",
+    "status": "Review",
+    "assignee": {
+      "name": "Rizky Ramadhan",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-11-18",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 2. CMS Landing Page Sustainable Agriculture",
+        "done": true
+      },
+      {
+        "text": "Implementasi deliverable: Modul CMS Sustainable Agriculture",
+        "done": true
+      },
+      {
+        "text": "QA verification & acceptance testing (32h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 1,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 1",
+    "deliverable": "Modul CMS Sustainable Agriculture"
+  },
+  {
+    "id": "7",
+    "key": "SUST-F1-02.3",
+    "title": "Pengujian integrasi CMS ke frontend & optimasi performa loading halaman",
+    "category": "QA/Test",
+    "priority": "Medium",
+    "status": "Review",
+    "assignee": {
+      "name": "Rian Pratama",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-11-20",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 2. CMS Landing Page Sustainable Agriculture",
+        "done": true
+      },
+      {
+        "text": "Implementasi deliverable: Laporan QA & Performance Check",
+        "done": true
+      },
+      {
+        "text": "QA verification & acceptance testing (16h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 1,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 1",
+    "deliverable": "Laporan QA & Performance Check"
+  },
+  {
+    "id": "8",
+    "key": "SUST-F1-03.1",
+    "title": "Implementasi 5 Halaman Detail Topic Knowledge (Agri Media Hub, Crop Knowledge, Plant Nutrition, Precision Agriculture, Soil Health)",
+    "category": "Frontend",
+    "priority": "Medium",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Sarah Connor",
+      "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-08",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 3. Build Knowledge & Fleksibilitas CMS",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: 5 Halaman Detail Topic Responsif",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (48h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 1",
+    "deliverable": "5 Halaman Detail Topic Responsif"
+  },
+  {
+    "id": "9",
+    "key": "SUST-F1-03.2",
+    "title": "Pengembangan fitur pencarian lokal, sidebar filter dinamis, sorting, featured card, & modal pratinjau artikel",
+    "category": "Frontend",
+    "priority": "Medium",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Sarah Connor",
+      "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-14",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 3. Build Knowledge & Fleksibilitas CMS",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Komponen Filter, Search & Preview Modal",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (32h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 1",
+    "deliverable": "Komponen Filter, Search & Preview Modal"
+  },
+  {
+    "id": "10",
+    "key": "SUST-F1-03.3",
+    "title": "Pembangunan Backend CMS Knowledge Management (CRUD artikel, kategori topik, tag, upload media/PDF, status publish)",
+    "category": "Backend",
+    "priority": "Medium",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Budi Santoso",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-21",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 3. Build Knowledge & Fleksibilitas CMS",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: API & Admin Panel Knowledge CMS",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (40h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 1",
+    "deliverable": "API & Admin Panel Knowledge CMS"
+  },
+  {
+    "id": "11",
+    "key": "SUST-F1-03.4",
+    "title": "Migrasi konten awal, pengujian cross-browser, & UAT Modul Knowledge",
+    "category": "QA/Test",
+    "priority": "Medium",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Rian Pratama",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-24",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 3. Build Knowledge & Fleksibilitas CMS",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Laporan UAT Knowledge Hub",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (24h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 1",
+    "deliverable": "Laporan UAT Knowledge Hub"
+  },
+  {
+    "id": "12",
+    "key": "SUST-F1-04.1",
+    "title": "Audit struktur konten eksisting Fertinnovation & perancangan ulang fleksibilitas blok konten CMS",
+    "category": "Design",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Marcus Vance",
+      "avatar": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-09",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 4. CMS Landing Page Fertinnovation",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Blueprint & Wireframe CMS Fertinnovation",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (24h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 1",
+    "deliverable": "Blueprint & Wireframe CMS Fertinnovation"
+  },
+  {
+    "id": "13",
+    "key": "SUST-F1-04.2",
+    "title": "Pengembangan enhancement CMS dinamis Fertinnovation (pengelolaan program inovasi, timeline, FAQ, & banner)",
+    "category": "Backend",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Rizky Ramadhan",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-17",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 4. CMS Landing Page Fertinnovation",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Modul CMS Fertinnovation Dinamis",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (48h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 1",
+    "deliverable": "Modul CMS Fertinnovation Dinamis"
+  },
+  {
+    "id": "14",
+    "key": "SUST-F1-04.3",
+    "title": "Sinkronisasi tampilan Frontend Fertinnovation dengan data CMS & pengujian regresi",
+    "category": "QA/Test",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Rian Pratama",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-22",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 4. CMS Landing Page Fertinnovation",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Landing Page Fertinnovation Terintegrasi CMS",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (24h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 1",
+    "deliverable": "Landing Page Fertinnovation Terintegrasi CMS"
+  },
+  {
+    "id": "15",
+    "key": "SMRT-F1-01.1",
+    "title": "Perancangan arsitektur Repositori Hasil Riset & pipeline ekstraksi teks (PDF/DOCX parsing & indexing)",
+    "category": "AI/ML",
+    "priority": "Urgent",
+    "status": "Done",
+    "assignee": {
+      "name": "Dr. Elena Rostova",
+      "avatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-11-06",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 1. Repository (Search/Text Mining/AI - Hasil Riset)",
+        "done": true
+      },
+      {
+        "text": "Implementasi deliverable: Arsitektur Pipeline Text Mining & Indexing",
+        "done": true
+      },
+      {
+        "text": "QA verification & acceptance testing (40h)",
+        "done": true
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 1",
+    "deliverable": "Arsitektur Pipeline Text Mining & Indexing"
+  },
+  {
+    "id": "16",
+    "key": "SMRT-F1-01.2",
+    "title": "Implementasi Search Engine & pengayaan metadata otomatis berbasis Text Mining / AI (keyword, topik, abstrak)",
+    "category": "AI/ML",
+    "priority": "High",
+    "status": "Done",
+    "assignee": {
+      "name": "Dr. Elena Rostova",
+      "avatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-11-16",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 1. Repository (Search/Text Mining/AI - Hasil Riset)",
+        "done": true
+      },
+      {
+        "text": "Implementasi deliverable: Engine Pencarian & Auto-Tagging AI",
+        "done": true
+      },
+      {
+        "text": "QA verification & acceptance testing (48h)",
+        "done": true
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 1",
+    "deliverable": "Engine Pencarian & Auto-Tagging AI"
+  },
+  {
+    "id": "17",
+    "key": "SMRT-F1-01.3",
+    "title": "Pembuatan antarmuka pencarian lanjutan (faceted search, filter tahun/peneliti/topik) & integrasi API",
+    "category": "Frontend",
+    "priority": "High",
+    "status": "Review",
+    "assignee": {
+      "name": "Rizky Ramadhan",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-11-20",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 1. Repository (Search/Text Mining/AI - Hasil Riset)",
+        "done": true
+      },
+      {
+        "text": "Implementasi deliverable: UI Repositori & Pencarian Cerdas SMART",
+        "done": true
+      },
+      {
+        "text": "QA verification & acceptance testing (32h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 1,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 1",
+    "deliverable": "UI Repositori & Pencarian Cerdas SMART"
+  },
+  {
+    "id": "18",
+    "key": "SMRT-F1-02.1",
+    "title": "Pengembangan modul ekspor/ekstraksi data riset terstruktur (Excel/CSV/PDF) dengan filter kustom",
+    "category": "Backend",
+    "priority": "High",
+    "status": "Done",
+    "assignee": {
+      "name": "Budi Santoso",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-11-13",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 2. Download / Ekstraksi Data",
+        "done": true
+      },
+      {
+        "text": "Implementasi deliverable: API & Engine Export Data Multi-Format",
+        "done": true
+      },
+      {
+        "text": "QA verification & acceptance testing (40h)",
+        "done": true
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 1",
+    "deliverable": "API & Engine Export Data Multi-Format"
+  },
+  {
+    "id": "19",
+    "key": "SMRT-F1-02.2",
+    "title": "Implementasi hak akses (RBAC), watermark/audit log unduhan, & background job untuk dataset besar",
+    "category": "Backend",
+    "priority": "High",
+    "status": "Review",
+    "assignee": {
+      "name": "Budi Santoso",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-11-19",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 2. Download / Ekstraksi Data",
+        "done": true
+      },
+      {
+        "text": "Implementasi deliverable: Sistem RBAC & Audit Log Ekstraksi Data",
+        "done": true
+      },
+      {
+        "text": "QA verification & acceptance testing (32h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 1,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 1",
+    "deliverable": "Sistem RBAC & Audit Log Ekstraksi Data"
+  },
+  {
+    "id": "20",
+    "key": "SMRT-F1-02.3",
+    "title": "Pengujian akurasi data hasil ekstraksi, stress test unduhan massal, & UAT",
+    "category": "QA/Test",
+    "priority": "High",
+    "status": "In Progress",
+    "assignee": {
+      "name": "Rian Pratama",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-11-24",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 2. Download / Ekstraksi Data",
+        "done": true
+      },
+      {
+        "text": "Implementasi deliverable: Laporan QA Validasi Ekstraksi Data",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (24h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 1,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 1",
+    "deliverable": "Laporan QA Validasi Ekstraksi Data"
+  },
+  {
+    "id": "21",
+    "key": "SMRT-F1-03.1",
+    "title": "Perancangan KPI & agregasi query database untuk metrik riset (jumlah riset, status, tren per tahun/unit)",
+    "category": "Database",
+    "priority": "Medium",
+    "status": "Done",
+    "assignee": {
+      "name": "Budi Santoso",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-11-16",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 3. Dashboard & Visualisasi Data",
+        "done": true
+      },
+      {
+        "text": "Implementasi deliverable: API Agregasi Data Dashboard SMART",
+        "done": true
+      },
+      {
+        "text": "QA verification & acceptance testing (24h)",
+        "done": true
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 1",
+    "deliverable": "API Agregasi Data Dashboard SMART"
+  },
+  {
+    "id": "22",
+    "key": "SMRT-F1-03.2",
+    "title": "Implementasi Dashboard interaktif (grafik tren, pie/bar chart, filter periode) & export visualisasi",
+    "category": "Frontend",
+    "priority": "Medium",
+    "status": "Review",
+    "assignee": {
+      "name": "Sarah Connor",
+      "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-11-23",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 3. Dashboard & Visualisasi Data",
+        "done": true
+      },
+      {
+        "text": "Implementasi deliverable: Dashboard Visualisasi Data SMART",
+        "done": true
+      },
+      {
+        "text": "QA verification & acceptance testing (40h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 1,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 1",
+    "deliverable": "Dashboard Visualisasi Data SMART"
+  },
+  {
+    "id": "23",
+    "key": "SMRT-F1-03.3",
+    "title": "Verifikasi kesesuaian angka dashboard dengan database sumber & UAT",
+    "category": "QA/Test",
+    "priority": "Medium",
+    "status": "In Progress",
+    "assignee": {
+      "name": "Rian Pratama",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-11-25",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 3. Dashboard & Visualisasi Data",
+        "done": true
+      },
+      {
+        "text": "Implementasi deliverable: Sign-off Dashboard & Visualisasi",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (16h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 1,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 1",
+    "deliverable": "Sign-off Dashboard & Visualisasi"
+  },
+  {
+    "id": "24",
+    "key": "SUST-F2-01.1",
+    "title": "Pengembangan pipeline document ingestion (PDF/DOCX) & prompt engineering untuk ringkasan proposal/jurnal",
+    "category": "AI/ML",
+    "priority": "Urgent",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Dr. Elena Rostova",
+      "avatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-07",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 5. AI-Powered Proposal & Journal Summarizer",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Service AI Text Generation Summarizer",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (40h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 2",
+    "deliverable": "Service AI Text Generation Summarizer"
+  },
+  {
+    "id": "25",
+    "key": "SUST-F2-01.2",
+    "title": "Integrasi fitur auto-summary ke halaman Review Proposal (poin utama, metodologi, kebaruan, catatan reviewer)",
+    "category": "Frontend",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Rizky Ramadhan",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-11",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 5. AI-Powered Proposal & Journal Summarizer",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: UI Review Proposal dengan AI Summarizer",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (32h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 2",
+    "deliverable": "UI Review Proposal dengan AI Summarizer"
+  },
+  {
+    "id": "26",
+    "key": "SUST-F2-01.3",
+    "title": "Evaluasi kualitas ringkasan AI (akurasi, halusinasi, latensi) & UAT bersama tim reviewer",
+    "category": "QA/Test",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Rian Pratama",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-16",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 5. AI-Powered Proposal & Journal Summarizer",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Laporan Evaluasi Akurasi AI Summarizer",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (24h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 2",
+    "deliverable": "Laporan Evaluasi Akurasi AI Summarizer"
+  },
+  {
+    "id": "27",
+    "key": "SUST-F2-02.1",
+    "title": "Pembangunan Knowledge Base RAG (Retrieval-Augmented Generation) dari konten Sustagri & dokumen pertanian",
+    "category": "AI/ML",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Dr. Elena Rostova",
+      "avatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-14",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 6. Intelligent Chatbot & Consultant (Conversational AI)",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Vector DB & RAG Pipeline Sustagri",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (48h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 2",
+    "deliverable": "Vector DB & RAG Pipeline Sustagri"
+  },
+  {
+    "id": "28",
+    "key": "SUST-F2-02.2",
+    "title": "Implementasi widget Conversational AI / Konsultan di portal Sustagri (riwayat chat, sitasi sumber, feedback)",
+    "category": "Frontend",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Rizky Ramadhan",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-18",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 6. Intelligent Chatbot & Consultant (Conversational AI)",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Widget Intelligent Chatbot & Consultant",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (32h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 2",
+    "deliverable": "Widget Intelligent Chatbot & Consultant"
+  },
+  {
+    "id": "29",
+    "key": "SUST-F2-02.3",
+    "title": "Pengujian skenario percakapan, guardrail keamanan prompt, & UAT",
+    "category": "QA/Test",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Rian Pratama",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-23",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 6. Intelligent Chatbot & Consultant (Conversational AI)",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Laporan UAT & Guardrail Testing Chatbot",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (24h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 2",
+    "deliverable": "Laporan UAT & Guardrail Testing Chatbot"
+  },
+  {
+    "id": "30",
+    "key": "SUST-F2-03.1",
+    "title": "Pengembangan semantic search & AI-generated overview untuk Repositori Inovasi Fertinnovation",
+    "category": "AI/ML",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Dr. Elena Rostova",
+      "avatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2027-01-11",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 7. AI-Generated Search Engine Repositori Inovasi",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Semantic & Generative Search API",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (48h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 2",
+    "deliverable": "Semantic & Generative Search API"
+  },
+  {
+    "id": "31",
+    "key": "SUST-F2-03.2",
+    "title": "Implementasi antarmuka pencarian AI (ringkasan jawaban instan + referensi dokumen inovasi terkait)",
+    "category": "Frontend",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Sarah Connor",
+      "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2027-01-15",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 7. AI-Generated Search Engine Repositori Inovasi",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: UI AI Search Engine Fertinnovation",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (32h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 2",
+    "deliverable": "UI AI Search Engine Fertinnovation"
+  },
+  {
+    "id": "32",
+    "key": "SUST-F2-03.3",
+    "title": "Pengujian relevansi hasil pencarian, performa query, & deployment",
+    "category": "QA/Test",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Rian Pratama",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2027-01-20",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 7. AI-Generated Search Engine Repositori Inovasi",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Laporan Benchmark Relevansi Search Engine",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (24h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 2",
+    "deliverable": "Laporan Benchmark Relevansi Search Engine"
+  },
+  {
+    "id": "33",
+    "key": "SUST-F2-04.1",
+    "title": "Analisis alur bisnis program inkubasi (pendaftaran tim, seleksi, mentoring, milestone, & evaluasi)",
+    "category": "Design",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Marcus Vance",
+      "avatar": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2027-01-11",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 8. Fitur Inkubasi FertInnovation",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Flowchart & Mockup Modul Inkubasi",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (24h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 2",
+    "deliverable": "Flowchart & Mockup Modul Inkubasi"
+  },
+  {
+    "id": "34",
+    "key": "SUST-F2-04.2",
+    "title": "Pengembangan Backend & Database Modul Inkubasi (manajemen cohort, log mentoring, tracking progres)",
+    "category": "Backend",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Budi Santoso",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2027-01-19",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 8. Fitur Inkubasi FertInnovation",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: API & Database Modul Inkubasi",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (48h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 2",
+    "deliverable": "API & Database Modul Inkubasi"
+  },
+  {
+    "id": "35",
+    "key": "SUST-F2-04.3",
+    "title": "Implementasi Frontend Portal Peserta & Mentor Inkubasi serta pengujian UAT",
+    "category": "Frontend",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Rizky Ramadhan",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2027-01-26",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 8. Fitur Inkubasi FertInnovation",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Modul Inkubasi FertInnovation Live",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (40h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SUSTAGRI",
+    "fase": "Fase 2",
+    "deliverable": "Modul Inkubasi FertInnovation Live"
+  },
+  {
+    "id": "36",
+    "key": "SMRT-F2-01.1",
+    "title": "Pengembangan manajemen akun & hak akses khusus External Reviewer (undang reviewer, NDA, batas akses)",
+    "category": "Backend",
+    "priority": "Urgent",
+    "status": "In Progress",
+    "assignee": {
+      "name": "Budi Santoso",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-04",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 4. Modul External Reviewer",
+        "done": true
+      },
+      {
+        "text": "Implementasi deliverable: Sistem RBAC & Manajemen External Reviewer",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (32h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 1,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 2",
+    "deliverable": "Sistem RBAC & Manajemen External Reviewer"
+  },
+  {
+    "id": "37",
+    "key": "SMRT-F2-01.2",
+    "title": "Pembuatan portal penilaian External Reviewer (assignment proposal, form rubrik penilaian, notifikasi email)",
+    "category": "Frontend",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Rizky Ramadhan",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-11",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 4. Modul External Reviewer",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Portal Penilaian External Reviewer",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (40h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 2",
+    "deliverable": "Portal Penilaian External Reviewer"
+  },
+  {
+    "id": "38",
+    "key": "SMRT-F2-01.3",
+    "title": "Pengujian keamanan akses eksternal (penetration/access check) & UAT",
+    "category": "QA/Test",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Rian Pratama",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-16",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 4. Modul External Reviewer",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Laporan QA & Security Check Reviewer",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (24h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 2",
+    "deliverable": "Laporan QA & Security Check Reviewer"
+  },
+  {
+    "id": "39",
+    "key": "SMRT-F2-02.1",
+    "title": "Pengembangan database profil mitra riset, riwayat kerja sama, & dokumen MoU/PKS",
+    "category": "Database",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Budi Santoso",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-10",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 5. Pengelolaan dan Evaluasi Mitra",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Modul Master Data & Dokumen Mitra",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (32h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 2",
+    "deliverable": "Modul Master Data & Dokumen Mitra"
+  },
+  {
+    "id": "40",
+    "key": "SMRT-F2-02.2",
+    "title": "Implementasi fitur penilaian/evaluasi kinerja mitra (scoring KPI, rekap rating, & rekomendasi)",
+    "category": "Frontend",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Rizky Ramadhan",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-17",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 5. Pengelolaan dan Evaluasi Mitra",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Fitur Evaluasi & Scorecard Mitra",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (40h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 2",
+    "deliverable": "Fitur Evaluasi & Scorecard Mitra"
+  },
+  {
+    "id": "41",
+    "key": "SMRT-F2-02.3",
+    "title": "Pengujian alur evaluasi mitra & validasi laporan rekapitulasi",
+    "category": "QA/Test",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Rian Pratama",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-21",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 5. Pengelolaan dan Evaluasi Mitra",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Sign-off Modul Pengelolaan Mitra",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (16h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 2",
+    "deliverable": "Sign-off Modul Pengelolaan Mitra"
+  },
+  {
+    "id": "42",
+    "key": "SMRT-F2-03.1",
+    "title": "Pengembangan form pengajuan perubahan data topik eksisting (versioning/diff perubahan & alasan)",
+    "category": "Frontend",
+    "priority": "Medium",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Rizky Ramadhan",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-17",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 6. Update Data Topik Eksisting & Approval Admin",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Form Request Update Topik Eksisting",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (32h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 2",
+    "deliverable": "Form Request Update Topik Eksisting"
+  },
+  {
+    "id": "43",
+    "key": "SMRT-F2-03.2",
+    "title": "Implementasi workflow approval admin (approve/reject/revisi, audit trail, & notifikasi otomatis)",
+    "category": "Backend",
+    "priority": "Medium",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Budi Santoso",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2026-12-23",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 6. Update Data Topik Eksisting & Approval Admin",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Workflow Approval & Audit Trail Admin",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (32h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 2",
+    "deliverable": "Workflow Approval & Audit Trail Admin"
+  },
+  {
+    "id": "44",
+    "key": "SMRT-F2-04.1",
+    "title": "Perancangan instrumen & logika kalkulasi Tingkat Kesiapterapan Riset (TKR) beserta bobot indikator",
+    "category": "Backend",
+    "priority": "Urgent",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Budi Santoso",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2027-01-07",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 7. Modul Evaluasi TKR",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Engine Kalkulasi & Indikator TKR",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (32h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 2",
+    "deliverable": "Engine Kalkulasi & Indikator TKR"
+  },
+  {
+    "id": "45",
+    "key": "SMRT-F2-04.2",
+    "title": "Implementasi UI pengisian evaluasi TKR, visualisasi level TKR, & riwayat progres penilaian",
+    "category": "Frontend",
+    "priority": "Urgent",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Rizky Ramadhan",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2027-01-14",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 7. Modul Evaluasi TKR",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Antarmuka Modul Evaluasi TKR",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (40h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 2",
+    "deliverable": "Antarmuka Modul Evaluasi TKR"
+  },
+  {
+    "id": "46",
+    "key": "SMRT-F2-04.3",
+    "title": "Validasi rumus perhitungan TKR dengan tim bisnis & UAT",
+    "category": "QA/Test",
+    "priority": "Urgent",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Rian Pratama",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2027-01-19",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 7. Modul Evaluasi TKR",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Laporan UAT Modul Evaluasi TKR",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (24h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 2",
+    "deliverable": "Laporan UAT Modul Evaluasi TKR"
+  },
+  {
+    "id": "47",
+    "key": "SMRT-F2-05.1",
+    "title": "Perancangan template & form pengajuan Laporan Kinerja SMART (capaian, luaran, realisasi, lampiran)",
+    "category": "Backend",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Budi Santoso",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2027-01-14",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 8. Pengajuan Laporan Kinerja SMART",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Skema & Form Pengajuan Laporan Kinerja",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (32h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 2",
+    "deliverable": "Skema & Form Pengajuan Laporan Kinerja"
+  },
+  {
+    "id": "48",
+    "key": "SMRT-F2-05.2",
+    "title": "Implementasi alur verifikasi/approval berjenjang & fitur generate/export laporan kinerja (PDF/Excel)",
+    "category": "Frontend",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Rizky Ramadhan",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2027-01-21",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 8. Pengajuan Laporan Kinerja SMART",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Modul Pengajuan & Export Laporan Kinerja",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (40h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 2",
+    "deliverable": "Modul Pengajuan & Export Laporan Kinerja"
+  },
+  {
+    "id": "49",
+    "key": "SMRT-F2-05.3",
+    "title": "End-to-end testing seluruh alur pelaporan kinerja, deployment produksi, & serah terima (BAST)",
+    "category": "Feature",
+    "priority": "High",
+    "status": "Backlog",
+    "assignee": {
+      "name": "Dewi Lestari",
+      "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80"
+    },
+    "dueDate": "2027-01-26",
+    "subtasks": [
+      {
+        "text": "Review spesifikasi teknis: 8. Pengajuan Laporan Kinerja SMART",
+        "done": false
+      },
+      {
+        "text": "Implementasi deliverable: Dokumen UAT Final & BAST Fase 2",
+        "done": false
+      },
+      {
+        "text": "QA verification & acceptance testing (24h)",
+        "done": false
+      }
+    ],
+    "commentsCount": 0,
+    "clientVisible": true,
+    "project": "SMART",
+    "fase": "Fase 2",
+    "deliverable": "Dokumen UAT Final & BAST Fase 2"
+  }
+];
+
+    let currentSelectedTaskId = '1';
+    let currentDragTaskId = null;
+    let isDarkMode = false;
+    let currentMainView = 'tasks';
+    let currentProjectSubView = 'kanban';
+
+    // Initialize Lucide Icons
+    function initIcons() {
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    }
+
+    // Toggle Sidebar
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar.classList.contains('-ml-64')) {
+        sidebar.classList.remove('-ml-64');
+      } else {
+        sidebar.classList.add('-ml-64');
+      }
+    }
+
+    // Theme Switcher
+    function toggleTheme() {
+      isDarkMode = !isDarkMode;
+      const html = document.documentElement;
+      const themeIcon = document.getElementById('themeIcon');
+      const themeLabel = document.getElementById('themeLabel');
+
+      if (isDarkMode) {
+        html.classList.add('dark');
+        themeIcon.setAttribute('data-lucide', 'sun');
+        themeLabel.innerText = 'Light Appearance';
+      } else {
+        html.classList.remove('dark');
+        themeIcon.setAttribute('data-lucide', 'moon');
+        themeLabel.innerText = 'Dark Appearance';
+      }
+      initIcons();
+    }
+
+    // Switch Main Workspace View
+    function switchView(viewName) {
+      currentMainView = viewName;
+      const views = ['dashboard', 'tasks', 'milestones', 'team', 'client-portal', 'settings'];
+      
+      // Update Nav active styling
+      ['dashboard', 'tasks', 'milestones', 'team', 'client-portal'].forEach(navId => {
+        const btn = document.getElementById(`nav-${navId}`);
+        if (!btn) return;
+        if (navId === viewName) {
+          btn.className = "w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-brand-600 dark:text-brand-400 bg-brand-50/70 dark:bg-brand-950/40 font-semibold transition-colors group";
+        } else {
+          btn.className = "w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors group";
+        }
+      });
+
+      // Show/Hide Views
+      const dashView = document.getElementById('view-dashboard');
+      const kanbanView = document.getElementById('view-kanban');
+      const listView = document.getElementById('view-list');
+      const timelineView = document.getElementById('view-timeline');
+      const clientView = document.getElementById('view-client-portal');
+      const projectSubheader = document.getElementById('projectSubheader');
+
+      // Hide all first
+      dashView.classList.add('hidden');
+      kanbanView.classList.add('hidden');
+      listView.classList.add('hidden');
+      timelineView.classList.add('hidden');
+      clientView.classList.add('hidden');
+
+      if (viewName === 'dashboard') {
+        dashView.classList.remove('hidden');
+        projectSubheader.classList.add('hidden');
+      } else if (viewName === 'tasks') {
+        projectSubheader.classList.remove('hidden');
+        switchProjectView(currentProjectSubView);
+      } else if (viewName === 'client-portal') {
+        clientView.classList.remove('hidden');
+        projectSubheader.classList.add('hidden');
+      } else {
+        // Fallback or placeholder for milestones/team
+        projectSubheader.classList.remove('hidden');
+        switchProjectView('kanban');
+      }
+      initIcons();
+    }
+
+    // Switch Project Sub-View (Kanban, List, Timeline)
+    function switchProjectView(subView) {
+      currentProjectSubView = subView;
+      const kanbanView = document.getElementById('view-kanban');
+      const listView = document.getElementById('view-list');
+      const timelineView = document.getElementById('view-timeline');
+
+      const tabKanban = document.getElementById('tab-kanban');
+      const tabList = document.getElementById('tab-list');
+      const tabTimeline = document.getElementById('tab-timeline');
+
+      kanbanView.classList.add('hidden');
+      listView.classList.add('hidden');
+      timelineView.classList.add('hidden');
+
+      // Reset tab button styles
+      [tabKanban, tabList, tabTimeline].forEach(tab => {
+        tab.className = "flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all";
+      });
+
+      const activeClass = "flex items-center space-x-1.5 px-3 py-1.5 rounded-md bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs font-semibold transition-all";
+
+      if (subView === 'kanban') {
+        kanbanView.classList.remove('hidden');
+        tabKanban.className = activeClass;
+      } else if (subView === 'list') {
+        listView.classList.remove('hidden');
+        tabList.className = activeClass;
+        renderListViewTable();
+      } else if (subView === 'timeline') {
+        timelineView.classList.remove('hidden');
+        tabTimeline.className = activeClass;
+      }
+      initIcons();
+    }
+
+    // Render List View Rows
+    function renderListViewTable() {
+      const tbody = document.getElementById('listViewTableBody');
+      tbody.innerHTML = '';
+
+      TASKS.forEach(task => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition-colors";
+        tr.onclick = (e) => {
+          if (e.target.tagName !== 'INPUT') {
+            openTaskDetail(task.id);
+          }
+        };
+
+        const priorityBadgeColor = 
+          task.priority === 'Urgent' ? 'bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400' :
+          task.priority === 'High' ? 'bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400' :
+          task.priority === 'Medium' ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400' :
+          'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400';
+
+        const statusColor = 
+          task.status === 'Done' ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60' :
+          task.status === 'In Progress' ? 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60' :
+          task.status === 'Review' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60' :
+          'text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800';
+
+        const completedSubtasks = task.subtasks.filter(s => s.done).length;
+
+        tr.innerHTML = `
+          <td class="py-3 px-3 text-center"><input type="checkbox" class="rounded text-brand-600 focus:ring-0"></td>
+          <td class="py-3 px-3">
+            <div class="flex items-center space-x-2">
+              <span class="font-mono text-[10px] text-slate-400">${task.key}</span>
+              <span class="font-semibold text-slate-900 dark:text-white truncate max-w-xs">${task.title}</span>
+              <span class="px-1.5 py-0.5 rounded text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-500">${task.category}</span>
+            </div>
+          </td>
+          <td class="py-3 px-3">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-medium ${statusColor}">${task.status}</span>
+          </td>
+          <td class="py-3 px-3">
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-medium ${priorityBadgeColor}">${task.priority}</span>
+          </td>
+          <td class="py-3 px-3">
+            <div class="flex items-center space-x-1.5">
+              <img class="w-5 h-5 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700" src="${task.assignee.avatar}" alt="${task.assignee.name}">
+              <span class="text-slate-700 dark:text-slate-300">${task.assignee.name.split(' ')[0]}</span>
+            </div>
+          </td>
+          <td class="py-3 px-3 font-mono text-slate-500">${task.dueDate}</td>
+          <td class="py-3 px-3 text-center font-mono text-[11px] text-slate-500">${completedSubtasks}/${task.subtasks.length}</td>
+          <td class="py-3 px-3 text-right">
+            ${task.clientVisible 
+              ? `<span class="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded"><i data-lucide="check" class="w-3 h-3"></i> Shared</span>` 
+              : `<span class="inline-flex items-center text-[10px] font-mono text-slate-400">Internal Only</span>`}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      initIcons();
+    }
+
+    // Drag and Drop State Machine
+    function handleDragStart(e, taskId) {
+      currentDragTaskId = taskId;
+      e.dataTransfer.setData('text/plain', taskId);
+      e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      e.currentTarget.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+      e.currentTarget.classList.remove('drag-over');
+    }
+
+    function handleDrop(e, targetColumnName) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over');
+      const taskId = e.dataTransfer.getData('text/plain') || currentDragTaskId;
+      
+      const task = TASKS.find(t => t.id === taskId);
+      if (task && task.status !== targetColumnName) {
+        task.status = targetColumnName;
+        // Move card DOM element
+        const cardElem = document.getElementById(`card-${taskId}`);
+        const colContainer = document.getElementById(targetColumnName === 'In Progress' ? 'col-InProgress' : `col-${targetColumnName}`);
+        if (cardElem && colContainer) {
+          colContainer.appendChild(cardElem);
+          updateColumnCounts();
+        }
+      }
+    }
+
+    function updateColumnCounts() {
+      ['Backlog', 'InProgress', 'Review', 'Done'].forEach(col => {
+        const colName = col === 'InProgress' ? 'In Progress' : col;
+        const count = TASKS.filter(t => t.status === colName).length;
+        const countBadge = document.getElementById(`count-${col}`);
+        if (countBadge) countBadge.innerText = count;
+      });
+    }
+
+    // Task Detail Slide-Over Drawer
+    function openTaskDetail(taskId) {
+      currentSelectedTaskId = taskId;
+      const task = TASKS.find(t => t.id === taskId);
+      if (!task) return;
+
+      document.getElementById('drawerTaskKey').innerText = task.key;
+      document.getElementById('drawerCategoryTag').innerText = task.category;
+      document.getElementById('drawerTitleInput').value = task.title;
+      document.getElementById('drawerStatusSelect').value = task.status;
+      document.getElementById('drawerPrioritySelect').value = task.priority;
+      document.getElementById('drawerAssigneeName').innerText = task.assignee.name;
+      document.getElementById('drawerAssigneeImg').src = task.assignee.avatar;
+
+      // Render Subtasks
+      renderDrawerSubtasks(task);
+
+      // Open Animation
+      const drawer = document.getElementById('taskDrawer');
+      const backdrop = document.getElementById('drawerBackdrop');
+      backdrop.classList.remove('hidden', 'pointer-events-none');
+      setTimeout(() => {
+        backdrop.classList.add('opacity-100');
+        drawer.classList.remove('translate-x-full');
+      }, 10);
+
+      initIcons();
+    }
+
+    function closeTaskDetail() {
+      const drawer = document.getElementById('taskDrawer');
+      const backdrop = document.getElementById('drawerBackdrop');
+      drawer.classList.add('translate-x-full');
+      backdrop.classList.remove('opacity-100');
+      setTimeout(() => {
+        backdrop.classList.add('hidden', 'pointer-events-none');
+      }, 250);
+    }
+
+    function renderDrawerSubtasks(task) {
+      const container = document.getElementById('subtaskListContainer');
+      container.innerHTML = '';
+      const total = task.subtasks.length;
+      const doneCount = task.subtasks.filter(s => s.done).length;
+
+      document.getElementById('subtaskProgressRatio').innerText = `${doneCount} of ${total} completed`;
+      const pct = total === 0 ? 0 : Math.round((doneCount / total) * 100);
+      document.getElementById('subtaskProgressBar').style.width = `${pct}%`;
+
+      task.subtasks.forEach((sub, idx) => {
+        const label = document.createElement('label');
+        label.className = "flex items-center space-x-2.5 p-2 rounded-lg bg-slate-50/70 dark:bg-slate-900/40 hover:bg-slate-100/70 dark:hover:bg-slate-800/50 cursor-pointer transition-colors";
+        label.innerHTML = `
+          <input type="checkbox" ${sub.done ? 'checked' : ''} onchange="toggleSubtaskAtIndex(${idx}, this.checked)" class="w-4 h-4 rounded text-brand-600 focus:ring-0 cursor-pointer">
+          <span class="${sub.done ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}">${sub.text}</span>
+        `;
+        container.appendChild(label);
+      });
+    }
+
+    function toggleSubtaskAtIndex(idx, isChecked) {
+      const task = TASKS.find(t => t.id === currentSelectedTaskId);
+      if (task && task.subtasks[idx]) {
+        task.subtasks[idx].done = isChecked;
+        renderDrawerSubtasks(task);
+      }
+    }
+
+    function addNewSubtask() {
+      const input = document.getElementById('newSubtaskInput');
+      const text = input.value.trim();
+      if (!text) return;
+      const task = TASKS.find(t => t.id === currentSelectedTaskId);
+      if (task) {
+        task.subtasks.push({ text, done: false });
+        input.value = '';
+        renderDrawerSubtasks(task);
+      }
+    }
+
+    function postComment() {
+      const textarea = document.getElementById('drawerNewCommentText');
+      const text = textarea.value.trim();
+      if (!text) return;
+
+      const stream = document.getElementById('drawerCommentsStream');
+      const div = document.createElement('div');
+      div.className = "flex items-start space-x-2.5";
+      div.innerHTML = `
+        <img class="w-6 h-6 rounded-full object-cover mt-0.5" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80" alt="You">
+        <div class="flex-1 bg-brand-50/50 dark:bg-brand-950/20 p-2.5 rounded-xl border border-brand-100 dark:border-brand-900/40 space-y-1">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-900 dark:text-white">Alex Rivera (You)</span>
+            <span class="text-[10px] font-mono text-slate-400">Just now</span>
+          </div>
+          <p class="text-slate-700 dark:text-slate-300">${text}</p>
+        </div>
+      `;
+      stream.appendChild(div);
+      textarea.value = '';
+    }
+
+    function updateTaskStatusFromDrawer(newStatus) {
+      const task = TASKS.find(t => t.id === currentSelectedTaskId);
+      if (task) {
+        task.status = newStatus;
+        const cardElem = document.getElementById(`card-${task.id}`);
+        const colContainer = document.getElementById(newStatus === 'In Progress' ? 'col-InProgress' : `col-${newStatus}`);
+        if (cardElem && colContainer) {
+          colContainer.appendChild(cardElem);
+          updateColumnCounts();
+        }
+      }
+    }
+
+    // Command Modal (Cmd + K)
+    function openCommandModal() {
+      const backdrop = document.getElementById('commandModalBackdrop');
+      backdrop.classList.remove('hidden');
+      setTimeout(() => {
+        backdrop.classList.remove('opacity-0');
+        document.getElementById('commandModal').classList.remove('scale-95');
+        document.getElementById('commandInput').focus();
+      }, 10);
+      initIcons();
+    }
+
+    function closeCommandModal() {
+      const backdrop = document.getElementById('commandModalBackdrop');
+      backdrop.classList.add('opacity-0');
+      document.getElementById('commandModal').classList.add('scale-95');
+      setTimeout(() => {
+        backdrop.classList.add('hidden');
+      }, 200);
+    }
+
+    // Create Task Modal
+    function openCreateTaskModal(defaultColumn = 'Backlog') {
+      document.getElementById('newTaskColumn').value = defaultColumn;
+      const backdrop = document.getElementById('createTaskModalBackdrop');
+      backdrop.classList.remove('hidden');
+      setTimeout(() => {
+        backdrop.classList.remove('opacity-0');
+        document.getElementById('newTaskTitle').focus();
+      }, 10);
+      initIcons();
+    }
+
+    function closeCreateTaskModal() {
+      const backdrop = document.getElementById('createTaskModalBackdrop');
+      backdrop.classList.add('opacity-0');
+      setTimeout(() => {
+        backdrop.classList.add('hidden');
+      }, 200);
+    }
+
+    function createNewTaskSubmit() {
+      const title = document.getElementById('newTaskTitle').value.trim();
+      const col = document.getElementById('newTaskColumn').value;
+      const priority = document.getElementById('newTaskPriority').value;
+      const category = document.getElementById('newTaskCategory').value || 'Feature';
+
+      if (!title) return;
+
+      const newId = String(Date.now());
+      const newTask = {
+        id: newId,
+        key: `#EGN-${Math.floor(100 + Math.random() * 900)}`,
+        title: title,
+        category: category,
+        priority: priority,
+        status: col,
+        assignee: { name: 'Sarah Connor', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80' },
+        dueDate: 'Nov 28',
+        subtasks: [],
+        commentsCount: 0,
+        clientVisible: true
+      };
+
+      TASKS.unshift(newTask);
+
+      // Create card element and insert into column
+      const colContainer = document.getElementById(col === 'In Progress' ? 'col-InProgress' : `col-${col}`);
+      const newCard = document.createElement('div');
+      newCard.id = `card-${newId}`;
+      newCard.draggable = true;
+      newCard.ondragstart = (e) => handleDragStart(e, newId);
+      newCard.onclick = () => openTaskDetail(newId);
+      newCard.className = "task-card group p-3.5 rounded-lg bg-white dark:bg-[#1A2338] border border-slate-200/80 dark:border-slate-800 shadow-card hover:shadow-card-hover dark:hover:shadow-card-hover-dark hover:border-brand-500/50 cursor-pointer transition-all space-y-2.5 relative";
+
+      newCard.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-brand-50 text-brand-600 border border-brand-200/40">${priority}</span>
+          <span class="text-[10px] font-mono text-slate-400">${newTask.key}</span>
+        </div>
+        <h3 class="text-xs font-semibold text-slate-900 dark:text-white leading-snug">${title}</h3>
+        <div class="flex items-center gap-1.5">
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">${category}</span>
+        </div>
+        <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+          <div class="flex items-center space-x-3">
+            <span class="flex items-center gap-1"><i data-lucide="check-square" class="w-3 h-3"></i> 0/0</span>
+          </div>
+          <div class="flex items-center space-x-1.5">
+            <span>Nov 28</span>
+            <img class="w-5 h-5 rounded-full object-cover" src="${newTask.assignee.avatar}" alt="Assignee">
+          </div>
+        </div>
+      `;
+
+      colContainer.prepend(newCard);
+      updateColumnCounts();
+      closeCreateTaskModal();
+      document.getElementById('newTaskTitle').value = '';
+      initIcons();
+    }
+
+    // Filter Tasks by Category
+    function filterTasks(cat) {
+      const buttons = ['all', 'design', 'backend', 'security'];
+      buttons.forEach(b => {
+        const btn = document.getElementById(`btn-filter-${b}`);
+        if (btn) {
+          if (b === cat.toLowerCase()) {
+            btn.className = "px-2.5 py-1 rounded-md bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-semibold text-[11px] transition-colors";
+          } else {
+            btn.className = "px-2.5 py-1 rounded-md bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[11px] hover:border-slate-300 transition-colors";
+          }
+        }
+      });
+
+      TASKS.forEach(task => {
+        const card = document.getElementById(`card-${task.id}`);
+        if (!card) return;
+        if (cat === 'all' || task.category.toLowerCase() === cat.toLowerCase()) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Notification dropdown
+    function toggleNotifications() {
+      const popover = document.getElementById('notificationsPopover');
+      popover.classList.toggle('hidden');
+    }
+
+    function copyClientShareLink() {
+      alert('Secure Client Portal Link copied to clipboard:\nhttps://pulse.workspace/portal/nike-tech-v2?auth=exp_7d');
+    }
+
+    function copyTaskLink() {
+      alert('Task Deep Link copied to clipboard:\nhttps://pulse.workspace/project/mobile-v2/task/' + currentSelectedTaskId);
+    }
+
+    function exportDashboardSummary() {
+      alert('Generating Executive PDF/CSV report summary...');
+    }
+
+    function shareProjectReport() {
+      alert('Opening Client & Stakeholder Share configuration dialog.');
+    }
+
+    function selectProject(projId) {
+      const names = {
+        'mobile-v2': 'Mobile App v2.4',
+        'stripe-checkout': 'Stripe Billing Revamp',
+        'brand-refresh': 'Brand Identity 2027',
+        'soc2-compliance': 'SOC2 Type II Audit'
+      };
+      document.getElementById('breadcrumbCurrentProject').innerText = names[projId] || 'Mobile App v2.4';
+      switchView('tasks');
+    }
+
+    // Global Keyboard Shortcuts (Cmd+K, Esc, N)
+    window.addEventListener('keydown', (e) => {
+      // Cmd+K or Ctrl+K
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        openCommandModal();
+      }
+      // Esc to close drawers/modals
+      if (e.key === 'Escape') {
+        closeTaskDetail();
+        closeCommandModal();
+        closeCreateTaskModal();
+        document.getElementById('notificationsPopover').classList.add('hidden');
+      }
+      // N to create task (when not inside inputs)
+      if (e.key === 'n' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+        e.preventDefault();
+        openCreateTaskModal();
+      }
+    });
+
+    // Initial page setup on load
+    document.addEventListener('DOMContentLoaded', () => {
+      initIcons();
+      updateColumnCounts();
+    });
+  </script>
+</body>
+</html>
