@@ -508,4 +508,122 @@ func SeedAuxiliaryData() {
 			DB.Create(&b)
 		}
 	}
+
+	// 5. Default Status Configurations (Task & Project Lifecycle)
+	var statusCount int64
+	DB.Model(&models.StatusConfig{}).Count(&statusCount)
+	if statusCount == 0 {
+		defaultStatuses := []models.StatusConfig{
+			// Task Workflow Statuses
+			{
+				ID:          "st_task_backlog",
+				Name:        "Backlog",
+				Slug:        "backlog",
+				Category:    "task",
+				ColorDot:    "#94A3B8",
+				BadgeBg:     "bg-slate-100",
+				BadgeText:   "text-slate-700",
+				Position:    1,
+				IsCompleted: false,
+				IsSystem:    true,
+				Description: "Tugas dalam antrean atau tahap perencanaan awal",
+			},
+			{
+				ID:          "st_task_inprogress",
+				Name:        "In Progress",
+				Slug:        "in-progress",
+				Category:    "task",
+				ColorDot:    "#F59E0B",
+				BadgeBg:     "bg-amber-50",
+				BadgeText:   "text-amber-700",
+				Position:    2,
+				IsCompleted: false,
+				IsSystem:    true,
+				Description: "Tugas sedang aktif dikerjakan oleh tim teknis",
+			},
+			{
+				ID:          "st_task_review",
+				Name:        "Review",
+				Slug:        "review",
+				Category:    "task",
+				ColorDot:    "#6366F1",
+				BadgeBg:     "bg-indigo-50",
+				BadgeText:   "text-indigo-700",
+				Position:    3,
+				IsCompleted: false,
+				IsSystem:    true,
+				Description: "Tugas dalam tahap pengujian, QA, atau review hasil kerja",
+			},
+			{
+				ID:          "st_task_done",
+				Name:        "Done",
+				Slug:        "done",
+				Category:    "task",
+				ColorDot:    "#10B981",
+				BadgeBg:     "bg-emerald-50",
+				BadgeText:   "text-emerald-700",
+				Position:    4,
+				IsCompleted: true,
+				IsSystem:    true,
+				Description: "Tugas selesai dan deliverable terverifikasi sukses",
+			},
+
+			// Project Lifecycle Statuses
+			{
+				ID:          "st_proj_active",
+				Name:        "Aktif (Active)",
+				Slug:        "active",
+				Category:    "project",
+				ColorDot:    "#10B981",
+				BadgeBg:     "bg-emerald-50",
+				BadgeText:   "text-emerald-700",
+				Position:    1,
+				IsCompleted: false,
+				IsSystem:    true,
+				Description: "Proyek sedang aktif berjalan sesuai milestone",
+			},
+			{
+				ID:          "st_proj_onhold",
+				Name:        "Ditangguhkan (On Hold)",
+				Slug:        "on_hold",
+				Category:    "project",
+				ColorDot:    "#F59E0B",
+				BadgeBg:     "bg-amber-50",
+				BadgeText:   "text-amber-700",
+				Position:    2,
+				IsCompleted: false,
+				IsSystem:    true,
+				Description: "Proyek ditunda menunggu keputusan stakeholder",
+			},
+			{
+				ID:          "st_proj_completed",
+				Name:        "Rampung (Completed)",
+				Slug:        "completed",
+				Category:    "project",
+				ColorDot:    "#3B82F6",
+				BadgeBg:     "bg-blue-50",
+				BadgeText:   "text-blue-700",
+				Position:    3,
+				IsCompleted: true,
+				IsSystem:    true,
+				Description: "Seluruh fase dan deliverable proyek telah diserahterimakan",
+			},
+			{
+				ID:          "st_proj_archived",
+				Name:        "Arsip (Archived)",
+				Slug:        "archived",
+				Category:    "project",
+				ColorDot:    "#64748B",
+				BadgeBg:     "bg-slate-100",
+				BadgeText:   "text-slate-600",
+				Position:    4,
+				IsCompleted: false,
+				IsSystem:    true,
+				Description: "Proyek non-aktif yang disimpan untuk keperluan rekam jejak",
+			},
+		}
+		for _, s := range defaultStatuses {
+			DB.Create(&s)
+		}
+	}
 }

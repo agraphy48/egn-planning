@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
-import type { Project, Task, Milestone, KPIStats, ActivityItem, TaskStatus } from '../types/project'
-import { projectApi } from '../services/api'
+import type { Project, Task, Milestone, KPIStats, ActivityItem, TaskStatus, StatusConfig } from '../types/project'
+import { projectApi, statusApi } from '../services/api'
 
 export const useProjectStore = defineStore('project', {
   state: () => ({
@@ -10,6 +10,7 @@ export const useProjectStore = defineStore('project', {
     milestones: [] as Milestone[],
     kpiStats: null as KPIStats | null,
     activityFeed: [] as ActivityItem[],
+    statuses: [] as StatusConfig[],
     
     // UI & Filter state
     currentView: 'kanban' as 'kanban' | 'list' | 'timeline',
@@ -59,28 +60,40 @@ export const useProjectStore = defineStore('project', {
       })
     },
 
-    tasksByStatus(): Record<TaskStatus, Task[]> {
-      const grouped: Record<TaskStatus, Task[]> = {
-        'Backlog': [],
-        'In Progress': [],
-        'Review': [],
-        'Done': [],
+    taskStatuses(state): StatusConfig[] {
+      return state.statuses
+        .filter((s) => s.category === 'task')
+        .sort((a, b) => a.position - b.position)
+    },
+
+    tasksByStatus(): Record<string, Task[]> {
+      const grouped: Record<string, Task[]> = {}
+      if (this.taskStatuses && this.taskStatuses.length > 0) {
+        this.taskStatuses.forEach((s) => {
+          grouped[s.name] = []
+        })
+      } else {
+        grouped['Backlog'] = []
+        grouped['In Progress'] = []
+        grouped['Review'] = []
+        grouped['Done'] = []
       }
+
       this.filteredTasks.forEach((task) => {
-        if (grouped[task.status]) {
-          grouped[task.status].push(task)
+        if (!grouped[task.status]) {
+          grouped[task.status] = []
         }
+        grouped[task.status].push(task)
       })
       return grouped
     },
 
-    taskCounts(): Record<TaskStatus, number> {
-      return {
-        'Backlog': this.tasksByStatus['Backlog'].length,
-        'In Progress': this.tasksByStatus['In Progress'].length,
-        'Review': this.tasksByStatus['Review'].length,
-        'Done': this.tasksByStatus['Done'].length,
+    taskCounts(): Record<string, number> {
+      const counts: Record<string, number> = {}
+      for (const key in this.tasksByStatus) {
+        counts[key] = this.tasksByStatus[key].length
       }
+      return counts
     },
 
     selectedTask(state): Task | undefined {
@@ -93,22 +106,44 @@ export const useProjectStore = defineStore('project', {
     async fetchInitialData() {
       this.isLoading = true
       try {
-        const [projects, tasks, kpis, milestones, activities] = await Promise.all([
+        const [projects, tasks, kpis, milestones, activities, statuses] = await Promise.all([
           projectApi.getProjects(),
           projectApi.getTasks(),
           projectApi.getKPIStats(),
           projectApi.getMilestones(),
           projectApi.getActivityFeed(),
+          statusApi.getStatuses().catch(() => []),
         ])
         this.projects = projects
         this.tasks = tasks
         this.kpiStats = kpis
         this.milestones = milestones
         this.activityFeed = activities
+        if (statuses && statuses.length > 0) {
+          this.statuses = statuses
+        }
       } catch (err) {
         console.error('Failed to load initial project data:', err)
       } finally {
         this.isLoading = false
+      }
+    },
+
+    async fetchStatuses() {
+      try {
+        const data = await statusApi.getStatuses()
+        this.statuses = data
+      } catch (err) {
+        console.error('Failed to load statuses:', err)
+      }
+    },
+
+    async fetchProjects() {
+      try {
+        const projects = await projectApi.getProjects()
+        this.projects = projects
+      } catch (err) {
+        console.error('Failed to load projects:', err)
       }
     },
 

@@ -7,6 +7,10 @@ export interface User {
   avatar_url: string
   role: UserRole
   initials?: string
+  current_session_id?: string
+  last_active_at?: string | Date
+  created_at?: string | Date
+  updated_at?: string | Date
 }
 
 export type ProjectStatus = 'active' | 'completed' | 'on_hold' | 'archived'
@@ -172,4 +176,21 @@ export interface BudgetItem {
   allocated: number
   spent: number
   currency: string
+}
+
+export interface StatusConfig {
+  id: string
+  name: string
+  slug: string
+  category: 'task' | 'project' | 'milestone'
+  color_dot: string
+  badge_bg: string
+  badge_text: string
+  position: number
+  is_completed: boolean
+  is_system: boolean
+  description?: string
+  usage_count?: number
+  created_at?: string
+  updated_at?: string
 }

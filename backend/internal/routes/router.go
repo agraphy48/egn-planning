@@ -108,11 +108,29 @@ func SetupRouter() *gin.Engine {
 				usersGroup.POST("/:id/reset-session", middleware.RequirePermission(auth.PermUserManage), handlers.ResetUserSession)
 			}
 
+			// Status Management (Workflow CRUD Status)
+			statusesGroup := protected.Group("/statuses")
+			{
+				statusesGroup.GET("", handlers.ListStatuses)
+				statusesGroup.GET("/:id", handlers.GetStatus)
+				statusesGroup.POST("", middleware.RequirePermission(auth.PermStatusManage), handlers.CreateStatus)
+				statusesGroup.PATCH("/:id", middleware.RequirePermission(auth.PermStatusManage), handlers.UpdateStatus)
+				statusesGroup.PUT("/:id", middleware.RequirePermission(auth.PermStatusManage), handlers.UpdateStatus)
+				statusesGroup.DELETE("/:id", middleware.RequirePermission(auth.PermStatusManage), handlers.DeleteStatus)
+				statusesGroup.POST("/reorder", middleware.RequirePermission(auth.PermStatusManage), handlers.ReorderStatuses)
+			}
+
 			// Projects Management
 			projectsGroup := protected.Group("/projects")
 			{
 				projectsGroup.GET("", middleware.RequirePermission(auth.PermProjectRead), handlers.ListProjects)
 				projectsGroup.POST("", middleware.RequirePermission(auth.PermProjectCreate), handlers.CreateProject)
+
+				// Import & Export Modules (CSV & MS Excel Compatible)
+				projectsGroup.GET("/export", middleware.RequirePermission(auth.PermProjectRead), handlers.ExportProjectsCSV)
+				projectsGroup.GET("/export/tasks", middleware.RequirePermission(auth.PermProjectRead), handlers.ExportTasksCSV)
+				projectsGroup.GET("/import/template", middleware.RequirePermission(auth.PermProjectRead), handlers.GetProjectImportTemplate)
+				projectsGroup.POST("/import", middleware.RequirePermission(auth.PermProjectCreate), handlers.ImportProjects)
 
 				// Single project operations requiring project membership
 				projectScoped := projectsGroup.Group("/:id")

@@ -393,8 +393,8 @@ function handleInboxClick() {
 }
 
 function handleTeamClick() {
-  store.showToast('Manajemen Tim & Hak Akses (RBAC: ' + authStore.currentRole.toUpperCase() + ')')
   closeSidebar()
+  router.push('/dashboard?tab=users')
 }
 
 function handleSettingsClick() {

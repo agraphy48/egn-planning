@@ -93,6 +93,17 @@
           <Plus class="w-3.5 h-3.5" />
           <span>New Task</span>
         </button>
+
+        <!-- Export Project Tasks to CSV / MS Excel -->
+        <button
+          @click="handleExportProjectTasks"
+          :disabled="isExportingTasks"
+          class="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-white dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 text-[11px] font-medium transition-all cursor-pointer shadow-2xs"
+          title="Ekspor tasks proyek ini ke MS Excel / CSV"
+        >
+          <Download class="w-3.5 h-3.5 text-zinc-500" />
+          <span>Ekspor CSV</span>
+        </button>
       </div>
     </section>
 
@@ -301,10 +312,35 @@ import { projectApi } from '../services/api'
 import type { WikiPage } from '../types/project'
 import KanbanBoard from '../components/KanbanBoard.vue'
 import TaskListView from '../components/TaskListView.vue'
-import { Kanban, ListTodo, GitCommit, BookOpen, Flag, Plus } from 'lucide-vue-next'
+import { Kanban, ListTodo, GitCommit, BookOpen, Flag, Plus, Download } from 'lucide-vue-next'
 
 const store = useProjectStore()
 const route = useRoute()
+
+const isExportingTasks = ref(false)
+
+async function handleExportProjectTasks() {
+  if (!store.currentProjectId) return
+  isExportingTasks.value = true
+  try {
+    store.showToast('Menyiapkan file ekspor tasks proyek ini (MS Excel / CSV)...')
+    const blob = await projectApi.exportTasksCSV(store.currentProjectId)
+    const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '')
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `tasks_${store.currentProject?.slug || 'project'}_${timestamp}.csv`
+    document.body.appendChild(a)
+    a.click()
+    window.URL.revokeObjectURL(url)
+    document.body.removeChild(a)
+    store.showToast('File CSV berhasil diunduh!')
+  } catch (err: any) {
+    store.showToast(err.response?.data?.error || 'Gagal mengekspor tasks.')
+  } finally {
+    isExportingTasks.value = false
+  }
+}
 
 const activeSubTab = ref<'views' | 'wiki'>('views')
 const quickCategories = ['All', 'Frontend', 'Backend', 'AI/ML', 'QA/Test', 'Infrastructure']

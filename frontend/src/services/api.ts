@@ -1,5 +1,6 @@
 import axios, { type AxiosInstance } from 'axios'
 import type {
+  User,
   Project,
   Task,
   Milestone,
@@ -11,7 +12,8 @@ import type {
   TimeEntry,
   TeamWorkload,
   NotificationItem,
-  BudgetItem
+  BudgetItem,
+  StatusConfig
 } from '../types/project'
 import {
   mockProjects,
@@ -365,4 +367,124 @@ export const projectApi = {
     const response = await apiClient.get<any>(`/projects/${projectId}/budgets`)
     return response.data
   },
+
+  // 10. Project Import & Export (MS Excel & CSV)
+  async exportProjectsCSV(): Promise<Blob> {
+    const response = await apiClient.get('/projects/export', { responseType: 'blob' })
+    return response.data
+  },
+
+  async exportTasksCSV(projectId?: string): Promise<Blob> {
+    const response = await apiClient.get('/projects/export/tasks', {
+      params: { project_id: projectId },
+      responseType: 'blob'
+    })
+    return response.data
+  },
+
+  async downloadImportTemplate(): Promise<Blob> {
+    const response = await apiClient.get('/projects/import/template', { responseType: 'blob' })
+    return response.data
+  },
+
+  async importProjects(file: File): Promise<{ message: string; created_count: number; updated_count: number; projects: Project[] }> {
+    const formData = new FormData()
+    formData.append('file', file)
+    const response = await apiClient.post('/projects/import', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    return response.data
+  },
+
+  async importProjectsJSON(projects: any[]): Promise<{ message: string; created_count: number; updated_count: number; projects: Project[] }> {
+    const response = await apiClient.post('/projects/import', { projects })
+    return response.data
+  },
+}
+
+export interface UserPayload {
+  name: string
+  email: string
+  role: string
+  password?: string
+  avatar_url?: string
+}
+
+export const userApi = {
+  async getUsers(): Promise<User[]> {
+    const response = await apiClient.get<User[]>('/users')
+    return response.data
+  },
+
+  async getUser(id: string): Promise<User> {
+    const response = await apiClient.get<User>(`/users/${id}`)
+    return response.data
+  },
+
+  async createUser(payload: UserPayload): Promise<User> {
+    const response = await apiClient.post<User>('/users', payload)
+    return response.data
+  },
+
+  async updateUser(id: string, payload: Partial<UserPayload>): Promise<User> {
+    const response = await apiClient.patch<User>(`/users/${id}`, payload)
+    return response.data
+  },
+
+  async deleteUser(id: string): Promise<void> {
+    await apiClient.delete(`/users/${id}`)
+  },
+
+  async resetUserSession(id: string): Promise<void> {
+    await apiClient.post(`/users/${id}/reset-session`)
+  },
+
+  async updateUserRole(id: string, role: string): Promise<void> {
+    await apiClient.patch(`/users/${id}/role`, { role })
+  }
+}
+
+export interface StatusPayload {
+  name: string
+  slug?: string
+  category?: 'task' | 'project' | 'milestone'
+  color_dot?: string
+  badge_bg?: string
+  badge_text?: string
+  position?: number
+  is_completed?: boolean
+  description?: string
+  migrate_tasks?: boolean
+}
+
+export const statusApi = {
+  async getStatuses(category?: string): Promise<StatusConfig[]> {
+    const response = await apiClient.get<StatusConfig[]>('/statuses', { params: { category } })
+    return response.data
+  },
+
+  async getStatus(id: string): Promise<StatusConfig> {
+    const response = await apiClient.get<StatusConfig>(`/statuses/${id}`)
+    return response.data
+  },
+
+  async createStatus(payload: StatusPayload): Promise<StatusConfig> {
+    const response = await apiClient.post<StatusConfig>('/statuses', payload)
+    return response.data
+  },
+
+  async updateStatus(id: string, payload: Partial<StatusPayload>): Promise<any> {
+    const response = await apiClient.patch(`/statuses/${id}`, payload)
+    return response.data
+  },
+
+  async deleteStatus(id: string, reassignTo?: string): Promise<any> {
+    const response = await apiClient.delete(`/statuses/${id}`, { params: { reassign_to: reassignTo } })
+    return response.data
+  },
+
+  async reorderStatuses(items: { id: string; position: number }[]): Promise<any> {
+    const response = await apiClient.post('/statuses/reorder', { items })
+    return response.data
+  }
 }

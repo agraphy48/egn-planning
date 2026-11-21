@@ -31,6 +31,7 @@ const (
 	PermAttachmentUpload    = "attachment:upload"
 	PermCommentCreate       = "comment:create"
 	PermCommentRead         = "comment:read"
+	PermStatusManage        = "status:manage"
 )
 
 // AllPermissions contains all valid permissions in the system
@@ -56,6 +57,7 @@ var AllPermissions = []string{
 	PermAttachmentUpload,
 	PermCommentCreate,
 	PermCommentRead,
+	PermStatusManage,
 }
 
 // RolePermissions defines the strict permission map for each role
@@ -80,6 +82,7 @@ var RolePermissions = map[string][]string{
 		PermAttachmentUpload,
 		PermCommentCreate,
 		PermCommentRead,
+		PermStatusManage,
 	},
 	RoleMember: {
 		PermProjectRead,

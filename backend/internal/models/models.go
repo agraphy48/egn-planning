@@ -208,3 +208,21 @@ type Budget struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+// StatusConfig represents a configurable workflow status item for tasks, projects, or milestones
+type StatusConfig struct {
+	ID          string         `gorm:"primaryKey;size:64" json:"id"`
+	Name        string         `gorm:"size:128;not null" json:"name"`
+	Slug        string         `gorm:"size:128;not null;index" json:"slug"`
+	Category    string         `gorm:"size:32;not null;default:'task'" json:"category"` // 'task', 'project', 'milestone'
+	ColorDot    string         `gorm:"size:32;default:'#6366F1'" json:"color_dot"`
+	BadgeBg     string         `gorm:"size:64;default:'bg-indigo-50'" json:"badge_bg"`
+	BadgeText   string         `gorm:"size:64;default:'text-indigo-700'" json:"badge_text"`
+	Position    int            `gorm:"default:0" json:"position"`
+	IsCompleted bool           `gorm:"default:false" json:"is_completed"`
+	IsSystem    bool           `gorm:"default:false" json:"is_system"`
+	Description string         `gorm:"size:255" json:"description"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
+	DeletedAt   gorm.DeletedAt `gorm:"index" json:"-"`
+}
