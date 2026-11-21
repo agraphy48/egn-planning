@@ -71,6 +71,7 @@ func SetupRouter() *gin.Engine {
 			// Current user profile + role + permissions
 			protected.GET("/auth/me", handlers.GetMe)
 			protected.GET("/auth/heartbeat", handlers.Heartbeat)
+			protected.POST("/auth/change-password", handlers.ChangePassword)
 
 			// Real-time Executive Dashboard KPIs & Activity Feed
 			dashboardGroup := protected.Group("/dashboard")

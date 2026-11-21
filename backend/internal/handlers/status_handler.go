@@ -77,7 +77,7 @@ func GetStatus(c *gin.Context) {
 	})
 }
 
-type CreateStatusRequest struct {
+type CreateStatusConfigRequest struct {
 	Name        string `json:"name" binding:"required"`
 	Slug        string `json:"slug"`
 	Category    string `json:"category"`
@@ -91,7 +91,7 @@ type CreateStatusRequest struct {
 
 // CreateStatus creates a new status config
 func CreateStatus(c *gin.Context) {
-	var req CreateStatusRequest
+	var req CreateStatusConfigRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Nama status wajib diisi: " + err.Error()})
 		return
@@ -178,7 +178,7 @@ func CreateStatus(c *gin.Context) {
 	})
 }
 
-type UpdateStatusRequest struct {
+type UpdateStatusConfigRequest struct {
 	Name         string `json:"name"`
 	Slug         string `json:"slug"`
 	Category     string `json:"category"`
@@ -201,7 +201,7 @@ func UpdateStatus(c *gin.Context) {
 		return
 	}
 
-	var req UpdateStatusRequest
+	var req UpdateStatusConfigRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Format payload tidak valid: " + err.Error()})
 		return

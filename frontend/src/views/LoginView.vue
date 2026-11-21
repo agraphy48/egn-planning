@@ -72,7 +72,7 @@
           </button>
 
           <button
-            @click="handleLogoutSession"
+            @click="authStore.logout()"
             class="py-2.5 px-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-semibold text-xs shadow-2xs transition-all cursor-pointer"
           >
             Ganti Akun
@@ -96,45 +96,13 @@
       >
         <AlertCircle class="w-4 h-4 text-rose-500 flex-shrink-0" />
         <span class="flex-1 font-medium">{{ errorMessage }}</span>
-        <button @click="errorMessage = ''" class="text-rose-500 hover:text-rose-700">
+        <button @click="errorMessage = ''" class="text-rose-500 hover:text-rose-700 cursor-pointer">
           <X class="w-3.5 h-3.5" />
         </button>
       </div>
 
-      <!-- Optional Tab Switcher: Only displayed in Development Mode when explicitly enabled by server -->
-      <div
-        v-if="showQuickLoginTab"
-        class="grid grid-cols-2 p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs font-semibold"
-      >
-        <button
-          @click="activeTab = 'credentials'"
-          :class="[
-            'py-2 px-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-200',
-            activeTab === 'credentials'
-              ? 'bg-white text-brand-700 shadow-sm font-bold'
-              : 'text-slate-600 hover:text-slate-900'
-          ]"
-        >
-          <KeyRound class="w-3.5 h-3.5" />
-          <span>Login Kredensial</span>
-        </button>
-
-        <button
-          @click="activeTab = 'quick'"
-          :class="[
-            'py-2 px-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-200',
-            activeTab === 'quick'
-              ? 'bg-white text-brand-700 shadow-sm font-bold'
-              : 'text-slate-600 hover:text-slate-900'
-          ]"
-        >
-          <Zap class="w-3.5 h-3.5" :class="activeTab === 'quick' ? 'text-amber-500' : ''" />
-          <span>Akses Cepat Pengguna (Dev)</span>
-        </button>
-      </div>
-
-      <!-- TAB 1: Primary Secure Credentials Form -->
-      <form v-if="activeTab === 'credentials'" @submit.prevent="handleManualLogin" class="space-y-4 text-xs">
+      <!-- Primary Secure Credentials Form -->
+      <form @submit.prevent="handleManualLogin" class="space-y-4 text-xs" autocomplete="on">
         <!-- Email Input -->
         <div class="space-y-1.5">
           <label class="font-semibold text-slate-700 flex items-center justify-between">
@@ -147,6 +115,7 @@
               type="email"
               v-model="email"
               required
+              autocomplete="username"
               placeholder="nama@pulse.workspace"
               class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all text-xs shadow-xs"
             />
@@ -157,7 +126,7 @@
         <div class="space-y-1.5">
           <div class="flex items-center justify-between">
             <label class="font-semibold text-slate-700">Kata Sandi (Password)</label>
-            <span class="text-[10px] text-slate-400 font-mono">Sandi Akun Terverifikasi</span>
+            <span class="text-[10px] text-slate-400 font-mono">Autentikasi Terverifikasi</span>
           </div>
           <div class="relative">
             <Lock class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -165,39 +134,17 @@
               :type="showPassword ? 'text' : 'password'"
               v-model="password"
               required
-              placeholder="••••••••••••"
+              autocomplete="current-password"
+              placeholder="Masukkan kata sandi..."
               class="w-full pl-9 pr-10 py-2.5 rounded-xl border border-slate-300 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all text-xs shadow-xs"
             />
             <button
               type="button"
               @click="showPassword = !showPassword"
-              class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
             >
               <EyeOff v-if="showPassword" class="w-4 h-4" />
               <Eye v-else class="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        <!-- Development Autofill Assistance (Dev Mode Only) -->
-        <div v-if="showQuickLoginTab" class="space-y-1 pt-1">
-          <span class="text-[10px] font-mono text-slate-500 font-semibold uppercase">Auto-Fill Dev:</span>
-          <div class="flex flex-wrap gap-1.5">
-            <button
-              v-for="user in quickUsers.slice(0, 5)"
-              :key="user.key"
-              type="button"
-              @click="autofill(user.email)"
-              class="px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-[10px] font-medium transition-colors"
-            >
-              {{ user.shortName }}
-            </button>
-            <button
-              type="button"
-              @click="autofill('admin@pulse.workspace')"
-              class="px-2 py-1 rounded-md bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-[10px] font-semibold transition-colors"
-            >
-              Admin
             </button>
           </div>
         </div>
@@ -213,57 +160,6 @@
           <ArrowRight v-if="!authStore.isLoading && !isSubmitting" class="w-4 h-4" />
         </button>
       </form>
-
-      <!-- TAB 2: Development Quick Login (Only when enabled by server) -->
-      <div v-else-if="showQuickLoginTab" class="space-y-3">
-        <div class="flex items-center justify-between text-[11px] text-slate-500 font-medium px-1">
-          <span>Pilih Profil untuk Akses Pengembang:</span>
-          <span class="font-mono text-slate-400 text-[10px]">Autentikasi API Riil</span>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[380px] overflow-y-auto pr-1">
-          <button
-            v-for="user in quickUsers"
-            :key="user.key"
-            @click="handleQuickLogin(user.key)"
-            :disabled="authStore.isLoading || isSubmitting"
-            :class="[
-              'p-3 rounded-xl border text-left transition-all duration-200 flex items-start gap-3 relative group',
-              user.borderClass,
-              'bg-slate-50/70 hover:bg-white hover:shadow-md active:scale-[0.98]'
-            ]"
-          >
-            <!-- User Avatar with Status Indicator -->
-            <div class="relative flex-shrink-0 mt-0.5">
-              <img
-                :src="user.avatar"
-                :alt="user.name"
-                class="w-10 h-10 rounded-xl object-cover ring-1 ring-slate-200 group-hover:ring-brand-500 transition-all"
-              />
-              <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
-            </div>
-
-            <!-- User Info & Role Badge -->
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center justify-between gap-1">
-                <span class="text-xs font-bold text-slate-900 group-hover:text-brand-600 transition-colors truncate">
-                  {{ user.name }}
-                </span>
-                <span :class="['text-[9px] font-mono px-1.5 py-0.2 rounded font-semibold uppercase', user.badgeClass]">
-                  {{ user.badgeText }}
-                </span>
-              </div>
-              <p class="text-[10px] text-slate-500 truncate mt-0.5">{{ user.email }}</p>
-              <p class="text-[10px] text-slate-400 truncate mt-0.5 italic">{{ user.roleDesc }}</p>
-            </div>
-
-            <!-- Hover Slide Arrow -->
-            <div class="self-center text-slate-400 group-hover:text-brand-600 group-hover:translate-x-0.5 transition-all">
-              <ChevronRight class="w-4 h-4" />
-            </div>
-          </button>
-        </div>
-      </div>
 
       <!-- Footer Info & Security Verification -->
       <div class="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2">
@@ -282,13 +178,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useAuthStore, SEED_USERS } from '../stores/authStore'
+import { useAuthStore } from '../stores/authStore'
 import {
-  Layers,
-  Zap,
-  KeyRound,
   Mail,
   Lock,
   Eye,
@@ -297,7 +190,6 @@ import {
   ShieldCheck,
   AlertCircle,
   X,
-  ChevronRight,
   Loader2,
   Info,
   Clock,
@@ -308,10 +200,8 @@ const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 
-// Default tab is always the real credential login form
-const activeTab = ref<'credentials' | 'quick'>('credentials')
-const email = ref('agus.setiawan@pulse.workspace')
-const password = ref('Password123!')
+const email = ref('')
+const password = ref('')
 const showPassword = ref(false)
 const errorMessage = ref('')
 const isSubmitting = ref(false)
@@ -349,117 +239,6 @@ const noticeInfo = computed(() => {
   return null
 })
 
-// Quick Login tab is strictly controlled: disabled in production or if server says false
-const showQuickLoginTab = computed(() => {
-  return !import.meta.env.PROD && authStore.allowQuickLogin
-})
-
-onMounted(async () => {
-  await authStore.fetchAuthConfig()
-  // Ensure we stay on credentials form if quick login is disabled
-  if (!showQuickLoginTab.value) {
-    activeTab.value = 'credentials'
-  }
-})
-
-interface QuickUserItem {
-  key: string
-  name: string
-  shortName: string
-  email: string
-  badgeText: string
-  badgeClass: string
-  borderClass: string
-  avatar: string
-  roleDesc: string
-}
-
-const quickUsers: QuickUserItem[] = [
-  {
-    key: 'agus',
-    name: 'Agus Setiawan',
-    shortName: 'Agus',
-    email: 'agus.setiawan@pulse.workspace',
-    badgeText: 'Project Manager',
-    badgeClass: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-    borderClass: 'border-slate-200 hover:border-emerald-500',
-    avatar: SEED_USERS['agus'].avatar_url,
-    roleDesc: 'Sprint lead, delegasi task & timeline'
-  },
-  {
-    key: 'adi',
-    name: 'Adi Saputra',
-    shortName: 'Adi',
-    email: 'adi.saputra@pulse.workspace',
-    badgeText: 'Project Manager',
-    badgeClass: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-    borderClass: 'border-slate-200 hover:border-emerald-500',
-    avatar: SEED_USERS['adi'].avatar_url,
-    roleDesc: 'Alokasi resource & project governance'
-  },
-  {
-    key: 'yudistira',
-    name: 'Yudistira Sira P.',
-    shortName: 'Yudistira',
-    email: 'yudistira@pulse.workspace',
-    badgeText: 'Lead Engineer',
-    badgeClass: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
-    borderClass: 'border-slate-200 hover:border-indigo-500',
-    avatar: SEED_USERS['yudistira'].avatar_url,
-    roleDesc: 'Fullstack Golang Gin & Vue 3 SPA'
-  },
-  {
-    key: 'hardianto',
-    name: 'Hardianto',
-    shortName: 'Hardianto',
-    email: 'hardianto@pulse.workspace',
-    badgeText: 'Frontend Dev',
-    badgeClass: 'bg-cyan-50 text-cyan-700 border border-cyan-200',
-    borderClass: 'border-slate-200 hover:border-cyan-500',
-    avatar: SEED_USERS['hardianto'].avatar_url,
-    roleDesc: 'UI/UX animatif & responsif Tailwind'
-  },
-  {
-    key: 'dedi',
-    name: 'Dedi Irawan',
-    shortName: 'Dedi',
-    email: 'dedi.irawan@pulse.workspace',
-    badgeText: 'DevOps & QA',
-    badgeClass: 'bg-purple-50 text-purple-700 border border-purple-200',
-    borderClass: 'border-slate-200 hover:border-purple-500',
-    avatar: SEED_USERS['dedi'].avatar_url,
-    roleDesc: 'Cloudflare Tunnel, TLS & Security Audit'
-  },
-  {
-    key: 'super_admin',
-    name: 'Budi Santoso',
-    shortName: 'Admin',
-    email: 'admin@pulse.workspace',
-    badgeText: 'Super Admin',
-    badgeClass: 'bg-rose-50 text-rose-700 border border-rose-200',
-    borderClass: 'border-slate-200 hover:border-rose-500',
-    avatar: SEED_USERS['super_admin'].avatar_url,
-    roleDesc: 'Kontrol penuh sistem, audit & pengguna'
-  },
-  {
-    key: 'client',
-    name: 'Ir. H. Gunawan',
-    shortName: 'Client',
-    email: 'client@pulse.workspace',
-    badgeText: 'Client Portal',
-    badgeClass: 'bg-amber-50 text-amber-700 border border-amber-200',
-    borderClass: 'border-slate-200 hover:border-amber-500',
-    avatar: SEED_USERS['client'].avatar_url,
-    roleDesc: 'Persetujuan milestone & review deliverables'
-  }
-]
-
-function autofill(userEmail: string) {
-  email.value = userEmail
-  password.value = 'Password123!'
-  errorMessage.value = ''
-}
-
 async function proceedRedirect(role?: string) {
   if (route.query.redirect) {
     router.push(route.query.redirect as string)
@@ -473,32 +252,14 @@ async function proceedRedirect(role?: string) {
   }
 }
 
-async function handleQuickLogin(userKey: string) {
-  errorMessage.value = ''
-  isSubmitting.value = true
-  try {
-    const user = await authStore.switchUser(userKey)
-    await proceedRedirect(user.role)
-  } catch (err: any) {
-    errorMessage.value = err.message || 'Gagal masuk akun'
-  } finally {
-    isSubmitting.value = false
-  }
-}
-
-async function handleLogoutSession() {
-  await authStore.logout()
-  errorMessage.value = ''
-}
-
 async function handleManualLogin() {
   errorMessage.value = ''
   isSubmitting.value = true
   try {
-    await authStore.login(email.value, password.value)
+    await authStore.login(email.value.trim(), password.value)
     await proceedRedirect(authStore.currentRole)
   } catch (err: any) {
-    errorMessage.value = err?.response?.data?.error || err.message || 'Email atau password salah'
+    errorMessage.value = err?.response?.data?.error || err.message || 'Email atau kata sandi tidak valid'
   } finally {
     isSubmitting.value = false
   }

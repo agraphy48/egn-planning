@@ -21,8 +21,15 @@
 
         <div class="flex items-center space-x-2 flex-shrink-0">
           <button
+            @click="authStore.isChangePasswordModalOpen = true"
+            class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-sm border border-white/15 transition-all flex items-center gap-1.5 cursor-pointer"
+          >
+            <KeyRound class="w-3.5 h-3.5" />
+            <span>Ganti Kata Sandi</span>
+          </button>
+          <button
             @click="copyPublicLink"
-            class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-sm border border-white/15 transition-all flex items-center gap-1.5"
+            class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-sm border border-white/15 transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <Copy class="w-3.5 h-3.5" />
             <span>Copy Portal Link</span>
@@ -201,7 +208,7 @@ import { useProjectStore } from '../stores/projectStore'
 import { useAuthStore } from '../stores/authStore'
 import { projectApi } from '../services/api'
 import type { Milestone } from '../types/project'
-import { Copy, CheckCircle2, Check, XCircle, AlertTriangle } from 'lucide-vue-next'
+import { Copy, CheckCircle2, Check, XCircle, AlertTriangle, KeyRound } from 'lucide-vue-next'
 
 const store = useProjectStore()
 const authStore = useAuthStore()

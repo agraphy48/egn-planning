@@ -18,26 +18,28 @@ import (
 )
 
 type CreateUserRequest struct {
-	Name      string `json:"name" binding:"required"`
-	Email     string `json:"email" binding:"required,email"`
-	Password  string `json:"password" binding:"required,min=6"`
-	Role      string `json:"role" binding:"required"`
-	AvatarURL string `json:"avatar_url"`
+	Name       string   `json:"name" binding:"required"`
+	Email      string   `json:"email" binding:"required,email"`
+	Password   string   `json:"password" binding:"required,min=6"`
+	Role       string   `json:"role" binding:"required"`
+	AvatarURL  string   `json:"avatar_url"`
+	ProjectIDs []string `json:"project_ids"`
 }
 
 type UpdateUserRequest struct {
-	Name      string `json:"name"`
-	Email     string `json:"email"`
-	Password  string `json:"password"` // optional: if not empty, hash & update
-	Role      string `json:"role"`
-	AvatarURL string `json:"avatar_url"`
+	Name       string    `json:"name"`
+	Email      string    `json:"email"`
+	Password   string    `json:"password"` // optional: if not empty, hash & update
+	Role       string    `json:"role"`
+	AvatarURL  string    `json:"avatar_url"`
+	ProjectIDs *[]string `json:"project_ids"`
 }
 
 type UpdateRoleRequest struct {
 	Role string `json:"role" binding:"required"`
 }
 
-// ListUsers returns list of system users
+// ListUsers returns list of system users with their assigned project IDs
 func ListUsers(c *gin.Context) {
 	var users []models.User
 	if err := database.DB.Order("created_at asc").Find(&users).Error; err != nil {
@@ -45,10 +47,26 @@ func ListUsers(c *gin.Context) {
 		return
 	}
 
+	// Fetch all project members mapping in one fast query
+	var members []models.ProjectMember
+	database.DB.Select("project_id, user_id").Find(&members)
+	userProjects := make(map[string][]string)
+	for _, m := range members {
+		userProjects[m.UserID] = append(userProjects[m.UserID], m.ProjectID)
+	}
+
+	for i := range users {
+		if pids, exists := userProjects[users[i].ID]; exists {
+			users[i].ProjectIDs = pids
+		} else {
+			users[i].ProjectIDs = []string{}
+		}
+	}
+
 	c.JSON(http.StatusOK, users)
 }
 
-// GetUser returns a single user profile by ID
+// GetUser returns a single user profile by ID with assigned project IDs
 func GetUser(c *gin.Context) {
 	targetUserID := c.Param("id")
 	if targetUserID == "" {
@@ -61,6 +79,13 @@ func GetUser(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
+
+	var pids []string
+	database.DB.Model(&models.ProjectMember{}).Where("user_id = ?", user.ID).Pluck("project_id", &pids)
+	if pids == nil {
+		pids = []string{}
+	}
+	user.ProjectIDs = pids
 
 	c.JSON(http.StatusOK, user)
 }
@@ -83,11 +108,16 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	// Check email uniqueness
+	// Check email uniqueness (handling any leftover soft-deleted records)
 	var existing models.User
-	if err := database.DB.Where("LOWER(email) = ?", cleanEmail).First(&existing).Error; err == nil {
-		c.JSON(http.StatusConflict, gin.H{"error": "Email is already registered by another user"})
-		return
+	if err := database.DB.Unscoped().Where("LOWER(email) = ?", cleanEmail).First(&existing).Error; err == nil {
+		if existing.DeletedAt.Valid {
+			// Permanently purge leftover soft-deleted record so the email can be re-registered immediately
+			database.DB.Unscoped().Delete(&existing)
+		} else {
+			c.JSON(http.StatusConflict, gin.H{"error": "Email sudah digunakan oleh pengguna lain"})
+			return
+		}
 	}
 
 	// Hash password
@@ -124,6 +154,32 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
+	// Assign project memberships if requested
+	if len(req.ProjectIDs) > 0 {
+		projRole := "member"
+		if user.Role == "pm" {
+			projRole = "pm"
+		} else if user.Role == "client" {
+			projRole = "client"
+		}
+		for _, pid := range req.ProjectIDs {
+			pid = strings.TrimSpace(pid)
+			if pid == "" {
+				continue
+			}
+			pm := models.ProjectMember{
+				ProjectID:   pid,
+				UserID:      user.ID,
+				ProjectRole: projRole,
+				JoinedAt:    time.Now(),
+			}
+			database.DB.Where(models.ProjectMember{ProjectID: pid, UserID: user.ID}).FirstOrCreate(&pm)
+		}
+		user.ProjectIDs = req.ProjectIDs
+	} else {
+		user.ProjectIDs = []string{}
+	}
+
 	c.JSON(http.StatusCreated, user)
 }
 
@@ -153,14 +209,18 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	// Email update with uniqueness check
+	// Email update with uniqueness check (handling leftover soft-deleted records)
 	if req.Email != "" {
 		cleanEmail := strings.TrimSpace(strings.ToLower(req.Email))
 		if cleanEmail != strings.ToLower(user.Email) {
 			var check models.User
-			if err := database.DB.Where("LOWER(email) = ? AND id != ?", cleanEmail, user.ID).First(&check).Error; err == nil {
-				c.JSON(http.StatusConflict, gin.H{"error": "Email tersebut sudah digunakan oleh akun lain"})
-				return
+			if err := database.DB.Unscoped().Where("LOWER(email) = ? AND id != ?", cleanEmail, user.ID).First(&check).Error; err == nil {
+				if check.DeletedAt.Valid {
+					database.DB.Unscoped().Delete(&check)
+				} else {
+					c.JSON(http.StatusConflict, gin.H{"error": "Email tersebut sudah digunakan oleh akun lain"})
+					return
+				}
 			}
 			user.Email = cleanEmail
 		}
@@ -205,6 +265,51 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
+	// Synchronize project memberships if provided
+	if req.ProjectIDs != nil {
+		projRole := "member"
+		if user.Role == "pm" {
+			projRole = "pm"
+		} else if user.Role == "client" {
+			projRole = "client"
+		}
+
+		if len(*req.ProjectIDs) == 0 {
+			database.DB.Where("user_id = ?", user.ID).Delete(&models.ProjectMember{})
+			user.ProjectIDs = []string{}
+		} else {
+			// Delete revoked memberships
+			database.DB.Where("user_id = ? AND project_id NOT IN (?)", user.ID, *req.ProjectIDs).Delete(&models.ProjectMember{})
+			// Upsert memberships
+			for _, pid := range *req.ProjectIDs {
+				pid = strings.TrimSpace(pid)
+				if pid == "" {
+					continue
+				}
+				var pm models.ProjectMember
+				if err := database.DB.Where("user_id = ? AND project_id = ?", user.ID, pid).First(&pm).Error; err != nil {
+					pm = models.ProjectMember{
+						ProjectID:   pid,
+						UserID:      user.ID,
+						ProjectRole: projRole,
+						JoinedAt:    time.Now(),
+					}
+					database.DB.Create(&pm)
+				} else {
+					database.DB.Model(&pm).Update("project_role", projRole)
+				}
+			}
+			user.ProjectIDs = *req.ProjectIDs
+		}
+	} else {
+		var pids []string
+		database.DB.Model(&models.ProjectMember{}).Where("user_id = ?", user.ID).Pluck("project_id", &pids)
+		if pids == nil {
+			pids = []string{}
+		}
+		user.ProjectIDs = pids
+	}
+
 	c.JSON(http.StatusOK, user)
 }
 
@@ -231,7 +336,7 @@ func DeleteUser(c *gin.Context) {
 	}
 
 	var user models.User
-	if err := database.DB.Where("id = ?", targetUserID).First(&user).Error; err != nil {
+	if err := database.DB.Unscoped().Where("id = ?", targetUserID).First(&user).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Pengguna tidak ditemukan"})
 		return
 	}
@@ -247,14 +352,17 @@ func DeleteUser(c *gin.Context) {
 	// Remove from project members pivot table
 	database.DB.Where("user_id = ?", targetUserID).Delete(&models.ProjectMember{})
 
-	// Delete user record
-	if err := database.DB.Delete(&user).Error; err != nil {
+	// Unassign tasks assigned to this user to prevent orphaned data
+	database.DB.Model(&models.Task{}).Where("assignee_id = ?", targetUserID).Update("assignee_id", nil)
+
+	// Permanently hard delete user record from database
+	if err := database.DB.Unscoped().Delete(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menghapus pengguna dari database"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Pengguna berhasil dihapus dari sistem",
+		"message": "Pengguna berhasil dihapus secara permanen dari sistem",
 		"id":      targetUserID,
 	})
 }

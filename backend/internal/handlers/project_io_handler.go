@@ -21,6 +21,18 @@ import (
 	"pulse-backend/internal/models"
 )
 
+// sanitizeCSVField mitigates CSV Formula Injection (OWASP ASVS 5.1.5)
+func sanitizeCSVField(s string) string {
+	if len(s) == 0 {
+		return s
+	}
+	// Characters that can trigger formula execution in spreadsheet software
+	if s[0] == '=' || s[0] == '+' || s[0] == '-' || s[0] == '@' || s[0] == '\t' || s[0] == '\r' {
+		return "'" + s
+	}
+	return s
+}
+
 // ExportProjectsCSV exports all projects accessible to the user as a downloadable CSV file
 func ExportProjectsCSV(c *gin.Context) {
 	userID, role := middleware.GetCurrentUser(c)
@@ -73,19 +85,19 @@ func ExportProjectsCSV(c *gin.Context) {
 	}
 	_ = writer.Write(header)
 
-	// CSV Rows
+	// CSV Rows (sanitized against CSV Formula Injection)
 	for _, p := range projects {
 		row := []string{
-			p.ID,
-			p.Name,
-			p.Slug,
-			p.ClientName,
-			p.Status,
+			sanitizeCSVField(p.ID),
+			sanitizeCSVField(p.Name),
+			sanitizeCSVField(p.Slug),
+			sanitizeCSVField(p.ClientName),
+			sanitizeCSVField(p.Status),
 			strconv.Itoa(p.ProgressPercentage),
-			p.Deadline,
+			sanitizeCSVField(p.Deadline),
 			strconv.Itoa(p.TotalTasks),
 			strconv.Itoa(p.CompletedTasks),
-			p.ColorDot,
+			sanitizeCSVField(p.ColorDot),
 			p.CreatedAt.Format("2006-01-02 15:04:05"),
 		}
 		_ = writer.Write(row)
@@ -154,17 +166,17 @@ func ExportTasksCSV(c *gin.Context) {
 			projName = t.ProjectID
 		}
 		row := []string{
-			t.ID,
-			t.ProjectID,
-			projName,
-			t.Key,
-			t.Title,
-			t.Category,
-			t.Priority,
-			t.Status,
-			t.AssigneeID,
-			t.DueDate,
-			t.Description,
+			sanitizeCSVField(t.ID),
+			sanitizeCSVField(t.ProjectID),
+			sanitizeCSVField(projName),
+			sanitizeCSVField(t.Key),
+			sanitizeCSVField(t.Title),
+			sanitizeCSVField(t.Category),
+			sanitizeCSVField(t.Priority),
+			sanitizeCSVField(t.Status),
+			sanitizeCSVField(t.AssigneeID),
+			sanitizeCSVField(t.DueDate),
+			sanitizeCSVField(t.Description),
 			t.CreatedAt.Format("2006-01-02 15:04:05"),
 		}
 		_ = writer.Write(row)

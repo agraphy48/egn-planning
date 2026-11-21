@@ -1,7 +1,25 @@
 <template>
   <div class="h-full flex flex-col space-y-3 min-h-0">
-    <!-- Clean Subheader: Active Project Title, Category Chips, and Share Link -->
-    <section class="flex flex-wrap items-center justify-between gap-2 flex-shrink-0">
+    <!-- Empty State: No Project Assigned to Current User -->
+    <div
+      v-if="!store.currentProject"
+      class="flex-1 flex flex-col items-center justify-center p-8 text-center bg-white rounded-3xl border border-slate-200/90 shadow-sm space-y-4 my-auto select-none"
+    >
+      <div class="w-16 h-16 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center shadow-2xs">
+        <FolderKanban class="w-8 h-8" />
+      </div>
+      <div class="max-w-md space-y-2">
+        <h3 class="text-base sm:text-lg font-bold text-slate-900">Belum Ada Proyek yang Ditugaskan</h3>
+        <p class="text-xs text-slate-500 leading-relaxed">
+          Akun Anda saat ini belum memiliki akses ke proyek mana pun. Silakan hubungi Administrator atau Project Lead untuk memberikan hak akses melalui menu <strong>Akses Tim</strong> pada dashboard proyek.
+        </p>
+      </div>
+    </div>
+
+    <!-- Active Project Content -->
+    <template v-else>
+      <!-- Clean Subheader: Active Project Title, Category Chips, and Share Link -->
+      <section class="flex flex-wrap items-center justify-between gap-2 flex-shrink-0">
       <div class="flex items-center space-x-2">
         <h1 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 font-display tracking-tight flex items-center gap-2">
           <span>{{ store.currentProject?.name }}</span>
@@ -9,6 +27,17 @@
             {{ store.filteredTasks.length }} tasks
           </span>
         </h1>
+
+        <!-- Team Access Button for Admin / PM -->
+        <button
+          v-if="canManageProjectMembers"
+          @click="showProjectAccessModal = true"
+          class="flex items-center space-x-1 px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 text-[10px] font-semibold transition-all cursor-pointer border border-zinc-200 dark:border-zinc-700 ml-1.5"
+          title="Kelola hak akses team member ke proyek ini"
+        >
+          <ShieldCheck class="w-3 h-3 text-brand-600" />
+          <span>Akses Tim</span>
+        </button>
       </div>
 
       <div class="flex items-center space-x-2 text-xs">
@@ -301,6 +330,15 @@
         </div>
       </div>
     </div>
+    </template>
+
+    <!-- Project Access Management Modal -->
+    <ProjectAccessModal
+      :is-open="showProjectAccessModal"
+      :project="store.currentProject || null"
+      @close="showProjectAccessModal = false"
+      @updated="store.fetchProjects()"
+    />
   </div>
 </template>
 
@@ -308,14 +346,23 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProjectStore } from '../stores/projectStore'
+import { useAuthStore } from '../stores/authStore'
 import { projectApi } from '../services/api'
 import type { WikiPage } from '../types/project'
 import KanbanBoard from '../components/KanbanBoard.vue'
 import TaskListView from '../components/TaskListView.vue'
-import { Kanban, ListTodo, GitCommit, BookOpen, Flag, Plus, Download } from 'lucide-vue-next'
+import ProjectAccessModal from '../components/ProjectAccessModal.vue'
+import { Kanban, ListTodo, GitCommit, BookOpen, Flag, Plus, Download, ShieldCheck, FolderKanban } from 'lucide-vue-next'
 
 const store = useProjectStore()
+const authStore = useAuthStore()
 const route = useRoute()
+
+const showProjectAccessModal = ref(false)
+
+const canManageProjectMembers = computed(() => {
+  return authStore.hasRole('super_admin') || authStore.hasRole('pm') || authStore.can('project:member:manage')
+})
 
 const isExportingTasks = ref(false)
 

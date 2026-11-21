@@ -16,6 +16,7 @@ type User struct {
 	AvatarURL        string         `gorm:"size:255" json:"avatar_url"`
 	CurrentSessionID string         `gorm:"size:64;index" json:"current_session_id,omitempty"`
 	LastActiveAt     time.Time      `json:"last_active_at"`
+	ProjectIDs       []string       `gorm:"-" json:"project_ids"`
 	CreatedAt        time.Time      `json:"created_at"`
 	UpdatedAt        time.Time      `json:"updated_at"`
 	DeletedAt        gorm.DeletedAt `gorm:"index" json:"-"`

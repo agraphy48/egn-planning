@@ -77,7 +77,9 @@ function startBackend() {
     env: {
       ...process.env,
       PORT: String(BACKEND_PORT),
-      DB_PATH: 'pulse.db'
+      DB_PATH: 'pulse.db',
+      GIN_MODE: 'release',
+      APP_ENV: 'production'
     },
     stdio: ['ignore', 'pipe', 'pipe']
   });
@@ -131,8 +133,17 @@ function proxyToBackend(req, res) {
   };
 
   const proxyReq = http.request(options, (proxyRes) => {
-    setSecurityHeaders(res);
-    res.writeHead(proxyRes.statusCode, proxyRes.headers);
+    // Clone headers from proxy response and enforce critical security headers
+    const headers = { ...proxyRes.headers };
+    headers['x-content-type-options'] = 'nosniff';
+    headers['x-frame-options'] = 'SAMEORIGIN';
+    headers['strict-transport-security'] = 'max-age=31536000; includeSubDomains';
+    headers['referrer-policy'] = 'strict-origin-when-cross-origin';
+    headers['permissions-policy'] = 'camera=(), microphone=(), geolocation=()';
+    headers['x-xss-protection'] = '1; mode=block';
+    delete headers['x-powered-by'];
+
+    res.writeHead(proxyRes.statusCode, headers);
     proxyRes.pipe(res);
   });
 
@@ -212,7 +223,10 @@ function serveIndexHtml(req, res, indexPath) {
 
 // 6. Main HTTP Server
 const server = http.createServer((req, res) => {
-  const clientIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+  const clientIP = req.headers['cf-connecting-ip'] || 
+                   (req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(',')[0].trim() : null) || 
+                   req.socket.remoteAddress || 
+                   'unknown';
   const isLoginRoute = req.url.startsWith('/api/v1/auth/login');
 
   if (isRateLimited(clientIP, isLoginRoute)) {

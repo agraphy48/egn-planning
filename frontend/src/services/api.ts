@@ -13,7 +13,8 @@ import type {
   TeamWorkload,
   NotificationItem,
   BudgetItem,
-  StatusConfig
+  StatusConfig,
+  ProjectMember
 } from '../types/project'
 import {
   mockProjects,
@@ -400,6 +401,22 @@ export const projectApi = {
     const response = await apiClient.post('/projects/import', { projects })
     return response.data
   },
+
+  // 11. Project Members Access Management
+  async getProjectMembers(projectId: string): Promise<ProjectMember[]> {
+    const response = await apiClient.get<ProjectMember[]>(`/projects/${projectId}/members`)
+    return response.data
+  },
+
+  async addProjectMember(projectId: string, payload: { user_id: string; project_role: string }): Promise<any> {
+    const response = await apiClient.post(`/projects/${projectId}/members`, payload)
+    return response.data
+  },
+
+  async removeProjectMember(projectId: string, userId: string): Promise<any> {
+    const response = await apiClient.delete(`/projects/${projectId}/members/${userId}`)
+    return response.data
+  },
 }
 
 export interface UserPayload {
@@ -408,6 +425,7 @@ export interface UserPayload {
   role: string
   password?: string
   avatar_url?: string
+  project_ids?: string[]
 }
 
 export const userApi = {

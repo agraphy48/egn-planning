@@ -208,10 +208,38 @@
                 ></div>
               </div>
 
-              <!-- Row 3: Metadata Footer -->
-              <div class="mt-2.5 flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-slate-500 font-mono gap-1">
+              <!-- Row 3: Metadata Footer & Actions -->
+              <div class="mt-2.5 flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-slate-500 font-mono gap-1.5 pt-1.5 border-t border-slate-100">
                 <span class="tabular-nums font-medium">{{ proj.completed_tasks }} dari {{ proj.total_tasks }} deliverable selesai</span>
-                <span class="text-slate-400">Tenggat Waktu: {{ proj.deadline }}</span>
+                <div class="flex items-center gap-2">
+                  <span class="text-slate-400">Tenggat: {{ proj.deadline }}</span>
+                  <button
+                    v-if="canManageProjectAccess"
+                    type="button"
+                    @click.stop="openProjectAccessModal(proj)"
+                    class="px-2 py-0.5 rounded-lg bg-white hover:bg-brand-50 border border-slate-200 hover:border-brand-300 text-brand-700 text-[10px] font-bold flex items-center gap-1 shadow-2xs transition-colors cursor-pointer"
+                    title="Kelola hak akses team member ke proyek ini"
+                  >
+                    <ShieldCheck class="w-3 h-3 text-brand-600" />
+                    <span>Akses Tim</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Empty state when user has no projects assigned -->
+            <div
+              v-if="store.projects.length === 0"
+              class="py-10 px-4 text-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 space-y-3"
+            >
+              <div class="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center mx-auto shadow-2xs">
+                <FolderKanban class="w-6 h-6" />
+              </div>
+              <div class="space-y-1 max-w-sm mx-auto">
+                <h4 class="text-xs sm:text-sm font-bold text-slate-800">Belum Ada Proyek yang Ditugaskan</h4>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                  Akun Anda belum didaftarkan sebagai anggota di proyek mana pun oleh Admin/PM. Silakan hubungi Administrator untuk memberikan akses proyek melalui tombol <strong>Akses Tim</strong>.
+                </p>
               </div>
             </div>
           </div>
@@ -448,6 +476,7 @@
                 <tr>
                   <th class="py-3 px-4">Pengguna</th>
                   <th class="py-3 px-4">Peran (Role)</th>
+                  <th class="py-3 px-4">Akses Proyek</th>
                   <th class="py-3 px-4">Status Sesi / Device</th>
                   <th class="py-3 px-4">Terakhir Aktif</th>
                   <th class="py-3 px-4 text-right">Aksi</th>
@@ -496,6 +525,27 @@
                       <Shield class="w-3 h-3" />
                       <span>{{ formatRoleName(u.role) }}</span>
                     </span>
+                  </td>
+
+                  <!-- Project Access Column -->
+                  <td class="py-3 px-4">
+                    <div v-if="u.role === 'super_admin'" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-[10px] font-mono font-bold">
+                      <ShieldCheck class="w-3 h-3" />
+                      <span>Semua Proyek (Global)</span>
+                    </div>
+                    <div v-else-if="u.project_ids && u.project_ids.length > 0" class="space-y-1">
+                      <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-[10px] font-mono font-semibold">
+                        <FolderKanban class="w-3 h-3 text-indigo-600" />
+                        <span>{{ u.project_ids.length }} Proyek</span>
+                      </div>
+                      <div class="text-[10px] text-slate-500 truncate max-w-[200px]" :title="getProjectNames(u.project_ids).join(', ')">
+                        {{ getProjectNames(u.project_ids).join(', ') }}
+                      </div>
+                    </div>
+                    <div v-else class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-mono font-medium">
+                      <AlertCircle class="w-3 h-3" />
+                      <span>0 Proyek (Belum ada)</span>
+                    </div>
                   </td>
 
                   <!-- Session Status Column -->
@@ -556,7 +606,7 @@
                 </tr>
 
                 <tr v-if="filteredUsers.length === 0">
-                  <td colspan="5" class="py-8 text-center text-slate-400">
+                  <td colspan="6" class="py-8 text-center text-slate-400">
                     Tidak ada pengguna yang cocok dengan kriteria pencarian.
                   </td>
                 </tr>
@@ -594,6 +644,22 @@
               <span :class="['px-2 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase border', getRoleBadgeClass(u.role)]">
                 {{ formatRoleName(u.role) }}
               </span>
+            </div>
+
+            <!-- Project Access Badges for Mobile -->
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+              <span class="text-slate-400 font-mono text-[10px]">Akses Proyek:</span>
+              <div v-if="u.role === 'super_admin'" class="text-[10px] font-bold text-rose-700 font-mono">
+                Semua Proyek (Global)
+              </div>
+              <div v-else-if="u.project_ids && u.project_ids.length > 0" class="text-[10px] font-semibold text-indigo-700 flex items-center gap-1 font-mono">
+                <FolderKanban class="w-3 h-3 text-indigo-600" />
+                <span>{{ u.project_ids.length }} Proyek</span>
+              </div>
+              <div v-else class="text-[10px] text-amber-600 font-medium flex items-center gap-1 font-mono">
+                <AlertCircle class="w-3 h-3 text-amber-500" />
+                <span>0 Proyek (Belum ada)</span>
+              </div>
             </div>
 
             <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-500">
@@ -650,7 +716,7 @@
       class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs select-none"
       @click.self="showUserModal = false"
     >
-      <div class="max-w-lg w-full bg-white rounded-3xl border border-slate-200 shadow-2xl p-6 sm:p-7 space-y-5 relative animate-in fade-in zoom-in-95 duration-150">
+      <div class="max-w-xl w-full bg-white rounded-3xl border border-slate-200 shadow-2xl p-6 sm:p-7 space-y-5 relative max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
         <!-- Header -->
         <div class="flex items-center justify-between pb-3 border-b border-slate-100">
           <div class="flex items-center gap-2.5">
@@ -663,11 +729,11 @@
                 {{ isEditingUser ? 'Perbarui Data Pengguna' : 'Tambah Pengguna Baru' }}
               </h3>
               <p class="text-xs text-slate-500">
-                {{ isEditingUser ? 'Ubah informasi profil, peran, atau atur kata sandi baru' : 'Daftarkan pengguna baru ke dalam Pulse Workspace' }}
+                {{ isEditingUser ? 'Ubah informasi profil, peran, kata sandi, dan hak akses proyek' : 'Daftarkan pengguna baru dan berikan hak akses proyek' }}
               </p>
             </div>
           </div>
-          <button @click="showUserModal = false" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100">
+          <button @click="showUserModal = false" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer">
             <X class="w-4 h-4" />
           </button>
         </div>
@@ -731,6 +797,76 @@
                 </div>
                 <p class="text-[10px] text-slate-500 mt-1 leading-snug">{{ r.desc }}</p>
               </label>
+            </div>
+          </div>
+
+          <!-- Project Access Selection (Checkboxes) -->
+          <div class="space-y-2 p-3.5 rounded-2xl bg-gradient-to-br from-slate-50 to-indigo-50/30 border border-slate-200">
+            <div class="flex items-center justify-between flex-wrap gap-1">
+              <div>
+                <label class="font-bold text-slate-800 flex items-center gap-1.5 text-xs">
+                  <FolderKanban class="w-3.5 h-3.5 text-brand-600" />
+                  <span>Hak Akses Proyek (Pilih Proyek)</span>
+                </label>
+                <p class="text-[10px] text-slate-500 mt-0.5">
+                  Centang proyek yang dapat langsung dibuka oleh pengguna ini (dapat diubah kapan saja)
+                </p>
+              </div>
+              <div class="flex items-center gap-1.5 text-[10px]">
+                <button
+                  type="button"
+                  @click="selectAllProjects"
+                  class="font-semibold text-brand-600 hover:text-brand-700 hover:underline cursor-pointer"
+                >
+                  Pilih Semua
+                </button>
+                <span class="text-slate-300">|</span>
+                <button
+                  type="button"
+                  @click="clearAllProjects"
+                  class="font-semibold text-slate-500 hover:text-slate-700 hover:underline cursor-pointer"
+                >
+                  Kosongkan
+                </button>
+              </div>
+            </div>
+
+            <!-- Project Checkbox Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 max-h-48 overflow-y-auto pr-0.5">
+              <label
+                v-for="p in allAvailableProjects"
+                :key="p.id"
+                :class="[
+                  'p-2.5 rounded-xl border cursor-pointer transition-all flex items-center justify-between text-left select-none',
+                  selectedProjectIds.includes(p.id)
+                    ? 'border-brand-500 bg-brand-50/80 ring-1 ring-brand-500/40 text-brand-900 shadow-2xs'
+                    : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'
+                ]"
+              >
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <input
+                    type="checkbox"
+                    :value="p.id"
+                    v-model="selectedProjectIds"
+                    class="rounded text-brand-600 focus:ring-brand-500 border-slate-300 w-3.5 h-3.5 cursor-pointer"
+                  />
+                  <span class="w-2 h-2 rounded-full flex-shrink-0" :style="{ backgroundColor: p.color_dot }"></span>
+                  <div class="truncate">
+                    <div class="font-bold text-xs truncate">{{ p.name }}</div>
+                    <div class="text-[9px] font-mono text-slate-400">{{ p.slug }}</div>
+                  </div>
+                </div>
+                <span
+                  v-if="selectedProjectIds.includes(p.id)"
+                  class="text-[9px] font-bold font-mono px-1.5 py-0.2 rounded-full bg-brand-100 text-brand-700 flex-shrink-0"
+                >
+                  Aktif
+                </span>
+              </label>
+            </div>
+            
+            <div v-if="allAvailableProjects.length === 0" class="text-center py-3 text-slate-400 text-[11px]">
+              Belum ada proyek terdaftar di sistem.
             </div>
           </div>
 
@@ -1033,6 +1169,14 @@
         </div>
       </div>
     </div>
+
+    <!-- ==================== PROJECT ACCESS MANAGEMENT MODAL ==================== -->
+    <ProjectAccessModal
+      :is-open="showProjectAccessModal"
+      :project="selectedProjectForAccess"
+      @close="showProjectAccessModal = false"
+      @updated="store.fetchProjects()"
+    />
   </div>
 </template>
 
@@ -1042,8 +1186,9 @@ import { useProjectStore } from '../stores/projectStore'
 import { useAuthStore } from '../stores/authStore'
 import { useRouter, useRoute } from 'vue-router'
 import { projectApi, userApi, type UserPayload } from '../services/api'
-import type { TeamWorkload, BudgetItem, User } from '../types/project'
+import type { TeamWorkload, BudgetItem, User, Project } from '../types/project'
 import KPIStats from '../components/KPIStats.vue'
+import ProjectAccessModal from '../components/ProjectAccessModal.vue'
 import {
   Clock,
   Download,
@@ -1053,6 +1198,7 @@ import {
   Search,
   RefreshCw,
   Shield,
+  ShieldCheck,
   Edit,
   Trash2,
   ZapOff,
@@ -1069,7 +1215,8 @@ import {
   FileText,
   CheckCircle2,
   FileUp,
-  ChevronDown
+  ChevronDown,
+  FolderKanban
 } from 'lucide-vue-next'
 
 const store = useProjectStore()
@@ -1087,6 +1234,18 @@ const canManageUsers = computed(() => {
 const canCreateProject = computed(() => {
   return authStore.hasRole('super_admin') || authStore.hasRole('pm') || authStore.can('project:create')
 })
+
+const canManageProjectAccess = computed(() => {
+  return authStore.hasRole('super_admin') || authStore.hasRole('pm') || authStore.can('project:member:manage')
+})
+
+const showProjectAccessModal = ref(false)
+const selectedProjectForAccess = ref<Project | null>(null)
+
+function openProjectAccessModal(project: Project) {
+  selectedProjectForAccess.value = project
+  showProjectAccessModal.value = true
+}
 
 function switchTab(tab: 'overview' | 'users') {
   activeDashboardTab.value = tab
@@ -1182,6 +1341,28 @@ function formatLastActive(dateStr?: string | Date): string {
   })
 }
 
+const allAvailableProjects = computed(() => {
+  return store.projects
+})
+
+const selectedProjectIds = ref<string[]>([])
+
+function selectAllProjects() {
+  selectedProjectIds.value = allAvailableProjects.value.map(p => p.id)
+}
+
+function clearAllProjects() {
+  selectedProjectIds.value = []
+}
+
+function getProjectNames(projectIds?: string[]): string[] {
+  if (!projectIds || projectIds.length === 0) return []
+  return projectIds.map(id => {
+    const p = store.projects.find(proj => proj.id === id)
+    return p ? p.name : id
+  })
+}
+
 function generateRandomAvatar() {
   const seed = userForm.value.name.trim() || `user_${Date.now()}`
   userForm.value.avatar_url = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(seed)}`
@@ -1192,6 +1373,7 @@ function openCreateUserModal() {
   editingUserId.value = null
   modalErrorMessage.value = ''
   showModalPassword.value = false
+  selectedProjectIds.value = []
   userForm.value = {
     name: '',
     email: '',
@@ -1207,6 +1389,7 @@ function openEditUserModal(user: User) {
   editingUserId.value = user.id
   modalErrorMessage.value = ''
   showModalPassword.value = false
+  selectedProjectIds.value = user.project_ids ? [...user.project_ids] : []
   userForm.value = {
     name: user.name,
     email: user.email,
@@ -1226,24 +1409,29 @@ async function submitUserForm() {
         name: userForm.value.name,
         email: userForm.value.email,
         role: userForm.value.role,
-        avatar_url: userForm.value.avatar_url
+        avatar_url: userForm.value.avatar_url,
+        project_ids: selectedProjectIds.value
       }
       if (userForm.value.password) {
         payload.password = userForm.value.password
       }
       await userApi.updateUser(editingUserId.value, payload)
-      store.showToast(`Data pengguna ${userForm.value.name} berhasil diperbarui`)
+      store.showToast(`Data pengguna ${userForm.value.name} dan hak akses proyek berhasil diperbarui`)
     } else {
       if (!userForm.value.password || userForm.value.password.length < 6) {
         modalErrorMessage.value = 'Kata sandi wajib diisi minimal 6 karakter'
         isSubmittingUser.value = false
         return
       }
-      await userApi.createUser(userForm.value)
-      store.showToast(`Pengguna baru ${userForm.value.name} berhasil dibuat`)
+      await userApi.createUser({
+        ...userForm.value,
+        project_ids: selectedProjectIds.value
+      })
+      store.showToast(`Pengguna baru ${userForm.value.name} berhasil dibuat dengan akses proyek`)
     }
     showUserModal.value = false
     await loadUsers()
+    await store.fetchProjects()
   } catch (err: any) {
     modalErrorMessage.value = err?.response?.data?.error || err.message || 'Terjadi kesalahan saat menyimpan data'
   } finally {

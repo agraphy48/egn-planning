@@ -234,6 +234,14 @@
                 {{ project.progress_percentage }}%
               </span>
             </button>
+
+            <!-- Empty state when user has no projects assigned -->
+            <div
+              v-if="store.projects.length === 0 && (!store.isSidebarCollapsed || isMobile)"
+              class="px-2.5 py-2 text-[10px] text-slate-400 font-mono italic rounded-xl bg-slate-50 border border-slate-200/70 text-center"
+            >
+              Belum ada proyek ditugaskan
+            </div>
           </div>
         </div>
 
@@ -303,13 +311,22 @@
             </div>
           </div>
         </div>
-        <button
-          @click="logoutUser"
-          class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors flex-shrink-0"
-          title="Keluar (Logout)"
-        >
-          <LogOut class="w-3.5 h-3.5" />
-        </button>
+        <div class="flex items-center gap-1 flex-shrink-0">
+          <button
+            @click="openChangePassword"
+            class="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"
+            title="Ganti Kata Sandi"
+          >
+            <KeyRound class="w-3.5 h-3.5" />
+          </button>
+          <button
+            @click="logoutUser"
+            class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+            title="Keluar (Logout)"
+          >
+            <LogOut class="w-3.5 h-3.5" />
+          </button>
+        </div>
       </div>
 
       <!-- Collapse Toggle Button Row (Desktop only) -->
@@ -352,6 +369,7 @@ import {
   PanelLeftClose,
   PanelLeft,
   LogOut,
+  KeyRound,
   X
 } from 'lucide-vue-next'
 
@@ -400,6 +418,11 @@ function handleTeamClick() {
 function handleSettingsClick() {
   store.showToast('Pengaturan Workspace')
   closeSidebar()
+}
+
+function openChangePassword() {
+  closeSidebar()
+  authStore.isChangePasswordModalOpen = true
 }
 
 async function logoutUser() {

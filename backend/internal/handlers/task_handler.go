@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -367,10 +368,30 @@ func UploadAttachment(c *gin.Context) {
 	}
 	defer file.Close()
 
+	// 1. Strict File Size Validation (Max 10 MB)
+	const maxFileSize = 10 * 1024 * 1024 // 10 MB
+	if header.Size > maxFileSize {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Ukuran file melebihi batas maksimum 10 MB"})
+		return
+	}
+
+	// 2. Strict Extension Whitelist (OWASP ASVS 12.1.1 - Insecure File Upload Prevention)
+	ext := strings.ToLower(filepath.Ext(header.Filename))
+	allowedExtensions := map[string]bool{
+		".png": true, ".jpg": true, ".jpeg": true, ".gif": true, ".webp": true,
+		".pdf": true, ".doc": true, ".docx": true, ".xls": true, ".xlsx": true,
+		".csv": true, ".txt": true, ".zip": true,
+	}
+	if !allowedExtensions[ext] {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Tipe file tidak diizinkan. Format yang didukung: Dokumen (PDF, Word, Excel, CSV, TXT), Gambar (PNG, JPG, WEBP), atau Arsip ZIP."})
+		return
+	}
+
+	cleanFileName := filepath.Base(filepath.Clean(header.Filename))
+
 	uploadDir := filepath.Join(".", "uploads")
 	_ = os.MkdirAll(uploadDir, os.ModePerm)
 
-	ext := filepath.Ext(header.Filename)
 	safeFileName := fmt.Sprintf("%s_%d%s", uuid.New().String()[:8], time.Now().Unix(), ext)
 	dstPath := filepath.Join(uploadDir, safeFileName)
 
@@ -394,7 +415,7 @@ func UploadAttachment(c *gin.Context) {
 	att := models.Attachment{
 		ID:         "att_" + uuid.New().String()[:8],
 		TaskID:     taskID,
-		FileName:   header.Filename,
+		FileName:   cleanFileName,
 		FileSize:   sizeMB,
 		FileType:   ext,
 		FileURL:    "/uploads/" + safeFileName,

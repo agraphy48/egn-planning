@@ -11,9 +11,19 @@ export interface User {
   last_active_at?: string | Date
   created_at?: string | Date
   updated_at?: string | Date
+  project_ids?: string[]
 }
 
 export type ProjectStatus = 'active' | 'completed' | 'on_hold' | 'archived'
+
+export interface ProjectMember {
+  id?: number
+  project_id: string
+  user_id: string
+  project_role: 'pm' | 'member' | 'client' | string
+  joined_at?: string
+  user?: User
+}
 
 export interface Project {
   id: string
@@ -27,6 +37,7 @@ export interface Project {
   total_tasks: number
   completed_tasks: number
   created_at: string
+  members?: ProjectMember[]
 }
 
 export type MilestoneStatus = 'pending' | 'in_review' | 'approved' | 'revision' | 'rejected'

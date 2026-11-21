@@ -276,6 +276,20 @@
             </div>
           </div>
 
+          <!-- Account Security / Change Password Action -->
+          <div class="pt-2 border-t border-slate-200">
+            <button
+              @click="openChangePasswordModal"
+              class="w-full py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 hover:bg-brand-50/80 hover:text-brand-700 hover:border-brand-200 border border-slate-200/90 transition-all flex items-center justify-between cursor-pointer group shadow-2xs"
+            >
+              <div class="flex items-center gap-2">
+                <KeyRound class="w-3.5 h-3.5 text-brand-600 group-hover:scale-110 transition-transform" />
+                <span>Ganti Kata Sandi</span>
+              </div>
+              <ChevronRight class="w-3.5 h-3.5 text-slate-300 group-hover:text-brand-500 transition-colors" />
+            </button>
+          </div>
+
           <!-- Sign Out & Login Page Actions -->
           <div class="pt-2 border-t border-slate-200 flex items-center justify-between gap-2">
             <button
@@ -322,7 +336,8 @@ import {
   Plus,
   Bell,
   LogOut,
-  LogIn
+  LogIn,
+  KeyRound
 } from 'lucide-vue-next'
 
 const store = useProjectStore()
@@ -414,6 +429,11 @@ async function switchAccount(key: string) {
   showUserMenu.value = false
   const user = await authStore.switchUser(key)
   store.showToast(`Berhasil beralih ke: ${user.name} (${user.role.toUpperCase()})`)
+}
+
+function openChangePasswordModal() {
+  showUserMenu.value = false
+  authStore.isChangePasswordModalOpen = true
 }
 
 function goToLoginPage() {

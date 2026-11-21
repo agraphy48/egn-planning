@@ -99,6 +99,9 @@
     <!-- Command Palette (Cmd+K) -->
     <CommandPalette />
 
+    <!-- Change Password Modal -->
+    <ChangePasswordModal />
+
     <!-- Global Toast Notification Banner -->
     <Transition name="toast">
       <div
@@ -121,6 +124,7 @@ import Topbar from '../components/Topbar.vue'
 import TaskDetailDrawer from '../components/TaskDetailDrawer.vue'
 import NewTaskModal from '../components/NewTaskModal.vue'
 import CommandPalette from '../components/CommandPalette.vue'
+import ChangePasswordModal from '../components/ChangePasswordModal.vue'
 import {
   LayoutDashboard,
   FolderKanban,

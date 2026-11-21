@@ -172,6 +172,7 @@ export const useAuthStore = defineStore('auth', {
       isLoading: false,
       isLoggingOut: false,
       allowQuickLogin: false,
+      isChangePasswordModalOpen: false,
       useMock: USE_MOCK,
     }
   },
@@ -336,6 +337,16 @@ export const useAuthStore = defineStore('auth', {
           }
         } catch (_) {}
       }
+    },
+
+    // Change user password action
+    async changePassword(currentPassword: string, newPassword: string, confirmPassword: string) {
+      const response = await apiClient.post('/auth/change-password', {
+        current_password: currentPassword,
+        new_password: newPassword,
+        confirm_password: confirmPassword,
+      })
+      return response.data
     },
 
     // Force logout triggered on 401 Unauthorized or multi-tab sync

@@ -111,6 +111,7 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useProjectStore } from '../stores/projectStore'
+import { useAuthStore } from '../stores/authStore'
 import {
   Search,
   PlusCircle,
@@ -119,6 +120,7 @@ import {
   ListTodo,
   GitCommit,
   ShieldCheck,
+  KeyRound,
   Moon
 } from 'lucide-vue-next'
 
@@ -204,6 +206,17 @@ const quickCommands = [
     shortcut: 'G C',
     action: () => {
       goTo('/client-portal')
+    }
+  },
+  {
+    id: 'change-password',
+    label: 'Ganti Kata Sandi (Change Password)',
+    icon: KeyRound,
+    shortcut: 'G P',
+    action: () => {
+      store.isCommandPaletteOpen = false
+      const authStore = useAuthStore()
+      authStore.isChangePasswordModalOpen = true
     }
   },
   {
