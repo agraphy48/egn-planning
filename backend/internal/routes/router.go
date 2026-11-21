@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -15,22 +16,41 @@ import (
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
-	// CORS configuration for Vue 3 frontend integration
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:4173", "http://localhost:3000"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+	// Static file serving for uploaded task assets
+	r.Static("/uploads", "./uploads")
+
+	// CORS configuration for Vue 3 frontend integration and Cloudflare Tunnel
+	corsConfig := cors.Config{
+		AllowOrigins: []string{
+			"http://localhost:5173",
+			"http://localhost:4173",
+			"http://localhost:3000",
+			"http://localhost:5080",
+			"https://project.kedukanaksara.com",
+			"http://project.kedukanaksara.com",
+		},
+		AllowOriginFunc: func(origin string) bool {
+			if strings.HasSuffix(origin, "kedukanaksara.com") ||
+				strings.Contains(origin, "localhost") ||
+				strings.Contains(origin, "127.0.0.1") {
+				return true
+			}
+			return false
+		},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
-	}))
+	}
+	r.Use(cors.New(corsConfig))
 
 	// Health Check
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"status": "online",
 			"time":   time.Now().Format(time.RFC3339),
-			"system": "Pulse Backend RBAC v1.4.0",
+			"system": "Pulse Backend RBAC v1.5.0",
 		})
 	})
 
@@ -40,6 +60,8 @@ func SetupRouter() *gin.Engine {
 		authGroup := api.Group("/auth")
 		{
 			authGroup.POST("/login", handlers.Login)
+			authGroup.POST("/logout", handlers.Logout)
+			authGroup.GET("/config", handlers.GetAuthConfig)
 		}
 
 		// 2. Protected Routes (Requires valid JWT Bearer Token)
@@ -48,12 +70,42 @@ func SetupRouter() *gin.Engine {
 		{
 			// Current user profile + role + permissions
 			protected.GET("/auth/me", handlers.GetMe)
+			protected.GET("/auth/heartbeat", handlers.Heartbeat)
 
-			// User Management (Admin & Global role updates)
+			// Real-time Executive Dashboard KPIs & Activity Feed
+			dashboardGroup := protected.Group("/dashboard")
+			{
+				dashboardGroup.GET("/kpis", handlers.GetKPIStats)
+				dashboardGroup.GET("/activity", handlers.GetActivityFeed)
+			}
+
+			// In-App Notifications
+			notifGroup := protected.Group("/notifications")
+			{
+				notifGroup.GET("", handlers.ListNotifications)
+				notifGroup.PATCH("/:id/read", handlers.MarkNotificationRead)
+				notifGroup.POST("/read-all", handlers.MarkAllNotificationsRead)
+			}
+
+			// Timesheets & Team Workload
+			timeGroup := protected.Group("/timesheets")
+			{
+				timeGroup.POST("", handlers.LogTime)
+				timeGroup.GET("", handlers.ListTimeEntries)
+				timeGroup.GET("/workload", handlers.GetTeamWorkload)
+			}
+
+			// User Management (Admin CRUD & Global role updates)
 			usersGroup := protected.Group("/users")
 			{
 				usersGroup.GET("", middleware.RequirePermission(auth.PermUserManage), handlers.ListUsers)
+				usersGroup.GET("/:id", middleware.RequirePermission(auth.PermUserManage), handlers.GetUser)
+				usersGroup.POST("", middleware.RequirePermission(auth.PermUserManage), handlers.CreateUser)
+				usersGroup.PATCH("/:id", middleware.RequirePermission(auth.PermUserManage), handlers.UpdateUser)
+				usersGroup.PUT("/:id", middleware.RequirePermission(auth.PermUserManage), handlers.UpdateUser)
+				usersGroup.DELETE("/:id", middleware.RequirePermission(auth.PermUserManage), handlers.DeleteUser)
 				usersGroup.PATCH("/:id/role", middleware.RequireRole(auth.RoleSuperAdmin), handlers.UpdateUserRole)
+				usersGroup.POST("/:id/reset-session", middleware.RequirePermission(auth.PermUserManage), handlers.ResetUserSession)
 			}
 
 			// Projects Management
@@ -77,6 +129,23 @@ func SetupRouter() *gin.Engine {
 						membersGroup.POST("", middleware.RequirePermission(auth.PermProjectMemberManage), handlers.AddProjectMember)
 						membersGroup.DELETE("/:user_id", middleware.RequirePermission(auth.PermProjectMemberManage), handlers.RemoveProjectMember)
 					}
+
+					// Project Wiki / Knowledge Base
+					wikiGroup := projectScoped.Group("/wiki")
+					{
+						wikiGroup.GET("", handlers.ListWikiPages)
+						wikiGroup.POST("", middleware.RequirePermission(auth.PermProjectEdit), handlers.CreateWikiPage)
+						wikiGroup.GET("/:page_id", handlers.GetWikiPage)
+						wikiGroup.PATCH("/:page_id", middleware.RequirePermission(auth.PermProjectEdit), handlers.UpdateWikiPage)
+						wikiGroup.DELETE("/:page_id", middleware.RequirePermission(auth.PermProjectEdit), handlers.DeleteWikiPage)
+					}
+
+					// Project Budgets & Financials
+					budgetGroup := projectScoped.Group("/budgets")
+					{
+						budgetGroup.GET("", handlers.GetProjectBudgets)
+						budgetGroup.POST("", middleware.RequirePermission(auth.PermProjectEdit), handlers.CreateBudgetItem)
+					}
 				}
 			}
 
@@ -94,13 +163,20 @@ func SetupRouter() *gin.Engine {
 				tasksGroup.POST("/:id/subtasks", middleware.RequirePermission(auth.PermSubtaskManage), handlers.AddSubtask)
 				tasksGroup.PATCH("/:id/subtasks/:sub_id", middleware.RequirePermission(auth.PermSubtaskManage), handlers.ToggleSubtask)
 				tasksGroup.POST("/:id/comments", middleware.RequirePermission(auth.PermCommentCreate), handlers.AddComment)
+
+				// Attachments Upload & Deletion
+				tasksGroup.POST("/:id/attachments", middleware.RequirePermission(auth.PermAttachmentUpload), handlers.UploadAttachment)
+				tasksGroup.DELETE("/attachments/:att_id", middleware.RequirePermission(auth.PermTaskEdit), handlers.DeleteAttachment)
 			}
 
-			// Milestones Management
+			// Milestones Management (Contract Fix: accepts both PATCH and POST for approve/reject)
 			milestonesGroup := protected.Group("/milestones")
 			{
 				milestonesGroup.GET("", handlers.ListMilestones)
 				milestonesGroup.PATCH("/:id/approve", middleware.RequirePermission(auth.PermMilestoneApprove), handlers.ApproveMilestone)
+				milestonesGroup.POST("/:id/approve", middleware.RequirePermission(auth.PermMilestoneApprove), handlers.ApproveMilestone)
+				milestonesGroup.PATCH("/:id/reject", middleware.RequirePermission(auth.PermMilestoneApprove), handlers.RejectMilestone)
+				milestonesGroup.POST("/:id/reject", middleware.RequirePermission(auth.PermMilestoneApprove), handlers.RejectMilestone)
 			}
 		}
 	}

@@ -9,6 +9,7 @@ import (
 	"pulse-backend/internal/database"
 	"pulse-backend/internal/middleware"
 	"pulse-backend/internal/models"
+	"pulse-backend/internal/services"
 )
 
 // ListMilestones returns milestones for a project
@@ -48,13 +49,11 @@ func ApproveMilestone(c *gin.Context) {
 	}
 
 	clientName := req.ClientName
-	if clientName == "" {
-		var user models.User
-		if err := database.DB.Where("id = ?", userID).First(&user).Error; err == nil {
-			clientName = user.Name
-		} else {
-			clientName = "Authorized Client Stakeholder"
-		}
+	var user models.User
+	if err := database.DB.Where("id = ?", userID).First(&user).Error; err == nil && clientName == "" {
+		clientName = user.Name
+	} else if clientName == "" {
+		clientName = "Authorized Client Stakeholder"
 	}
 
 	now := time.Now()
@@ -67,10 +66,56 @@ func ApproveMilestone(c *gin.Context) {
 		return
 	}
 
+	services.LogActivity(milestone.ProjectID, userID, clientName, user.AvatarURL, "approved milestone", milestone.Title, "Status: Approved")
+
 	c.JSON(http.StatusOK, gin.H{
 		"message":     "Milestone approved successfully",
 		"milestone":   milestone,
 		"approved_by": clientName,
 		"approved_at": now,
+	})
+}
+
+type RejectMilestoneRequest struct {
+	ClientName string `json:"client_name"`
+	Reason     string `json:"reason" binding:"required"`
+}
+
+// RejectMilestone requests changes / flags revisions on a milestone
+func RejectMilestone(c *gin.Context) {
+	milestoneID := c.Param("id")
+	userID, _ := middleware.GetCurrentUser(c)
+
+	var req RejectMilestoneRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Revision reason is required"})
+		return
+	}
+
+	var milestone models.Milestone
+	if err := database.DB.Where("id = ?", milestoneID).First(&milestone).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Milestone not found"})
+		return
+	}
+
+	var user models.User
+	clientName := req.ClientName
+	if err := database.DB.Where("id = ?", userID).First(&user).Error; err == nil && clientName == "" {
+		clientName = user.Name
+	}
+
+	milestone.Status = "revision"
+	milestone.FeedbackNotes = req.Reason
+
+	if err := database.DB.Save(&milestone).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update milestone"})
+		return
+	}
+
+	services.LogActivity(milestone.ProjectID, userID, clientName, user.AvatarURL, "requested milestone revision", milestone.Title, "Feedback: "+req.Reason)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":   "Milestone revision requested",
+		"milestone": milestone,
 	})
 }

@@ -2,8 +2,11 @@ package handlers
 
 import (
 	"fmt"
+	"io"
 	"math/rand"
 	"net/http"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -13,9 +16,10 @@ import (
 	"pulse-backend/internal/database"
 	"pulse-backend/internal/middleware"
 	"pulse-backend/internal/models"
+	"pulse-backend/internal/services"
 )
 
-// ListTasks returns tasks for a project, enforcing client privacy visibility rules
+// ListTasks returns tasks for a project, strictly enforcing client privacy visibility rules
 func ListTasks(c *gin.Context) {
 	projectID := c.Query("project_id")
 	if projectID == "" {
@@ -24,14 +28,18 @@ func ListTasks(c *gin.Context) {
 
 	_, role := middleware.GetCurrentUser(c)
 
-	query := database.DB.Preload("Assignee").Preload("Subtasks").Preload("Comments.User")
+	query := database.DB.Preload("Assignee").Preload("Subtasks").Preload("Attachments")
 	if projectID != "" {
 		query = query.Where("project_id = ?", projectID)
 	}
 
-	// Client role restriction: Clients only see client-visible deliverables
+	// CRITICAL SECURITY FIX: Filter both tasks and comments for Client role
 	if role == auth.RoleClient {
-		query = query.Where("client_visible = ?", true)
+		query = query.Where("client_visible = ?", true).
+			Preload("Comments", "client_visible = ?", true).
+			Preload("Comments.User")
+	} else {
+		query = query.Preload("Comments.User")
 	}
 
 	var tasks []models.Task
@@ -43,13 +51,20 @@ func ListTasks(c *gin.Context) {
 	c.JSON(http.StatusOK, tasks)
 }
 
-// GetTask returns a single task
+// GetTask returns a single task with client data isolation
 func GetTask(c *gin.Context) {
 	taskID := c.Param("id")
 	_, role := middleware.GetCurrentUser(c)
 
+	query := database.DB.Preload("Assignee").Preload("Subtasks").Preload("Attachments")
+	if role == auth.RoleClient {
+		query = query.Preload("Comments", "client_visible = ?", true).Preload("Comments.User")
+	} else {
+		query = query.Preload("Comments.User")
+	}
+
 	var task models.Task
-	if err := database.DB.Preload("Assignee").Preload("Subtasks").Preload("Comments.User").Where("id = ?", taskID).First(&task).Error; err != nil {
+	if err := query.Where("id = ?", taskID).First(&task).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Task not found"})
 		return
 	}
@@ -72,11 +87,17 @@ type CreateTaskRequest struct {
 	Status        string `json:"status"`
 	AssigneeID    string `json:"assignee_id"`
 	DueDate       string `json:"due_date"`
+	StartDate     string `json:"start_date"`
+	TimeEstimate  string `json:"time_estimate"`
+	Fase          string `json:"fase"`
+	EpicModul     string `json:"epic_modul"`
+	Deliverable   string `json:"deliverable"`
 	ClientVisible *bool  `json:"client_visible"`
 }
 
 // CreateTask creates a new task
 func CreateTask(c *gin.Context) {
+	userID, _ := middleware.GetCurrentUser(c)
 	var req CreateTaskRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: " + err.Error()})
@@ -115,6 +136,11 @@ func CreateTask(c *gin.Context) {
 		Status:        status,
 		AssigneeID:    req.AssigneeID,
 		DueDate:       req.DueDate,
+		StartDate:     req.StartDate,
+		TimeEstimate:  req.TimeEstimate,
+		Fase:          req.Fase,
+		EpicModul:     req.EpicModul,
+		Deliverable:   req.Deliverable,
 		ClientVisible: clientVisible,
 	}
 
@@ -123,7 +149,12 @@ func CreateTask(c *gin.Context) {
 		return
 	}
 
-	database.DB.Preload("Assignee").Preload("Subtasks").First(&task, "id = ?", task.ID)
+	database.DB.Preload("Assignee").Preload("Subtasks").Preload("Attachments").First(&task, "id = ?", task.ID)
+
+	// Audit Log
+	var author models.User
+	database.DB.Where("id = ?", userID).First(&author)
+	services.LogActivity(req.ProjectID, userID, author.Name, author.AvatarURL, "created task", task.Key+" - "+task.Title, "Status: "+status)
 
 	c.JSON(http.StatusCreated, task)
 }
@@ -135,6 +166,7 @@ type UpdateStatusRequest struct {
 // UpdateTaskStatus moves task between Kanban columns
 func UpdateTaskStatus(c *gin.Context) {
 	taskID := c.Param("id")
+	userID, _ := middleware.GetCurrentUser(c)
 
 	var req UpdateStatusRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -148,11 +180,17 @@ func UpdateTaskStatus(c *gin.Context) {
 		return
 	}
 
+	oldStatus := task.Status
 	task.Status = req.Status
 	if err := database.DB.Save(&task).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update task status"})
 		return
 	}
+
+	// Audit Log
+	var author models.User
+	database.DB.Where("id = ?", userID).First(&author)
+	services.LogActivity(task.ProjectID, userID, author.Name, author.AvatarURL, "moved task", task.Key, fmt.Sprintf("%s -> %s", oldStatus, req.Status))
 
 	c.JSON(http.StatusOK, task)
 }
@@ -160,6 +198,7 @@ func UpdateTaskStatus(c *gin.Context) {
 // UpdateTask updates general task fields
 func UpdateTask(c *gin.Context) {
 	taskID := c.Param("id")
+	userID, _ := middleware.GetCurrentUser(c)
 
 	var task models.Task
 	if err := database.DB.Where("id = ?", taskID).First(&task).Error; err != nil {
@@ -178,17 +217,34 @@ func UpdateTask(c *gin.Context) {
 		return
 	}
 
+	database.DB.Preload("Assignee").Preload("Subtasks").Preload("Comments.User").Preload("Attachments").First(&task, "id = ?", taskID)
+
+	var author models.User
+	database.DB.Where("id = ?", userID).First(&author)
+	services.LogActivity(task.ProjectID, userID, author.Name, author.AvatarURL, "updated task", task.Key, "Task attributes updated")
+
 	c.JSON(http.StatusOK, task)
 }
 
 // DeleteTask removes a task
 func DeleteTask(c *gin.Context) {
 	taskID := c.Param("id")
+	userID, _ := middleware.GetCurrentUser(c)
+
+	var task models.Task
+	if err := database.DB.Where("id = ?", taskID).First(&task).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Task not found"})
+		return
+	}
 
 	if err := database.DB.Where("id = ?", taskID).Delete(&models.Task{}).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete task"})
 		return
 	}
+
+	var author models.User
+	database.DB.Where("id = ?", userID).First(&author)
+	services.LogActivity(task.ProjectID, userID, author.Name, author.AvatarURL, "deleted task", task.Key, task.Title)
 
 	c.JSON(http.StatusOK, gin.H{"message": "Task deleted successfully", "task_id": taskID})
 }
@@ -250,13 +306,14 @@ func ToggleSubtask(c *gin.Context) {
 }
 
 type AddCommentRequest struct {
-	Content string `json:"content" binding:"required"`
+	Content       string `json:"content" binding:"required"`
+	ClientVisible *bool  `json:"client_visible"`
 }
 
-// AddComment posts a new comment on a task
+// AddComment posts a new comment on a task with client visibility isolation
 func AddComment(c *gin.Context) {
 	taskID := c.Param("id")
-	userID, _ := middleware.GetCurrentUser(c)
+	userID, role := middleware.GetCurrentUser(c)
 
 	var req AddCommentRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -264,12 +321,22 @@ func AddComment(c *gin.Context) {
 		return
 	}
 
+	clientVisible := true
+	if req.ClientVisible != nil {
+		clientVisible = *req.ClientVisible
+	}
+	// If a client posts, it's always client visible
+	if role == auth.RoleClient {
+		clientVisible = true
+	}
+
 	comment := models.Comment{
-		ID:        "com_" + uuid.New().String()[:8],
-		TaskID:    taskID,
-		UserID:    userID,
-		Content:   req.Content,
-		CreatedAt: time.Now(),
+		ID:            "com_" + uuid.New().String()[:8],
+		TaskID:        taskID,
+		UserID:        userID,
+		Content:       req.Content,
+		ClientVisible: clientVisible,
+		CreatedAt:     time.Now(),
 	}
 
 	if err := database.DB.Create(&comment).Error; err != nil {
@@ -280,4 +347,83 @@ func AddComment(c *gin.Context) {
 	database.DB.Preload("User").First(&comment, "id = ?", comment.ID)
 
 	c.JSON(http.StatusCreated, comment)
+}
+
+// UploadAttachment uploads a file attachment for a task
+func UploadAttachment(c *gin.Context) {
+	taskID := c.Param("id")
+	userID, _ := middleware.GetCurrentUser(c)
+
+	var task models.Task
+	if err := database.DB.Where("id = ?", taskID).First(&task).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Task not found"})
+		return
+	}
+
+	file, header, err := c.Request.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing file upload: " + err.Error()})
+		return
+	}
+	defer file.Close()
+
+	uploadDir := filepath.Join(".", "uploads")
+	_ = os.MkdirAll(uploadDir, os.ModePerm)
+
+	ext := filepath.Ext(header.Filename)
+	safeFileName := fmt.Sprintf("%s_%d%s", uuid.New().String()[:8], time.Now().Unix(), ext)
+	dstPath := filepath.Join(uploadDir, safeFileName)
+
+	out, err := os.Create(dstPath)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file"})
+		return
+	}
+	defer out.Close()
+
+	if _, err = io.Copy(out, file); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to write file"})
+		return
+	}
+
+	sizeMB := fmt.Sprintf("%.1f MB", float64(header.Size)/(1024*1024))
+	if header.Size < 1024*1024 {
+		sizeMB = fmt.Sprintf("%.0f KB", float64(header.Size)/1024)
+	}
+
+	att := models.Attachment{
+		ID:         "att_" + uuid.New().String()[:8],
+		TaskID:     taskID,
+		FileName:   header.Filename,
+		FileSize:   sizeMB,
+		FileType:   ext,
+		FileURL:    "/uploads/" + safeFileName,
+		UploadedBy: userID,
+		CreatedAt:  time.Now(),
+	}
+
+	if err := database.DB.Create(&att).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to persist attachment"})
+		return
+	}
+
+	var author models.User
+	database.DB.Where("id = ?", userID).First(&author)
+	services.LogActivity(task.ProjectID, userID, author.Name, author.AvatarURL, "uploaded attachment", att.FileName, task.Key)
+
+	c.JSON(http.StatusCreated, att)
+}
+
+// DeleteAttachment removes a file attachment
+func DeleteAttachment(c *gin.Context) {
+	attID := c.Param("att_id")
+
+	var att models.Attachment
+	if err := database.DB.Where("id = ?", attID).First(&att).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Attachment not found"})
+		return
+	}
+
+	database.DB.Delete(&att)
+	c.JSON(http.StatusOK, gin.H{"message": "Attachment deleted", "id": attID})
 }

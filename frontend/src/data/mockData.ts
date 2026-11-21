@@ -11,6 +11,46 @@ export const currentUser: User = {
 
 export const teamMembers: User[] = [
   {
+    "id": "usr_agus",
+    "name": "Agus Setiawan",
+    "email": "agus.setiawan@pulse.workspace",
+    "avatar_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+    "role": "project_manager",
+    "initials": "AS"
+  },
+  {
+    "id": "usr_adi",
+    "name": "Adi Saputra",
+    "email": "adi.saputra@pulse.workspace",
+    "avatar_url": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80",
+    "role": "project_manager",
+    "initials": "AS"
+  },
+  {
+    "id": "usr_yudistira",
+    "name": "Yudistira Sira Permana",
+    "email": "yudistira@pulse.workspace",
+    "avatar_url": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80",
+    "role": "team_member",
+    "initials": "YP"
+  },
+  {
+    "id": "usr_hardianto",
+    "name": "Hardianto",
+    "email": "hardianto@pulse.workspace",
+    "avatar_url": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80",
+    "role": "team_member",
+    "initials": "HD"
+  },
+  {
+    "id": "usr_dedi",
+    "name": "Dedi Irawan",
+    "email": "dedi.irawan@pulse.workspace",
+    "avatar_url": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80",
+    "role": "team_member",
+    "initials": "DI"
+  },
+  {
     "id": "usr_pm",
     "name": "Alex Rivera",
     "email": "alex@pulse.workspace",
@@ -87,8 +127,8 @@ export const teamMembers: User[] = [
 export const mockProjects: Project[] = [
   {
     "id": "proj_sustagri",
-    "name": "SUSTAGRI Platform & CMS Modular",
-    "slug": "sustagri",
+    "name": "SUSTAGRI Fase 1",
+    "slug": "sustagri-fase-1",
     "client_name": "Kementerian Pertanian / Stakeholder Agraria",
     "status": "active",
     "progress_percentage": 52,
@@ -99,9 +139,22 @@ export const mockProjects: Project[] = [
     "created_at": "2026-11-01"
   },
   {
+    "id": "proj_sustagri_f2",
+    "name": "SUSTAGRI Fase 2",
+    "slug": "sustagri-fase-2",
+    "client_name": "Kementerian Pertanian / Stakeholder Agraria",
+    "status": "active",
+    "progress_percentage": 25,
+    "color_dot": "#059669",
+    "deadline": "2027-04-15",
+    "total_tasks": 3,
+    "completed_tasks": 0,
+    "created_at": "2026-11-21"
+  },
+  {
     "id": "proj_smart",
-    "name": "SMART (Repositori Riset & AI Text Mining)",
-    "slug": "smart",
+    "name": "SMART Fase 1",
+    "slug": "smart-fase-1",
     "client_name": "Badan Riset & Inovasi (BRIN) / R&D Institute",
     "status": "active",
     "progress_percentage": 43,
@@ -112,17 +165,17 @@ export const mockProjects: Project[] = [
     "created_at": "2026-11-01"
   },
   {
-    "id": "proj_01",
-    "name": "Mobile App v2.4 (React Native)",
-    "slug": "mobile-app-v2",
-    "client_name": "Nike Tech",
+    "id": "proj_smart_f2",
+    "name": "SMART Fase 2",
+    "slug": "smart-fase-2",
+    "client_name": "Badan Riset & Inovasi (BRIN) / R&D Institute",
     "status": "active",
-    "progress_percentage": 74,
-    "color_dot": "#3B82F6",
-    "deadline": "2026-12-04",
-    "total_tasks": 8,
-    "completed_tasks": 2,
-    "created_at": "2026-10-01"
+    "progress_percentage": 20,
+    "color_dot": "#8B5CF6",
+    "deadline": "2027-05-20",
+    "total_tasks": 3,
+    "completed_tasks": 0,
+    "created_at": "2026-11-21"
   }
 ]
 
@@ -137,7 +190,7 @@ export const mockMilestones: Milestone[] = [
   },
   {
     "id": "ms_sust_f2",
-    "project_id": "proj_sustagri",
+    "project_id": "proj_sustagri_f2",
     "title": "Fase 2: AI Proposal Summarizer, RAG Chatbot & Inkubasi Bisnis",
     "description": "Service AI text summarizer, knowledge base vector RAG, semantic search inovasi, dan portal inkubasi.",
     "due_date": "2027-01-26",
@@ -153,7 +206,7 @@ export const mockMilestones: Milestone[] = [
   },
   {
     "id": "ms_smart_f2",
-    "project_id": "proj_smart",
+    "project_id": "proj_smart_f2",
     "title": "Fase 2: External Reviewer, Evaluasi Mitra, TKR & Laporan Kinerja",
     "description": "Portal penilaian reviewer eksternal, scorecard kinerja mitra, engine kalkulasi TKR, dan pelaporan BAST.",
     "due_date": "2027-01-26",
@@ -1694,7 +1747,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_24",
-    "project_id": "proj_sustagri",
+    "project_id": "proj_sustagri_f2",
     "key": "SUST-F2-01.1",
     "title": "Pengembangan pipeline document ingestion (PDF/DOCX) & prompt engineering untuk ringkasan proposal/jurnal",
     "description": "[SUST-F2-01.1] Modul: 5. AI-Powered Proposal & Journal Summarizer | Deliverable: Service AI Text Generation Summarizer | Role/PIC: AI/ML Engineer\n\nDeliverable: Service AI Text Generation Summarizer\nEstimasi Waktu: 40h\nFase: Fase 2\nEpic: 5. AI-Powered Proposal & Journal Summarizer",
@@ -1749,7 +1802,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_25",
-    "project_id": "proj_sustagri",
+    "project_id": "proj_sustagri_f2",
     "key": "SUST-F2-01.2",
     "title": "Integrasi fitur auto-summary ke halaman Review Proposal (poin utama, metodologi, kebaruan, catatan reviewer)",
     "description": "[SUST-F2-01.2] Modul: 5. AI-Powered Proposal & Journal Summarizer | Deliverable: UI Review Proposal dengan AI Summarizer | Role/PIC: Fullstack Dev\n\nDeliverable: UI Review Proposal dengan AI Summarizer\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 5. AI-Powered Proposal & Journal Summarizer",
@@ -1804,7 +1857,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_26",
-    "project_id": "proj_sustagri",
+    "project_id": "proj_sustagri_f2",
     "key": "SUST-F2-01.3",
     "title": "Evaluasi kualitas ringkasan AI (akurasi, halusinasi, latensi) & UAT bersama tim reviewer",
     "description": "[SUST-F2-01.3] Modul: 5. AI-Powered Proposal & Journal Summarizer | Deliverable: Laporan Evaluasi Akurasi AI Summarizer | Role/PIC: QA Engineer\n\nDeliverable: Laporan Evaluasi Akurasi AI Summarizer\nEstimasi Waktu: 24h\nFase: Fase 2\nEpic: 5. AI-Powered Proposal & Journal Summarizer",
@@ -1859,7 +1912,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_27",
-    "project_id": "proj_sustagri",
+    "project_id": "proj_sustagri_f2",
     "key": "SUST-F2-02.1",
     "title": "Pembangunan Knowledge Base RAG (Retrieval-Augmented Generation) dari konten Sustagri & dokumen pertanian",
     "description": "[SUST-F2-02.1] Modul: 6. Intelligent Chatbot & Consultant (Conversational AI) | Deliverable: Vector DB & RAG Pipeline Sustagri | Role/PIC: AI/ML Engineer\n\nDeliverable: Vector DB & RAG Pipeline Sustagri\nEstimasi Waktu: 48h\nFase: Fase 2\nEpic: 6. Intelligent Chatbot & Consultant (Conversational AI)",
@@ -1914,7 +1967,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_28",
-    "project_id": "proj_sustagri",
+    "project_id": "proj_sustagri_f2",
     "key": "SUST-F2-02.2",
     "title": "Implementasi widget Conversational AI / Konsultan di portal Sustagri (riwayat chat, sitasi sumber, feedback)",
     "description": "[SUST-F2-02.2] Modul: 6. Intelligent Chatbot & Consultant (Conversational AI) | Deliverable: Widget Intelligent Chatbot & Consultant | Role/PIC: Fullstack Dev\n\nDeliverable: Widget Intelligent Chatbot & Consultant\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 6. Intelligent Chatbot & Consultant (Conversational AI)",
@@ -1969,7 +2022,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_29",
-    "project_id": "proj_sustagri",
+    "project_id": "proj_sustagri_f2",
     "key": "SUST-F2-02.3",
     "title": "Pengujian skenario percakapan, guardrail keamanan prompt, & UAT",
     "description": "[SUST-F2-02.3] Modul: 6. Intelligent Chatbot & Consultant (Conversational AI) | Deliverable: Laporan UAT & Guardrail Testing Chatbot | Role/PIC: QA Engineer\n\nDeliverable: Laporan UAT & Guardrail Testing Chatbot\nEstimasi Waktu: 24h\nFase: Fase 2\nEpic: 6. Intelligent Chatbot & Consultant (Conversational AI)",
@@ -2024,7 +2077,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_30",
-    "project_id": "proj_sustagri",
+    "project_id": "proj_sustagri_f2",
     "key": "SUST-F2-03.1",
     "title": "Pengembangan semantic search & AI-generated overview untuk Repositori Inovasi Fertinnovation",
     "description": "[SUST-F2-03.1] Modul: 7. AI-Generated Search Engine Repositori Inovasi | Deliverable: Semantic & Generative Search API | Role/PIC: AI/ML Engineer\n\nDeliverable: Semantic & Generative Search API\nEstimasi Waktu: 48h\nFase: Fase 2\nEpic: 7. AI-Generated Search Engine Repositori Inovasi",
@@ -2079,7 +2132,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_31",
-    "project_id": "proj_sustagri",
+    "project_id": "proj_sustagri_f2",
     "key": "SUST-F2-03.2",
     "title": "Implementasi antarmuka pencarian AI (ringkasan jawaban instan + referensi dokumen inovasi terkait)",
     "description": "[SUST-F2-03.2] Modul: 7. AI-Generated Search Engine Repositori Inovasi | Deliverable: UI AI Search Engine Fertinnovation | Role/PIC: Frontend Dev\n\nDeliverable: UI AI Search Engine Fertinnovation\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 7. AI-Generated Search Engine Repositori Inovasi",
@@ -2134,7 +2187,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_32",
-    "project_id": "proj_sustagri",
+    "project_id": "proj_sustagri_f2",
     "key": "SUST-F2-03.3",
     "title": "Pengujian relevansi hasil pencarian, performa query, & deployment",
     "description": "[SUST-F2-03.3] Modul: 7. AI-Generated Search Engine Repositori Inovasi | Deliverable: Laporan Benchmark Relevansi Search Engine | Role/PIC: QA Engineer\n\nDeliverable: Laporan Benchmark Relevansi Search Engine\nEstimasi Waktu: 24h\nFase: Fase 2\nEpic: 7. AI-Generated Search Engine Repositori Inovasi",
@@ -2189,7 +2242,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_33",
-    "project_id": "proj_sustagri",
+    "project_id": "proj_sustagri_f2",
     "key": "SUST-F2-04.1",
     "title": "Analisis alur bisnis program inkubasi (pendaftaran tim, seleksi, mentoring, milestone, & evaluasi)",
     "description": "[SUST-F2-04.1] Modul: 8. Fitur Inkubasi FertInnovation | Deliverable: Flowchart & Mockup Modul Inkubasi | Role/PIC: UI/UX Designer\n\nDeliverable: Flowchart & Mockup Modul Inkubasi\nEstimasi Waktu: 24h\nFase: Fase 2\nEpic: 8. Fitur Inkubasi FertInnovation",
@@ -2244,7 +2297,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_34",
-    "project_id": "proj_sustagri",
+    "project_id": "proj_sustagri_f2",
     "key": "SUST-F2-04.2",
     "title": "Pengembangan Backend & Database Modul Inkubasi (manajemen cohort, log mentoring, tracking progres)",
     "description": "[SUST-F2-04.2] Modul: 8. Fitur Inkubasi FertInnovation | Deliverable: API & Database Modul Inkubasi | Role/PIC: Backend Dev\n\nDeliverable: API & Database Modul Inkubasi\nEstimasi Waktu: 48h\nFase: Fase 2\nEpic: 8. Fitur Inkubasi FertInnovation",
@@ -2299,7 +2352,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_35",
-    "project_id": "proj_sustagri",
+    "project_id": "proj_sustagri_f2",
     "key": "SUST-F2-04.3",
     "title": "Implementasi Frontend Portal Peserta & Mentor Inkubasi serta pengujian UAT",
     "description": "[SUST-F2-04.3] Modul: 8. Fitur Inkubasi FertInnovation | Deliverable: Modul Inkubasi FertInnovation Live | Role/PIC: Fullstack Dev\n\nDeliverable: Modul Inkubasi FertInnovation Live\nEstimasi Waktu: 40h\nFase: Fase 2\nEpic: 8. Fitur Inkubasi FertInnovation",
@@ -2354,7 +2407,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_36",
-    "project_id": "proj_smart",
+    "project_id": "proj_smart_f2",
     "key": "SMRT-F2-01.1",
     "title": "Pengembangan manajemen akun & hak akses khusus External Reviewer (undang reviewer, NDA, batas akses)",
     "description": "[SMRT-F2-01.1] Modul: 4. Modul External Reviewer | Deliverable: Sistem RBAC & Manajemen External Reviewer | Role/PIC: Backend Dev\n\nDeliverable: Sistem RBAC & Manajemen External Reviewer\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 4. Modul External Reviewer",
@@ -2424,7 +2477,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_37",
-    "project_id": "proj_smart",
+    "project_id": "proj_smart_f2",
     "key": "SMRT-F2-01.2",
     "title": "Pembuatan portal penilaian External Reviewer (assignment proposal, form rubrik penilaian, notifikasi email)",
     "description": "[SMRT-F2-01.2] Modul: 4. Modul External Reviewer | Deliverable: Portal Penilaian External Reviewer | Role/PIC: Fullstack Dev\n\nDeliverable: Portal Penilaian External Reviewer\nEstimasi Waktu: 40h\nFase: Fase 2\nEpic: 4. Modul External Reviewer",
@@ -2479,7 +2532,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_38",
-    "project_id": "proj_smart",
+    "project_id": "proj_smart_f2",
     "key": "SMRT-F2-01.3",
     "title": "Pengujian keamanan akses eksternal (penetration/access check) & UAT",
     "description": "[SMRT-F2-01.3] Modul: 4. Modul External Reviewer | Deliverable: Laporan QA & Security Check Reviewer | Role/PIC: QA Engineer\n\nDeliverable: Laporan QA & Security Check Reviewer\nEstimasi Waktu: 24h\nFase: Fase 2\nEpic: 4. Modul External Reviewer",
@@ -2534,7 +2587,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_39",
-    "project_id": "proj_smart",
+    "project_id": "proj_smart_f2",
     "key": "SMRT-F2-02.1",
     "title": "Pengembangan database profil mitra riset, riwayat kerja sama, & dokumen MoU/PKS",
     "description": "[SMRT-F2-02.1] Modul: 5. Pengelolaan dan Evaluasi Mitra | Deliverable: Modul Master Data & Dokumen Mitra | Role/PIC: Backend Dev\n\nDeliverable: Modul Master Data & Dokumen Mitra\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 5. Pengelolaan dan Evaluasi Mitra",
@@ -2589,7 +2642,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_40",
-    "project_id": "proj_smart",
+    "project_id": "proj_smart_f2",
     "key": "SMRT-F2-02.2",
     "title": "Implementasi fitur penilaian/evaluasi kinerja mitra (scoring KPI, rekap rating, & rekomendasi)",
     "description": "[SMRT-F2-02.2] Modul: 5. Pengelolaan dan Evaluasi Mitra | Deliverable: Fitur Evaluasi & Scorecard Mitra | Role/PIC: Fullstack Dev\n\nDeliverable: Fitur Evaluasi & Scorecard Mitra\nEstimasi Waktu: 40h\nFase: Fase 2\nEpic: 5. Pengelolaan dan Evaluasi Mitra",
@@ -2644,7 +2697,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_41",
-    "project_id": "proj_smart",
+    "project_id": "proj_smart_f2",
     "key": "SMRT-F2-02.3",
     "title": "Pengujian alur evaluasi mitra & validasi laporan rekapitulasi",
     "description": "[SMRT-F2-02.3] Modul: 5. Pengelolaan dan Evaluasi Mitra | Deliverable: Sign-off Modul Pengelolaan Mitra | Role/PIC: QA Engineer\n\nDeliverable: Sign-off Modul Pengelolaan Mitra\nEstimasi Waktu: 16h\nFase: Fase 2\nEpic: 5. Pengelolaan dan Evaluasi Mitra",
@@ -2699,7 +2752,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_42",
-    "project_id": "proj_smart",
+    "project_id": "proj_smart_f2",
     "key": "SMRT-F2-03.1",
     "title": "Pengembangan form pengajuan perubahan data topik eksisting (versioning/diff perubahan & alasan)",
     "description": "[SMRT-F2-03.1] Modul: 6. Update Data Topik Eksisting & Approval Admin | Deliverable: Form Request Update Topik Eksisting | Role/PIC: Fullstack Dev\n\nDeliverable: Form Request Update Topik Eksisting\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 6. Update Data Topik Eksisting & Approval Admin",
@@ -2754,7 +2807,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_43",
-    "project_id": "proj_smart",
+    "project_id": "proj_smart_f2",
     "key": "SMRT-F2-03.2",
     "title": "Implementasi workflow approval admin (approve/reject/revisi, audit trail, & notifikasi otomatis)",
     "description": "[SMRT-F2-03.2] Modul: 6. Update Data Topik Eksisting & Approval Admin | Deliverable: Workflow Approval & Audit Trail Admin | Role/PIC: Backend Dev\n\nDeliverable: Workflow Approval & Audit Trail Admin\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 6. Update Data Topik Eksisting & Approval Admin",
@@ -2809,7 +2862,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_44",
-    "project_id": "proj_smart",
+    "project_id": "proj_smart_f2",
     "key": "SMRT-F2-04.1",
     "title": "Perancangan instrumen & logika kalkulasi Tingkat Kesiapterapan Riset (TKR) beserta bobot indikator",
     "description": "[SMRT-F2-04.1] Modul: 7. Modul Evaluasi TKR | Deliverable: Engine Kalkulasi & Indikator TKR | Role/PIC: Backend Dev\n\nDeliverable: Engine Kalkulasi & Indikator TKR\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 7. Modul Evaluasi TKR",
@@ -2864,7 +2917,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_45",
-    "project_id": "proj_smart",
+    "project_id": "proj_smart_f2",
     "key": "SMRT-F2-04.2",
     "title": "Implementasi UI pengisian evaluasi TKR, visualisasi level TKR, & riwayat progres penilaian",
     "description": "[SMRT-F2-04.2] Modul: 7. Modul Evaluasi TKR | Deliverable: Antarmuka Modul Evaluasi TKR | Role/PIC: Fullstack Dev\n\nDeliverable: Antarmuka Modul Evaluasi TKR\nEstimasi Waktu: 40h\nFase: Fase 2\nEpic: 7. Modul Evaluasi TKR",
@@ -2919,7 +2972,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_46",
-    "project_id": "proj_smart",
+    "project_id": "proj_smart_f2",
     "key": "SMRT-F2-04.3",
     "title": "Validasi rumus perhitungan TKR dengan tim bisnis & UAT",
     "description": "[SMRT-F2-04.3] Modul: 7. Modul Evaluasi TKR | Deliverable: Laporan UAT Modul Evaluasi TKR | Role/PIC: QA Engineer\n\nDeliverable: Laporan UAT Modul Evaluasi TKR\nEstimasi Waktu: 24h\nFase: Fase 2\nEpic: 7. Modul Evaluasi TKR",
@@ -2974,7 +3027,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_47",
-    "project_id": "proj_smart",
+    "project_id": "proj_smart_f2",
     "key": "SMRT-F2-05.1",
     "title": "Perancangan template & form pengajuan Laporan Kinerja SMART (capaian, luaran, realisasi, lampiran)",
     "description": "[SMRT-F2-05.1] Modul: 8. Pengajuan Laporan Kinerja SMART | Deliverable: Skema & Form Pengajuan Laporan Kinerja | Role/PIC: Backend Dev\n\nDeliverable: Skema & Form Pengajuan Laporan Kinerja\nEstimasi Waktu: 32h\nFase: Fase 2\nEpic: 8. Pengajuan Laporan Kinerja SMART",
@@ -3029,7 +3082,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_48",
-    "project_id": "proj_smart",
+    "project_id": "proj_smart_f2",
     "key": "SMRT-F2-05.2",
     "title": "Implementasi alur verifikasi/approval berjenjang & fitur generate/export laporan kinerja (PDF/Excel)",
     "description": "[SMRT-F2-05.2] Modul: 8. Pengajuan Laporan Kinerja SMART | Deliverable: Modul Pengajuan & Export Laporan Kinerja | Role/PIC: Fullstack Dev\n\nDeliverable: Modul Pengajuan & Export Laporan Kinerja\nEstimasi Waktu: 40h\nFase: Fase 2\nEpic: 8. Pengajuan Laporan Kinerja SMART",
@@ -3084,7 +3137,7 @@ export const mockTasks: Task[] = [
   },
   {
     "id": "task_imp_49",
-    "project_id": "proj_smart",
+    "project_id": "proj_smart_f2",
     "key": "SMRT-F2-05.3",
     "title": "End-to-end testing seluruh alur pelaporan kinerja, deployment produksi, & serah terima (BAST)",
     "description": "[SMRT-F2-05.3] Modul: 8. Pengajuan Laporan Kinerja SMART | Deliverable: Dokumen UAT Final & BAST Fase 2 | Role/PIC: DevOps & QA\n\nDeliverable: Dokumen UAT Final & BAST Fase 2\nEstimasi Waktu: 24h\nFase: Fase 2\nEpic: 8. Pengajuan Laporan Kinerja SMART",

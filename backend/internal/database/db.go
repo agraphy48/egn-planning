@@ -12,7 +12,7 @@ import (
 
 var DB *gorm.DB
 
-// InitDB initializes SQLite database and auto-migrates all models
+// InitDB initializes SQLite database and auto-migrates all models non-destructively
 func InitDB(dbPath string) (*gorm.DB, error) {
 	if dbPath == "" {
 		dbPath = "pulse.db"
@@ -25,7 +25,7 @@ func InitDB(dbPath string) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	// AutoMigrate all schemas including project_members pivot table
+	// AutoMigrate all schemas non-destructively preserving existing data
 	err = db.AutoMigrate(
 		&models.User{},
 		&models.Project{},
@@ -34,12 +34,19 @@ func InitDB(dbPath string) (*gorm.DB, error) {
 		&models.Task{},
 		&models.SubTask{},
 		&models.Comment{},
+		&models.Attachment{},
+		&models.ActivityLog{},
+		&models.WikiPage{},
+		&models.TimeEntry{},
+		&models.Notification{},
+		&models.Budget{},
+		&models.RevokedToken{},
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	DB = db
-	log.Println("[Database] Initialized and auto-migrated schemas successfully")
+	log.Println("[Database] Initialized and auto-migrated all enterprise schemas successfully")
 	return db, nil
 }

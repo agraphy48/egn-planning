@@ -1,92 +1,98 @@
 <template>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
     <!-- KPI 1: Active Projects -->
-    <div class="p-4 rounded-xl bg-white dark:bg-[#18181B] border border-[#E4E4E7] dark:border-[#27272A] shadow-subtle hover:shadow-card transition-shadow">
-      <div class="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 mb-2">
-        <span class="font-medium">Active Projects</span>
-        <span class="p-1 rounded bg-brand-50 dark:bg-brand-950/50 text-brand-600 dark:text-brand-400">
+    <div class="p-4 sm:p-5 rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-lg shadow-slate-200/40 hover:shadow-xl hover:border-brand-300 transition-all duration-300 relative overflow-hidden group cursor-pointer">
+      <div class="absolute top-0 left-6 right-6 h-0.5 bg-gradient-to-r from-transparent via-brand-500/40 to-transparent group-hover:via-brand-500 transition-all duration-500"></div>
+      <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+        <span class="font-semibold text-slate-600">Total Proyek Aktif</span>
+        <span class="p-1.5 rounded-xl bg-brand-50 border border-brand-200 text-brand-700 shadow-2xs">
           <FolderKanban class="w-4 h-4" />
         </span>
       </div>
       <div class="flex items-baseline space-x-2">
-        <span class="text-2xl font-bold font-display text-zinc-900 dark:text-white tabular-nums tracking-tight">
-          {{ store.kpiStats?.active_projects || 12 }}
+        <span class="text-2xl sm:text-3xl font-extrabold font-display text-slate-900 tabular-nums tracking-tight">
+          {{ store.kpiStats?.active_projects ?? store.projects.length }}
         </span>
-        <span class="text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center tabular-nums">
-          <TrendingUp class="w-3 h-3 mr-0.5" />
-          {{ store.kpiStats?.active_projects_delta || '+2 this month' }}
+        <span class="text-xs text-emerald-700 font-semibold flex items-center tabular-nums px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200">
+          <TrendingUp class="w-3 h-3 mr-1" />
+          {{ store.kpiStats?.active_projects_delta || '4 Proyek Aktif' }}
         </span>
       </div>
-      <div class="mt-2.5 flex items-center text-[11px] text-zinc-400 font-mono">
-        <span>8 Client</span>
-        <span class="mx-1.5">•</span>
-        <span>4 Internal</span>
+      <div class="mt-3 flex items-center text-[11px] text-slate-400 font-mono">
+        <span>SUSTAGRI (F1/F2)</span>
+        <span class="mx-1.5 text-slate-300">•</span>
+        <span>SMART (F1/F2)</span>
       </div>
     </div>
 
     <!-- KPI 2: Tasks Due This Week -->
-    <div class="p-4 rounded-xl bg-white dark:bg-[#18181B] border border-[#E4E4E7] dark:border-[#27272A] shadow-subtle hover:shadow-card transition-shadow">
-      <div class="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 mb-2">
-        <span class="font-medium">Tasks Due This Week</span>
-        <span class="p-1 rounded bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400">
+    <div class="p-4 sm:p-5 rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-lg shadow-slate-200/40 hover:shadow-xl hover:border-amber-300 transition-all duration-300 relative overflow-hidden group cursor-pointer">
+      <div class="absolute top-0 left-6 right-6 h-0.5 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent group-hover:via-amber-500 transition-all duration-500"></div>
+      <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+        <span class="font-semibold text-slate-600">Tenggat Sprint Ini</span>
+        <span class="p-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 shadow-2xs">
           <CalendarClock class="w-4 h-4" />
         </span>
       </div>
       <div class="flex items-baseline space-x-2">
-        <span class="text-2xl font-bold font-display text-zinc-900 dark:text-white tabular-nums tracking-tight">
-          {{ store.kpiStats?.tasks_due_this_week || 28 }}
+        <span class="text-2xl sm:text-3xl font-extrabold font-display text-slate-900 tabular-nums tracking-tight">
+          {{ store.kpiStats?.tasks_due_this_week ?? 0 }}
         </span>
-        <span class="text-xs text-zinc-500 font-medium font-mono">Across 4 teams</span>
+        <span class="text-xs text-amber-700 font-semibold font-mono px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200">
+          Sprint berjalan
+        </span>
       </div>
-      <div class="mt-2.5 flex items-center text-[11px] text-amber-600 dark:text-amber-400 font-mono">
-        <AlertCircle class="w-3 h-3 mr-1" />
-        <span>9 due in next 48h</span>
+      <div class="mt-3 flex items-center text-[11px] text-amber-700 font-mono">
+        <AlertCircle class="w-3 h-3 mr-1 flex-shrink-0" />
+        <span>Total 49 Deliverable Tasks</span>
       </div>
     </div>
 
     <!-- KPI 3: Overdue Tasks -->
-    <div class="p-4 rounded-xl bg-white dark:bg-[#18181B] border border-[#E4E4E7] dark:border-[#27272A] shadow-subtle hover:shadow-card transition-shadow">
-      <div class="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 mb-2">
-        <span class="font-medium">Overdue Tasks</span>
-        <span class="p-1 rounded bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400">
+    <div class="p-4 sm:p-5 rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-lg shadow-slate-200/40 hover:shadow-xl hover:border-rose-300 transition-all duration-300 relative overflow-hidden group cursor-pointer">
+      <div class="absolute top-0 left-6 right-6 h-0.5 bg-gradient-to-r from-transparent via-rose-500/40 to-transparent group-hover:via-rose-500 transition-all duration-500"></div>
+      <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+        <span class="font-semibold text-slate-600">Tugas Terlambat</span>
+        <span class="p-1.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 shadow-2xs">
           <Flame class="w-4 h-4" />
         </span>
       </div>
       <div class="flex items-baseline space-x-2">
-        <span class="text-2xl font-bold font-display text-rose-600 dark:text-rose-500 tabular-nums tracking-tight">
-          {{ store.kpiStats?.overdue_tasks || 3 }}
+        <span class="text-2xl sm:text-3xl font-extrabold font-display text-rose-600 tabular-nums tracking-tight">
+          {{ store.kpiStats?.overdue_tasks ?? 0 }}
         </span>
-        <span class="text-xs text-rose-500/80 font-medium font-mono tabular-nums">
-          {{ store.kpiStats?.overdue_tasks_delta || '-1 vs yesterday' }}
+        <span class="text-xs text-rose-700 font-semibold font-mono px-2 py-0.5 rounded-full bg-rose-50 border border-rose-200">
+          {{ store.kpiStats?.overdue_tasks_delta || 'Perlu akselerasi' }}
         </span>
       </div>
-      <div class="mt-2.5 flex items-center text-[11px] text-zinc-400 font-mono">
-        <span>Requires immediate triage</span>
+      <div class="mt-3 flex items-center text-[11px] text-slate-400 font-mono">
+        <span>Evaluasi tenggat sprint</span>
       </div>
     </div>
 
     <!-- KPI 4: Overall Velocity & Completion Rate -->
-    <div class="p-4 rounded-xl bg-white dark:bg-[#18181B] border border-[#E4E4E7] dark:border-[#27272A] shadow-subtle hover:shadow-card transition-shadow">
-      <div class="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 mb-2">
-        <span class="font-medium">Overall Sprint Velocity</span>
-        <span class="p-1 rounded bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400">
+    <div class="p-4 sm:p-5 rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-lg shadow-slate-200/40 hover:shadow-xl hover:border-emerald-300 transition-all duration-300 relative overflow-hidden group cursor-pointer">
+      <div class="absolute top-0 left-6 right-6 h-0.5 bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent group-hover:via-emerald-500 transition-all duration-500"></div>
+      <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+        <span class="font-semibold text-slate-600">Kecepatan & Selesai</span>
+        <span class="p-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 shadow-2xs">
           <Gauge class="w-4 h-4" />
         </span>
       </div>
       <div class="flex items-baseline space-x-2">
-        <span class="text-2xl font-bold font-display text-zinc-900 dark:text-white tabular-nums tracking-tight">
-          {{ store.kpiStats?.completion_rate || 88.4 }}%
+        <span class="text-2xl sm:text-3xl font-extrabold font-display text-slate-900 tabular-nums tracking-tight">
+          {{ store.kpiStats?.completion_rate ?? 0 }}%
         </span>
-        <span class="text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center tabular-nums">
-          <TrendingUp class="w-3 h-3 mr-0.5" />
-          {{ store.kpiStats?.completion_rate_delta || '+4.2%' }}
+        <span class="text-xs text-emerald-700 font-semibold font-mono px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 flex items-center tabular-nums">
+          <TrendingUp class="w-3 h-3 mr-1" />
+          {{ store.kpiStats?.completion_rate_delta || 'Tingkat Penyelesaian' }}
         </span>
       </div>
-      <!-- Progress Bar -->
-      <div class="mt-3 w-full bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+      <!-- Progress Bar with subtle shadow -->
+      <div class="mt-3 w-full bg-slate-200/80 h-2 rounded-full overflow-hidden shadow-inner">
         <div
-          class="bg-brand-600 h-full rounded-full transition-all duration-500"
-          :style="{ width: (store.kpiStats?.completion_rate || 88.4) + '%' }"
+          class="bg-gradient-to-r from-emerald-500 to-teal-500 h-full rounded-full transition-all duration-500 shadow-xs"
+          :style="{ width: (store.kpiStats?.completion_rate ?? 0) + '%' }"
         ></div>
       </div>
     </div>

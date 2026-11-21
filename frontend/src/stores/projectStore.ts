@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import type { Project, Task, Milestone, KPIStats, ActivityItem, TaskStatus } from '../types/project'
 import { projectApi } from '../services/api'
-import { currentUser } from '../data/mockData'
 
 export const useProjectStore = defineStore('project', {
   state: () => ({
@@ -21,11 +20,19 @@ export const useProjectStore = defineStore('project', {
     isDrawerOpen: false,
     isDarkMode: false,
     isSidebarCollapsed: false,
+    isMobileSidebarOpen: false,
     isNewTaskModalOpen: false,
     isCommandPaletteOpen: false,
     
-    // User Role switcher (PM / Team Member / Client)
-    currentUser: currentUser,
+    // User Profile state
+    currentUser: {
+      id: '',
+      name: 'Guest User',
+      email: '',
+      role: 'member' as any,
+      avatar_url: '',
+      initials: 'GU',
+    },
     activeRole: 'project_manager' as 'project_manager' | 'team_member' | 'client',
     
     // Loading & Notification states
@@ -290,7 +297,19 @@ export const useProjectStore = defineStore('project', {
     },
 
     toggleSidebar() {
-      this.isSidebarCollapsed = !this.isSidebarCollapsed
+      if (typeof window !== 'undefined' && window.innerWidth < 768) {
+        this.isMobileSidebarOpen = !this.isMobileSidebarOpen
+      } else {
+        this.isSidebarCollapsed = !this.isSidebarCollapsed
+      }
+    },
+
+    toggleMobileSidebar() {
+      this.isMobileSidebarOpen = !this.isMobileSidebarOpen
+    },
+
+    closeMobileSidebar() {
+      this.isMobileSidebarOpen = false
     },
 
     setFilter(filter: string) {
@@ -304,6 +323,26 @@ export const useProjectStore = defineStore('project', {
     switchRole(role: 'project_manager' | 'team_member' | 'client') {
       this.activeRole = role
       this.showToast(`Switched view context to ${role.replace('_', ' ').toUpperCase()}`)
+    },
+
+    resetStore() {
+      this.projects = []
+      this.tasks = []
+      this.milestones = []
+      this.kpiStats = null
+      this.activityFeed = []
+      this.selectedTaskId = null
+      this.isDrawerOpen = false
+      this.isNewTaskModalOpen = false
+      this.isCommandPaletteOpen = false
+      this.currentUser = {
+        id: '',
+        name: 'Guest User',
+        email: '',
+        role: 'member' as any,
+        avatar_url: '',
+        initials: 'GU',
+      }
     },
 
     showToast(message: string) {

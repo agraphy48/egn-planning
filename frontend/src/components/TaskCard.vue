@@ -5,7 +5,7 @@
     @dragend="onDragEnd"
     @click="store.openTaskDetail(task.id)"
     :class="[
-      'task-card group p-3 rounded-xl bg-white dark:bg-[#18181B] border border-[#E4E4E7] dark:border-[#27272A] shadow-card hover:shadow-card-hover transition-all duration-150 relative select-none',
+      'task-card group p-3 rounded-xl bg-white dark:bg-[#18181B] border border-[#E4E4E7] dark:border-[#27272A] shadow-card hover:shadow-card-hover hover-lift active-press transition-all duration-150 relative select-none',
       isDragging ? 'opacity-40 scale-[0.98] border-dashed border-brand-500' : '',
       canMove ? 'cursor-grab active:cursor-grabbing hover:border-zinc-300 dark:hover:border-zinc-700' : 'cursor-pointer hover:border-zinc-300 dark:hover:border-zinc-700',
       task.status === 'Done' ? 'opacity-85' : ''

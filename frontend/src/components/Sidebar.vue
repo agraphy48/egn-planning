@@ -1,63 +1,73 @@
 <template>
   <aside
     :class="[
-      'bg-white dark:bg-[#18181B] border-r border-[#E4E4E7] dark:border-[#27272A] flex flex-col justify-between flex-shrink-0 z-30 transition-all duration-200 ease-in-out select-none',
-      store.isSidebarCollapsed ? 'w-16' : 'w-60'
+      'bg-white/95 backdrop-blur-xl border-r border-slate-200/90 flex flex-col justify-between flex-shrink-0 z-30 transition-all duration-200 ease-in-out select-none shadow-xs',
+      isMobile ? 'w-full h-full' : (store.isSidebarCollapsed ? 'w-16' : 'w-60')
     ]"
   >
     <!-- Top Workspace Section -->
     <div class="flex flex-col flex-1 min-h-0">
       <!-- Workspace Switcher -->
-      <div class="p-2.5 border-b border-[#E4E4E7] dark:border-[#27272A]">
+      <div class="p-2.5 sm:p-3 border-b border-slate-200/80">
         <div
-          v-if="!store.isSidebarCollapsed"
-          class="flex items-center justify-between p-1.5 rounded-lg hover:bg-[#F4F4F5] dark:hover:bg-[#27272A] transition-colors group cursor-pointer"
+          v-if="!store.isSidebarCollapsed || isMobile"
+          class="flex items-center justify-between p-1.5 rounded-xl hover:bg-slate-100/70 transition-colors group cursor-pointer"
         >
           <div class="flex items-center space-x-2.5 min-w-0">
-            <div class="w-6 h-6 rounded-md bg-brand-600 flex items-center justify-center text-white font-display font-bold text-xs shadow-2xs">
+            <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white font-display font-bold text-xs shadow-md shadow-brand-600/20">
               P
             </div>
             <div class="truncate">
-              <div class="text-xs font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
+              <div class="text-xs font-bold tracking-tight text-slate-900 flex items-center gap-1.5">
                 <span class="truncate">Pulse HQ</span>
-                <span class="text-[9px] font-mono px-1 py-0.2 rounded bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 font-medium border border-brand-200/50 dark:border-brand-800/40">PRO</span>
+                <span class="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-brand-50 text-brand-700 font-semibold border border-brand-200">PRO</span>
               </div>
             </div>
           </div>
-          <ChevronsUpDown class="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 flex-shrink-0" />
+          
+          <div class="flex items-center gap-1">
+            <button
+              v-if="isMobile"
+              @click="closeSidebar"
+              class="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
+            >
+              <X class="w-4 h-4" />
+            </button>
+            <ChevronsUpDown v-else class="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 flex-shrink-0" />
+          </div>
         </div>
 
-        <!-- Collapsed Workspace Icon -->
+        <!-- Collapsed Workspace Icon (Desktop only) -->
         <div v-else class="flex justify-center py-0.5">
           <div
             @click="store.toggleSidebar()"
-            class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center text-white font-display font-bold text-xs shadow-2xs cursor-pointer hover:bg-brand-500 transition-colors"
-            title="Pulse HQ Workspace (Click to expand)"
+            class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white font-display font-bold text-xs shadow-sm shadow-brand-600/20 cursor-pointer hover:scale-105 transition-all"
+            title="Pulse HQ Workspace (Klik untuk memperluas)"
           >
             P
           </div>
         </div>
 
-        <!-- Quick Search Bar Trigger (Linear Cmd+K) -->
-        <div class="mt-2">
+        <!-- Quick Search Bar Trigger -->
+        <div class="mt-2.5">
           <button
-            v-if="!store.isSidebarCollapsed"
-            @click="store.isCommandPaletteOpen = true"
-            class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs text-zinc-500 dark:text-zinc-400 bg-[#F4F4F5] dark:bg-[#27272A] hover:bg-zinc-200/70 dark:hover:bg-zinc-700/60 transition-colors"
+            v-if="!store.isSidebarCollapsed || isMobile"
+            @click="openCommandPalette"
+            class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs text-slate-500 bg-slate-100/80 hover:bg-slate-200/70 border border-slate-200/60 transition-colors"
           >
             <div class="flex items-center space-x-2 truncate">
-              <Search class="w-3.5 h-3.5 text-zinc-400" />
-              <span class="text-[11px]">Search or jump...</span>
+              <Search class="w-3.5 h-3.5 text-slate-400" />
+              <span class="text-[11px] text-slate-500">Cari atau navigasi...</span>
             </div>
-            <kbd class="font-mono text-[9px] px-1 py-0.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded text-zinc-500">⌘K</kbd>
+            <kbd class="font-mono text-[9px] px-1.5 py-0.5 bg-white border border-slate-200 rounded-md text-slate-500 shadow-2xs">⌘K</kbd>
           </button>
           <button
             v-else
             @click="store.isCommandPaletteOpen = true"
-            class="w-full flex justify-center p-2 rounded-lg text-zinc-500 hover:bg-[#F4F4F5] dark:hover:bg-[#27272A] transition-colors"
-            title="Search (⌘K)"
+            class="w-full flex justify-center p-2 rounded-xl text-slate-500 hover:bg-slate-100 transition-colors"
+            title="Pencarian Cepat (⌘K)"
           >
-            <Search class="w-4 h-4 text-zinc-400" />
+            <Search class="w-4 h-4 text-slate-400" />
           </button>
         </div>
       </div>
@@ -67,28 +77,28 @@
         <!-- Main Nav -->
         <div>
           <div
-            v-if="!store.isSidebarCollapsed"
-            class="px-2 mb-1.5 text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 font-mono"
+            v-if="!store.isSidebarCollapsed || isMobile"
+            class="px-2 mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono"
           >
-            Core Views
+            Navigasi Utama
           </div>
-          <nav class="space-y-0.5 text-xs font-medium">
+          <nav class="space-y-1 text-xs font-medium">
             <!-- Inbox / Notifications -->
             <button
-              @click="store.showToast('You have 2 unread project updates')"
+              @click="handleInboxClick"
               :class="[
-                'w-full flex items-center rounded-md transition-colors text-zinc-700 dark:text-zinc-300 hover:bg-[#F4F4F5] dark:hover:bg-[#27272A] group',
-                store.isSidebarCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-1.5'
+                'w-full flex items-center rounded-xl transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 group',
+                !isMobile && store.isSidebarCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2'
               ]"
-              :title="store.isSidebarCollapsed ? 'Inbox (2 unread)' : ''"
+              :title="!isMobile && store.isSidebarCollapsed ? 'Inbox (2 update)' : ''"
             >
               <div class="flex items-center space-x-2.5">
-                <Inbox class="w-4 h-4 text-zinc-500 group-hover:text-brand-600 dark:group-hover:text-brand-400" />
-                <span v-if="!store.isSidebarCollapsed">Inbox</span>
+                <Inbox class="w-4 h-4 text-slate-400 group-hover:text-brand-600 transition-colors" />
+                <span v-if="!store.isSidebarCollapsed || isMobile">Inbox</span>
               </div>
               <span
-                v-if="!store.isSidebarCollapsed"
-                class="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 font-semibold"
+                v-if="!store.isSidebarCollapsed || isMobile"
+                class="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-brand-50 text-brand-700 font-semibold border border-brand-200"
               >
                 2
               </span>
@@ -99,20 +109,21 @@
               to="/dashboard"
               v-slot="{ isActive }"
               class="block"
+              @click="closeSidebar"
             >
               <div
                 :class="[
-                  'w-full flex items-center rounded-md transition-colors group',
-                  store.isSidebarCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-1.5',
+                  'w-full flex items-center rounded-xl transition-all group',
+                  !isMobile && store.isSidebarCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2',
                   isActive
-                    ? 'text-brand-600 dark:text-brand-400 bg-brand-50/70 dark:bg-brand-950/40 font-semibold'
-                    : 'text-zinc-700 dark:text-zinc-300 hover:bg-[#F4F4F5] dark:hover:bg-[#27272A]'
+                    ? 'text-brand-700 bg-brand-50/90 border border-brand-200/90 font-bold shadow-2xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
                 ]"
-                :title="store.isSidebarCollapsed ? 'Executive Dashboard' : ''"
+                :title="!isMobile && store.isSidebarCollapsed ? 'Executive Dashboard' : ''"
               >
                 <div class="flex items-center space-x-2.5">
-                  <LayoutDashboard class="w-4 h-4 text-zinc-500 group-hover:text-brand-600 dark:group-hover:text-brand-400" />
-                  <span v-if="!store.isSidebarCollapsed">Dashboard</span>
+                  <LayoutDashboard class="w-4 h-4" :class="isActive ? 'text-brand-600' : 'text-slate-400 group-hover:text-brand-600'" />
+                  <span v-if="!store.isSidebarCollapsed || isMobile">Dashboard</span>
                 </div>
               </div>
             </RouterLink>
@@ -122,24 +133,25 @@
               to="/projects"
               v-slot="{ isActive }"
               class="block"
+              @click="closeSidebar"
             >
               <div
                 :class="[
-                  'w-full flex items-center rounded-md transition-colors group',
-                  store.isSidebarCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-1.5',
+                  'w-full flex items-center rounded-xl transition-all group',
+                  !isMobile && store.isSidebarCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2',
                   isActive
-                    ? 'text-brand-600 dark:text-brand-400 bg-brand-50/70 dark:bg-brand-950/40 font-semibold'
-                    : 'text-zinc-700 dark:text-zinc-300 hover:bg-[#F4F4F5] dark:hover:bg-[#27272A]'
+                    ? 'text-brand-700 bg-brand-50/90 border border-brand-200/90 font-bold shadow-2xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
                 ]"
-                :title="store.isSidebarCollapsed ? 'Project Workspace' : ''"
+                :title="!isMobile && store.isSidebarCollapsed ? 'Project Workspace' : ''"
               >
                 <div class="flex items-center space-x-2.5">
-                  <FolderKanban class="w-4 h-4 text-zinc-500 group-hover:text-brand-600 dark:group-hover:text-brand-400" />
-                  <span v-if="!store.isSidebarCollapsed">Projects</span>
+                  <FolderKanban class="w-4 h-4" :class="isActive ? 'text-brand-600' : 'text-slate-400 group-hover:text-brand-600'" />
+                  <span v-if="!store.isSidebarCollapsed || isMobile">Projects</span>
                 </div>
                 <span
-                  v-if="!store.isSidebarCollapsed"
-                  class="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 tabular-nums"
+                  v-if="!store.isSidebarCollapsed || isMobile"
+                  class="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600 border border-slate-200/70 tabular-nums"
                 >
                   {{ store.tasks.length }}
                 </span>
@@ -151,24 +163,25 @@
               to="/client-portal"
               v-slot="{ isActive }"
               class="block"
+              @click="closeSidebar"
             >
               <div
                 :class="[
-                  'w-full flex items-center rounded-md transition-colors group',
-                  store.isSidebarCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-1.5',
+                  'w-full flex items-center rounded-xl transition-all group',
+                  !isMobile && store.isSidebarCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2',
                   isActive
-                    ? 'text-brand-600 dark:text-brand-400 bg-brand-50/70 dark:bg-brand-950/40 font-semibold'
-                    : 'text-zinc-700 dark:text-zinc-300 hover:bg-[#F4F4F5] dark:hover:bg-[#27272A]'
+                    ? 'text-indigo-700 bg-indigo-50/90 border border-indigo-200/90 font-bold shadow-2xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
                 ]"
-                :title="store.isSidebarCollapsed ? 'Client External Portal' : ''"
+                :title="!isMobile && store.isSidebarCollapsed ? 'Client External Portal' : ''"
               >
                 <div class="flex items-center space-x-2.5">
-                  <ShieldCheck class="w-4 h-4 text-indigo-500 group-hover:text-indigo-600" />
-                  <span v-if="!store.isSidebarCollapsed">Client Portal</span>
+                  <ShieldCheck class="w-4 h-4" :class="isActive ? 'text-indigo-600' : 'text-indigo-500 group-hover:text-indigo-600'" />
+                  <span v-if="!store.isSidebarCollapsed || isMobile">Client Portal</span>
                 </div>
                 <span
-                  v-if="!store.isSidebarCollapsed"
-                  class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-800/40"
+                  v-if="!store.isSidebarCollapsed || isMobile"
+                  class="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-indigo-50 text-indigo-700 font-semibold border border-indigo-200"
                 >
                   Portal
                 </span>
@@ -180,43 +193,43 @@
         <!-- Pinned Active Projects List -->
         <div>
           <div
-            v-if="!store.isSidebarCollapsed"
-            class="px-2 mb-1.5 flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 font-mono"
+            v-if="!store.isSidebarCollapsed || isMobile"
+            class="px-2 mb-1.5 flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono"
           >
-            <span>Projects</span>
+            <span>Daftar Proyek</span>
             <button
-              v-can="'task:create'"
-              @click="store.isNewTaskModalOpen = true"
-              class="hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
-              title="Add task or project"
+              v-can="'project:create'"
+              @click="showNewProjectModal = true"
+              class="hover:text-brand-600 transition-colors p-0.5 rounded"
+              title="Tambah Proyek Baru"
             >
               <Plus class="w-3.5 h-3.5" />
             </button>
           </div>
-          <div class="space-y-0.5 text-xs">
+          <div class="space-y-1 text-xs">
             <button
               v-for="project in store.projects"
               :key="project.id"
               @click="selectProject(project.id)"
               :class="[
-                'w-full flex items-center rounded-md transition-colors group text-left',
-                store.isSidebarCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-1.5',
+                'w-full flex items-center rounded-xl transition-all group text-left',
+                !isMobile && store.isSidebarCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-1.5',
                 store.currentProjectId === project.id
-                  ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white font-medium'
-                  : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100/60 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-white'
+                  ? 'bg-slate-100 text-slate-900 font-bold border border-slate-200/80 shadow-2xs'
+                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
               ]"
-              :title="store.isSidebarCollapsed ? project.name : ''"
+              :title="!isMobile && store.isSidebarCollapsed ? project.name : ''"
             >
               <div class="flex items-center space-x-2 truncate">
                 <span
                   class="w-2 h-2 rounded-full flex-shrink-0"
                   :style="{ backgroundColor: project.color_dot }"
                 ></span>
-                <span v-if="!store.isSidebarCollapsed" class="truncate">{{ project.name }}</span>
+                <span v-if="!store.isSidebarCollapsed || isMobile" class="truncate">{{ project.name }}</span>
               </div>
               <span
-                v-if="!store.isSidebarCollapsed"
-                class="text-[10px] font-mono text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 tabular-nums"
+                v-if="!store.isSidebarCollapsed || isMobile"
+                class="text-[10px] font-mono text-slate-400 group-hover:text-slate-600 tabular-nums"
               >
                 {{ project.progress_percentage }}%
               </span>
@@ -227,37 +240,37 @@
         <!-- Administration (Super Admin / PM only) -->
         <div v-if="canManageTeamOrSettings">
           <div
-            v-if="!store.isSidebarCollapsed"
-            class="px-2 mb-1.5 text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 font-mono"
+            v-if="!store.isSidebarCollapsed || isMobile"
+            class="px-2 mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono"
           >
-            Admin
+            Administrasi
           </div>
-          <nav class="space-y-0.5 text-xs font-medium">
+          <nav class="space-y-1 text-xs font-medium">
             <button
-              @click="store.showToast('Team & Access Permissions (RBAC: ' + authStore.currentRole.toUpperCase() + ')')"
+              @click="handleTeamClick"
               :class="[
-                'w-full flex items-center rounded-md transition-colors text-zinc-700 dark:text-zinc-300 hover:bg-[#F4F4F5] dark:hover:bg-[#27272A] group',
-                store.isSidebarCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-1.5'
+                'w-full flex items-center rounded-xl transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 group',
+                !isMobile && store.isSidebarCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2'
               ]"
-              :title="store.isSidebarCollapsed ? 'Team & Access' : ''"
+              :title="!isMobile && store.isSidebarCollapsed ? 'Team & Access' : ''"
             >
               <div class="flex items-center space-x-2.5">
-                <Users class="w-4 h-4 text-zinc-500 group-hover:text-brand-600 dark:group-hover:text-brand-400" />
-                <span v-if="!store.isSidebarCollapsed">Team & Access</span>
+                <Users class="w-4 h-4 text-slate-400 group-hover:text-brand-600" />
+                <span v-if="!store.isSidebarCollapsed || isMobile">Tim & Hak Akses</span>
               </div>
             </button>
 
             <button
-              @click="store.showToast('Workspace Settings')"
+              @click="handleSettingsClick"
               :class="[
-                'w-full flex items-center rounded-md transition-colors text-zinc-700 dark:text-zinc-300 hover:bg-[#F4F4F5] dark:hover:bg-[#27272A] group',
-                store.isSidebarCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-1.5'
+                'w-full flex items-center rounded-xl transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 group',
+                !isMobile && store.isSidebarCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2'
               ]"
-              :title="store.isSidebarCollapsed ? 'Settings' : ''"
+              :title="!isMobile && store.isSidebarCollapsed ? 'Pengaturan' : ''"
             >
               <div class="flex items-center space-x-2.5">
-                <Settings class="w-4 h-4 text-zinc-500 group-hover:text-brand-600 dark:group-hover:text-brand-400" />
-                <span v-if="!store.isSidebarCollapsed">Settings</span>
+                <Settings class="w-4 h-4 text-slate-400 group-hover:text-brand-600" />
+                <span v-if="!store.isSidebarCollapsed || isMobile">Pengaturan</span>
               </div>
             </button>
           </nav>
@@ -265,64 +278,46 @@
       </div>
     </div>
 
-    <!-- Sidebar Footer (Dev Role Switcher, Theme & Collapse Toggle) -->
-    <div class="p-2 border-t border-[#E4E4E7] dark:border-[#27272A] space-y-1.5">
-      <!-- Dev Role Switcher -->
-      <div v-if="authStore.useMock && !store.isSidebarCollapsed" class="p-1.5 rounded-lg bg-[#F4F4F5] dark:bg-[#27272A] space-y-1">
-        <div class="flex items-center justify-between text-[9px] font-mono text-zinc-400">
-          <span>ROLE</span>
-          <span class="text-brand-600 dark:text-brand-400 font-bold uppercase">{{ authStore.currentRole }}</span>
+    <!-- Sidebar Footer (Active User Card, Theme & Collapse Toggle) -->
+    <div class="p-2 sm:p-2.5 border-t border-slate-200/80 space-y-2 bg-slate-50/50">
+      <!-- Active User Profile Card -->
+      <div
+        v-if="!store.isSidebarCollapsed || isMobile"
+        class="p-2 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-between gap-2"
+      >
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="relative flex-shrink-0">
+            <img
+              :src="authStore.user?.avatar_url || store.currentUser.avatar_url"
+              :alt="authStore.user?.name || store.currentUser.name"
+              class="w-7 h-7 rounded-lg object-cover ring-1 ring-slate-200"
+            />
+            <span class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+          </div>
+          <div class="min-w-0">
+            <div class="text-xs font-bold text-slate-900 truncate leading-tight">
+              {{ authStore.user?.name || store.currentUser.name }}
+            </div>
+            <div class="text-[9px] font-mono text-brand-600 font-semibold uppercase leading-none mt-0.5">
+              {{ authStore.currentRole }}
+            </div>
+          </div>
         </div>
-        <div class="grid grid-cols-4 gap-0.5 text-[9px] font-medium text-center">
-          <button
-            @click="switchRole('super_admin')"
-            :class="authStore.currentRole === 'super_admin' ? 'bg-white dark:bg-zinc-900 text-brand-600 dark:text-brand-400 font-bold shadow-2xs' : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'"
-            class="py-0.5 rounded transition-colors"
-          >
-            Admin
-          </button>
-          <button
-            @click="switchRole('pm')"
-            :class="authStore.currentRole === 'pm' ? 'bg-white dark:bg-zinc-900 text-brand-600 dark:text-brand-400 font-bold shadow-2xs' : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'"
-            class="py-0.5 rounded transition-colors"
-          >
-            PM
-          </button>
-          <button
-            @click="switchRole('member')"
-            :class="authStore.currentRole === 'member' ? 'bg-white dark:bg-zinc-900 text-brand-600 dark:text-brand-400 font-bold shadow-2xs' : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'"
-            class="py-0.5 rounded transition-colors"
-          >
-            Dev
-          </button>
-          <button
-            @click="switchRole('client')"
-            :class="authStore.currentRole === 'client' ? 'bg-white dark:bg-zinc-900 text-brand-600 dark:text-brand-400 font-bold shadow-2xs' : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'"
-            class="py-0.5 rounded transition-colors"
-          >
-            Client
-          </button>
-        </div>
+        <button
+          @click="logoutUser"
+          class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors flex-shrink-0"
+          title="Keluar (Logout)"
+        >
+          <LogOut class="w-3.5 h-3.5" />
+        </button>
       </div>
 
-      <!-- Theme Toggle & Collapse Button Row -->
-      <div class="flex items-center justify-between gap-1">
-        <button
-          @click="store.toggleTheme()"
-          class="flex-1 flex items-center justify-center p-1.5 rounded-md text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-[#F4F4F5] dark:hover:bg-[#27272A] transition-colors"
-          :title="store.isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
-        >
-          <Sun v-if="store.isDarkMode" class="w-4 h-4 text-amber-500" />
-          <Moon v-else class="w-4 h-4 text-zinc-500" />
-          <span v-if="!store.isSidebarCollapsed" class="ml-2 text-xs">
-            {{ store.isDarkMode ? 'Light' : 'Dark' }}
-          </span>
-        </button>
-
+      <!-- Collapse Toggle Button Row (Desktop only) -->
+      <div v-if="!isMobile" class="flex items-center justify-between gap-1">
         <button
           @click="store.toggleSidebar()"
-          class="p-1.5 rounded-md text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-[#F4F4F5] dark:hover:bg-[#27272A] transition-colors"
-          :title="store.isSidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'"
+          class="w-full flex items-center justify-center p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+          :title="store.isSidebarCollapsed ? 'Perluas Sidebar' : 'Ciutkan Sidebar'"
         >
           <PanelLeftClose v-if="!store.isSidebarCollapsed" class="w-4 h-4" />
           <PanelLeft v-else class="w-4 h-4" />
@@ -330,13 +325,20 @@
       </div>
     </div>
   </aside>
+
+  <!-- New Project Modal Dialog -->
+  <NewProjectModal
+    :isOpen="showNewProjectModal"
+    @close="showNewProjectModal = false"
+  />
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useProjectStore } from '../stores/projectStore'
 import { useAuthStore } from '../stores/authStore'
 import { useRouter } from 'vue-router'
+import NewProjectModal from './NewProjectModal.vue'
 import {
   ChevronsUpDown,
   Search,
@@ -347,27 +349,69 @@ import {
   Plus,
   Users,
   Settings,
-  Sun,
-  Moon,
   PanelLeftClose,
-  PanelLeft
+  PanelLeft,
+  LogOut,
+  X
 } from 'lucide-vue-next'
+
+interface Props {
+  isMobile?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  isMobile: false
+})
+
+const emit = defineEmits(['close'])
 
 const store = useProjectStore()
 const authStore = useAuthStore()
 const router = useRouter()
 
+const showNewProjectModal = ref(false)
+
 const canManageTeamOrSettings = computed(() => {
   return authStore.hasRole(['super_admin', 'pm']) || authStore.can('user:manage') || authStore.can('project:member:manage')
 })
 
-function switchRole(role: 'super_admin' | 'pm' | 'member' | 'client') {
-  authStore.switchDevRole(role)
-  store.showToast(`Active role switched to: ${role.toUpperCase()}`)
+function closeSidebar() {
+  if (props.isMobile) {
+    emit('close')
+    store.closeMobileSidebar()
+  }
+}
+
+function openCommandPalette() {
+  store.isCommandPaletteOpen = true
+  closeSidebar()
+}
+
+function handleInboxClick() {
+  store.showToast('Anda memiliki 2 pembaruan tugas proyek')
+  closeSidebar()
+}
+
+function handleTeamClick() {
+  store.showToast('Manajemen Tim & Hak Akses (RBAC: ' + authStore.currentRole.toUpperCase() + ')')
+  closeSidebar()
+}
+
+function handleSettingsClick() {
+  store.showToast('Pengaturan Workspace')
+  closeSidebar()
+}
+
+async function logoutUser() {
+  closeSidebar()
+  await authStore.logout()
+  store.showToast('Anda telah keluar dari akun')
+  router.replace('/login')
 }
 
 function selectProject(projectId: string) {
   store.selectProject(projectId)
-  router.push('/projects')
+  closeSidebar()
+  router.push(`/projects/${projectId}`)
 }
 </script>

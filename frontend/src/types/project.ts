@@ -9,7 +9,7 @@ export interface User {
   initials?: string
 }
 
-export type ProjectStatus = 'active' | 'completed' | 'on_hold'
+export type ProjectStatus = 'active' | 'completed' | 'on_hold' | 'archived'
 
 export interface Project {
   id: string
@@ -25,7 +25,7 @@ export interface Project {
   created_at: string
 }
 
-export type MilestoneStatus = 'pending' | 'in_review' | 'approved'
+export type MilestoneStatus = 'pending' | 'in_review' | 'approved' | 'revision' | 'rejected'
 
 export interface Milestone {
   id: string
@@ -36,6 +36,7 @@ export interface Milestone {
   status: MilestoneStatus
   approved_by?: string
   approved_at?: string
+  feedback_notes?: string
 }
 
 export interface SubTask {
@@ -51,6 +52,7 @@ export interface Comment {
   task_id: string
   user: User
   content: string
+  client_visible?: boolean
   created_at: string
 }
 
@@ -61,7 +63,9 @@ export interface Attachment {
   file_size: string
   file_type: string
   file_url: string
-  uploaded_at: string
+  uploaded_by?: string
+  uploaded_at?: string
+  created_at?: string
 }
 
 export type TaskPriority = 'Urgent' | 'High' | 'Medium' | 'Low'
@@ -97,15 +101,75 @@ export interface KPIStats {
   tasks_due_this_week: number
   overdue_tasks: number
   completion_rate: number
-  active_projects_delta: string
-  overdue_tasks_delta: string
-  completion_rate_delta: string
+  active_projects_delta?: string
+  tasks_due_this_week_delta?: string
+  overdue_tasks_delta?: string
+  completion_rate_delta?: string
+  total_tasks?: number
+  completed_tasks?: number
 }
 
 export interface ActivityItem {
   id: string
-  user: User
+  user: any
+  avatar_url?: string
   action: string
   target: string
-  timestamp: string
+  project?: string
+  time_ago?: string
+  timestamp?: string
+}
+
+export interface WikiPage {
+  id: string
+  project_id: string
+  title: string
+  slug: string
+  content: string
+  author_id?: string
+  author_name: string
+  client_visible: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface TimeEntry {
+  id: string
+  project_id: string
+  task_id?: string
+  user_id: string
+  hours: number
+  description: string
+  date: string
+  created_at: string
+  user?: User
+}
+
+export interface TeamWorkload {
+  user_id: string
+  user_name: string
+  user_avatar?: string
+  total_hours: number
+  tasks_count?: number
+  task_count?: number
+}
+
+export interface NotificationItem {
+  id: string
+  user_id: string
+  title: string
+  message: string
+  type: 'info' | 'success' | 'warning' | 'milestone'
+  link?: string
+  is_read: boolean
+  created_at: string
+}
+
+export interface BudgetItem {
+  id: string
+  project_id: string
+  category: string
+  allocated: number
+  spent: number
+  currency: string
 }

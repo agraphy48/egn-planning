@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"pulse-backend/internal/auth"
 	"pulse-backend/internal/database"
 	"pulse-backend/internal/routes"
 )
@@ -22,8 +23,12 @@ func main() {
 		log.Fatalf("[Pulse] Database initialization failed: %v", err)
 	}
 
+	// Initialize token revocation memory cache from database
+	auth.InitRevocationStore(database.DB)
+
 	// 2. Seed 4 Core Role Accounts, Projects, and Membership Pivots
 	database.SeedDatabase()
+	database.SeedAuxiliaryData()
 
 	// 3. Initialize Router & RBAC Middleware
 	r := routes.SetupRouter()

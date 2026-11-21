@@ -56,13 +56,26 @@
           </div>
         </div>
 
-        <div>
-          <label class="font-semibold text-zinc-700 dark:text-zinc-300">Category Tag</label>
-          <input
-            type="text"
-            v-model="category"
-            class="w-full mt-1 px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none"
-          />
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="font-semibold text-zinc-700 dark:text-zinc-300">Category Tag</label>
+            <input
+              type="text"
+              v-model="category"
+              class="w-full mt-1 px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none"
+            />
+          </div>
+          <div>
+            <label class="font-semibold text-zinc-700 dark:text-zinc-300">Assignee</label>
+            <select
+              v-model="assigneeId"
+              class="w-full mt-1 px-2.5 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none"
+            >
+              <option v-for="member in teamMembers" :key="member.id" :value="member.id">
+                {{ member.name }}
+              </option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -88,6 +101,7 @@
 import { ref } from 'vue'
 import { useProjectStore } from '../stores/projectStore'
 import { useAuthStore } from '../stores/authStore'
+import { teamMembers } from '../data/mockData'
 import type { TaskPriority, TaskStatus } from '../types/project'
 import { X } from 'lucide-vue-next'
 
@@ -98,6 +112,7 @@ const title = ref('')
 const column = ref<TaskStatus>('Backlog')
 const priority = ref<TaskPriority>('High')
 const category = ref('Frontend')
+const assigneeId = ref(teamMembers[0]?.id || 'usr_agus')
 
 function submitTask() {
   if (!authStore.can('task:create')) {
@@ -106,11 +121,13 @@ function submitTask() {
     return
   }
   if (!title.value.trim()) return
+  const selectedAssignee = teamMembers.find(m => m.id === assigneeId.value) || teamMembers[0]
   store.createTask({
     title: title.value.trim(),
     status: column.value,
     priority: priority.value,
     category: category.value || 'General',
+    assignee: selectedAssignee,
   })
   title.value = ''
 }

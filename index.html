@@ -1392,9 +1392,22 @@ Fallback to tenant PIN code when biometric failure count exceeds 3 tries.</texta
                 </select>
               </div>
             </div>
-            <div>
-              <label class="font-semibold text-slate-700 dark:text-slate-300">Category Tag</label>
-              <input type="text" id="newTaskCategory" value="Frontend" class="w-full mt-1 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none">
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="font-semibold text-slate-700 dark:text-slate-300">Category Tag</label>
+                <input type="text" id="newTaskCategory" value="Frontend" class="w-full mt-1 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none">
+              </div>
+              <div>
+                <label class="font-semibold text-slate-700 dark:text-slate-300">Assignee</label>
+                <select id="newTaskAssignee" class="w-full mt-1 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none">
+                  <option value="Agus Setiawan" data-avatar="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80">Agus Setiawan (PM)</option>
+                  <option value="Adi Saputra" data-avatar="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80">Adi Saputra (PM)</option>
+                  <option value="Yudistira Sira Permana" data-avatar="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80">Yudistira Sira Permana</option>
+                  <option value="Hardianto" data-avatar="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80">Hardianto</option>
+                  <option value="Dedi Irawan" data-avatar="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80">Dedi Irawan</option>
+                  <option value="Sarah Connor" data-avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80">Sarah Connor</option>
+                </select>
+              </div>
             </div>
           </div>
           <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100 dark:border-slate-800">
@@ -3377,6 +3390,12 @@ Fallback to tenant PIN code when biometric failure count exceeds 3 tries.</texta
 
       if (!title) return;
 
+      const assigneeSelect = document.getElementById('newTaskAssignee');
+      const assigneeName = assigneeSelect ? assigneeSelect.value : 'Agus Setiawan';
+      const assigneeAvatar = assigneeSelect && assigneeSelect.options[assigneeSelect.selectedIndex] 
+        ? assigneeSelect.options[assigneeSelect.selectedIndex].getAttribute('data-avatar') 
+        : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&auto=format&fit=crop&q=80';
+
       const newId = String(Date.now());
       const newTask = {
         id: newId,
@@ -3385,7 +3404,7 @@ Fallback to tenant PIN code when biometric failure count exceeds 3 tries.</texta
         category: category,
         priority: priority,
         status: col,
-        assignee: { name: 'Sarah Connor', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80' },
+        assignee: { name: assigneeName, avatar: assigneeAvatar },
         dueDate: 'Nov 28',
         subtasks: [],
         commentsCount: 0,
