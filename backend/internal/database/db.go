@@ -42,6 +42,7 @@ func InitDB(dbPath string) (*gorm.DB, error) {
 		&models.Budget{},
 		&models.RevokedToken{},
 		&models.StatusConfig{},
+		&models.Invitation{},
 	)
 	if err != nil {
 		return nil, err

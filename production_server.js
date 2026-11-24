@@ -79,7 +79,8 @@ function startBackend() {
       PORT: String(BACKEND_PORT),
       DB_PATH: 'pulse.db',
       GIN_MODE: 'release',
-      APP_ENV: 'production'
+      APP_ENV: 'production',
+      APP_BASE_URL: process.env.APP_BASE_URL || 'https://project.kedukanaksara.com'
     },
     stdio: ['ignore', 'pipe', 'pipe']
   });
@@ -128,7 +129,8 @@ function proxyToBackend(req, res) {
       ...req.headers,
       host: `127.0.0.1:${BACKEND_PORT}`,
       'x-forwarded-for': req.socket.remoteAddress,
-      'x-forwarded-proto': 'https'
+      'x-forwarded-proto': 'https',
+      'x-forwarded-host': req.headers['host'] || 'project.kedukanaksara.com'
     }
   };
 

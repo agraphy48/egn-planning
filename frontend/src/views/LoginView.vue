@@ -89,6 +89,30 @@
         <span class="flex-1 leading-snug font-medium">{{ noticeInfo.message }}</span>
       </div>
 
+      <!-- Account Confirmed Success Banner -->
+      <div
+        v-if="isConfirmedSuccess && showConfirmedBanner"
+        class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs flex items-start gap-3 animate-slide-up shadow-2xs"
+      >
+        <div class="p-1.5 rounded-xl bg-emerald-100 text-emerald-600 flex-shrink-0 mt-0.5">
+          <CheckCircle2 class="w-4 h-4" />
+        </div>
+        <div class="flex-1 space-y-1">
+          <h4 class="font-bold text-emerald-950">Konfirmasi Akun Berhasil!</h4>
+          <p class="text-[11px] text-emerald-800 leading-relaxed">
+            Akun Anda telah aktif dan kata sandi telah dikirimkan ke kotak masuk email Anda. Silakan masukkan kata sandi Anda di bawah ini untuk masuk.
+          </p>
+        </div>
+        <button
+          type="button"
+          @click="showConfirmedBanner = false"
+          class="text-emerald-700 hover:text-emerald-900 cursor-pointer p-0.5"
+          title="Tutup"
+        >
+          <X class="w-4 h-4" />
+        </button>
+      </div>
+
       <!-- Error Alert Banner -->
       <div
         v-if="errorMessage"
@@ -178,7 +202,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
 import {
@@ -189,6 +213,7 @@ import {
   ArrowRight,
   ShieldCheck,
   AlertCircle,
+  CheckCircle2,
   X,
   Loader2,
   Info,
@@ -205,6 +230,15 @@ const password = ref('')
 const showPassword = ref(false)
 const errorMessage = ref('')
 const isSubmitting = ref(false)
+const showConfirmedBanner = ref(true)
+
+const isConfirmedSuccess = computed(() => route.query.confirmed === 'true')
+
+onMounted(() => {
+  if (route.query.email) {
+    email.value = String(route.query.email).trim()
+  }
+})
 
 // Session notice indicator from route query (styled for white theme)
 const noticeInfo = computed(() => {

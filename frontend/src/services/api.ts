@@ -14,7 +14,8 @@ import type {
   NotificationItem,
   BudgetItem,
   StatusConfig,
-  ProjectMember
+  ProjectMember,
+  InvitationItem
 } from '../types/project'
 import {
   mockProjects,
@@ -132,6 +133,40 @@ export const projectApi = {
       return mockDelay(newProj)
     }
     const response = await apiClient.post<Project>('/projects', projectData)
+    return response.data
+  },
+
+  async updateProject(projectId: string, projectData: Partial<Project>): Promise<Project> {
+    if (USE_MOCK) {
+      const idx = inMemoryProjects.findIndex((p) => p.id === projectId)
+      if (idx !== -1) {
+        inMemoryProjects[idx] = { ...inMemoryProjects[idx], ...projectData }
+        return mockDelay({ ...inMemoryProjects[idx] })
+      }
+    }
+    const response = await apiClient.patch<Project>(`/projects/${projectId}`, projectData)
+    return response.data
+  },
+
+  async deleteProject(projectId: string): Promise<{ message: string; project_id: string }> {
+    if (USE_MOCK) {
+      inMemoryProjects = inMemoryProjects.filter((p) => p.id !== projectId)
+      return mockDelay({ message: 'Project deleted successfully', project_id: projectId })
+    }
+    const response = await apiClient.delete<{ message: string; project_id: string }>(`/projects/${projectId}`)
+    return response.data
+  },
+
+  async copyProject(projectId: string, payload: {
+    name: string
+    client_name?: string
+    deadline?: string
+    color_dot?: string
+    copy_members?: boolean
+    reset_task_status?: boolean
+    copy_wiki?: boolean
+  }): Promise<{ message: string; project: Project; tasks_copied: number }> {
+    const response = await apiClient.post<{ message: string; project: Project; tasks_copied: number }>(`/projects/${projectId}/copy`, payload)
     return response.data
   },
 
@@ -503,6 +538,87 @@ export const statusApi = {
 
   async reorderStatuses(items: { id: string; position: number }[]): Promise<any> {
     const response = await apiClient.post('/statuses/reorder', { items })
+    return response.data
+  }
+}
+
+export interface CreateInvitationPayload {
+  email: string
+  name?: string
+  role: string
+  project_ids: string[]
+}
+
+export interface AcceptInvitationPayload {
+  token: string
+  name: string
+  password: string
+}
+
+export const invitationApi = {
+  async getInvitations(): Promise<InvitationItem[]> {
+    const response = await apiClient.get<InvitationItem[]>('/invitations')
+    return response.data
+  },
+
+  async createInvitation(payload: CreateInvitationPayload): Promise<{ message: string; invitation: InvitationItem; invite_url: string }> {
+    const response = await apiClient.post('/invitations', payload)
+    return response.data
+  },
+
+  async revokeInvitation(id: string): Promise<any> {
+    const response = await apiClient.delete(`/invitations/${id}`)
+    return response.data
+  },
+
+  async resendInvitation(id: string): Promise<{ message: string; invite_url: string }> {
+    const response = await apiClient.post(`/invitations/${id}/resend`)
+    return response.data
+  },
+
+  async verifyInvitation(token: string): Promise<{ valid: boolean; email: string; name?: string; role: string; projects: Project[]; expires_at: string }> {
+    const response = await apiClient.get('/invitations/verify', { params: { token } })
+    return response.data
+  },
+
+  async acceptInvitation(payload: AcceptInvitationPayload): Promise<{ message: string; token: string; user: User; permissions: string[]; redirect_url: string }> {
+    const response = await apiClient.post('/invitations/accept', payload)
+    return response.data
+  },
+
+  async confirmInvitation(token: string): Promise<{
+    success?: boolean
+    status?: string
+    email: string
+    name?: string
+    password?: string
+    role: string
+    projects: string[]
+    message: string
+    login_url: string
+  }> {
+    const response = await apiClient.post('/invitations/confirm', { token })
+    return response.data
+  }
+}
+
+export const systemApi = {
+  async getSMTPStatus(): Promise<{
+    configured: boolean
+    smtp_host: string
+    smtp_port: number
+    smtp_user: string
+    smtp_from: string
+    smtp_secure: boolean
+    has_pass: boolean
+    masked_pass: string
+  }> {
+    const response = await apiClient.get('/system/smtp')
+    return response.data
+  },
+
+  async testSMTP(email: string): Promise<{ message: string }> {
+    const response = await apiClient.post('/system/smtp/test', { email })
     return response.data
   }
 }

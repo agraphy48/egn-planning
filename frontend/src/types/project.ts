@@ -38,6 +38,7 @@ export interface Project {
   completed_tasks: number
   created_at: string
   members?: ProjectMember[]
+  pm_user_id?: string
 }
 
 export type MilestoneStatus = 'pending' | 'in_review' | 'approved' | 'revision' | 'rejected'
@@ -204,4 +205,19 @@ export interface StatusConfig {
   usage_count?: number
   created_at?: string
   updated_at?: string
+}
+
+export interface InvitationItem {
+  id: string
+  email: string
+  name?: string
+  role: 'client' | 'member' | 'pm' | 'super_admin' | string
+  token: string
+  status: 'pending' | 'accepted' | 'revoked' | 'expired'
+  project_ids: string[]
+  invited_by: string
+  inviter_name?: string
+  invite_url?: string
+  expires_at: string
+  created_at: string
 }

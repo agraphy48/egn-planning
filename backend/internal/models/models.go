@@ -227,3 +227,24 @@ type StatusConfig struct {
 	UpdatedAt   time.Time      `json:"updated_at"`
 	DeletedAt   gorm.DeletedAt `gorm:"index" json:"-"`
 }
+
+// Invitation represents an email invitation for a client, member, or PM with pre-assigned projects
+type Invitation struct {
+	ID          string         `gorm:"primaryKey;size:64" json:"id"`
+	Email       string         `gorm:"size:128;index;not null" json:"email"`
+	Name        string         `gorm:"size:128" json:"name"`
+	Role        string         `gorm:"size:32;not null;default:'client'" json:"role"` // client, member, pm
+	Token       string         `gorm:"size:128;uniqueIndex;not null" json:"token"`
+	Status      string         `gorm:"size:32;not null;default:'pending'" json:"status"` // pending, accepted, revoked, expired
+	ProjectIDs  string         `gorm:"type:text" json:"-"` // JSON serialized array of project IDs e.g. ["proj_1", "proj_2"]
+	InvitedBy   string         `gorm:"size:64" json:"invited_by"`
+	ExpiresAt   time.Time      `json:"expires_at"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
+	DeletedAt   gorm.DeletedAt `gorm:"index" json:"-"`
+
+	// Virtual fields for JSON API response
+	ProjectList []string       `gorm:"-" json:"project_ids"`
+	InviterName string         `gorm:"-" json:"inviter_name,omitempty"`
+	InviteURL   string         `gorm:"-" json:"invite_url,omitempty"`
+}

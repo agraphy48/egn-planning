@@ -50,7 +50,8 @@ function startServer() {
     env: {
       ...process.env,
       PORT: '5080',
-      BACKEND_PORT: '5081'
+      BACKEND_PORT: '5081',
+      APP_BASE_URL: 'https://project.kedukanaksara.com'
     },
     windowsHide: true,
   });

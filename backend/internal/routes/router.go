@@ -64,6 +64,11 @@ func SetupRouter() *gin.Engine {
 			authGroup.GET("/config", handlers.GetAuthConfig)
 		}
 
+		// Public Invitation Verification & Acceptance / Auto-Confirmation
+		api.GET("/invitations/verify", handlers.VerifyInvitation)
+		api.POST("/invitations/accept", handlers.AcceptInvitation)
+		api.POST("/invitations/confirm", handlers.ConfirmInvitation)
+
 		// 2. Protected Routes (Requires valid JWT Bearer Token)
 		protected := api.Group("")
 		protected.Use(middleware.AuthMiddleware())
@@ -109,6 +114,22 @@ func SetupRouter() *gin.Engine {
 				usersGroup.POST("/:id/reset-session", middleware.RequirePermission(auth.PermUserManage), handlers.ResetUserSession)
 			}
 
+			// Invitation Management (Admin & PM invite client/user)
+			invitationsGroup := protected.Group("/invitations")
+			{
+				invitationsGroup.POST("", middleware.RequirePermission(auth.PermUserManage), handlers.CreateInvitation)
+				invitationsGroup.GET("", middleware.RequirePermission(auth.PermUserManage), handlers.ListInvitations)
+				invitationsGroup.DELETE("/:id", middleware.RequirePermission(auth.PermUserManage), handlers.RevokeInvitation)
+				invitationsGroup.POST("/:id/resend", middleware.RequirePermission(auth.PermUserManage), handlers.ResendInvitationEmail)
+			}
+
+			// System & SMTP Management
+			systemGroup := protected.Group("/system")
+			{
+				systemGroup.GET("/smtp", middleware.RequirePermission(auth.PermUserManage), handlers.GetSMTPStatusHandler)
+				systemGroup.POST("/smtp/test", middleware.RequireRole(auth.RoleSuperAdmin), handlers.TestSMTPHandler)
+			}
+
 			// Status Management (Workflow CRUD Status)
 			statusesGroup := protected.Group("/statuses")
 			{
@@ -140,6 +161,7 @@ func SetupRouter() *gin.Engine {
 					projectScoped.GET("", handlers.GetProject)
 					projectScoped.PATCH("", middleware.RequirePermission(auth.PermProjectEdit), handlers.UpdateProject)
 					projectScoped.DELETE("", middleware.RequirePermission(auth.PermProjectDelete), handlers.DeleteProject)
+					projectScoped.POST("/copy", middleware.RequirePermission(auth.PermProjectCreate), handlers.CopyProject)
 
 					// Project Members Sub-resource (Super Admin & PM)
 					membersGroup := projectScoped.Group("/members")

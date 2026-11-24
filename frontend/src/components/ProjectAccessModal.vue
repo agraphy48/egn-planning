@@ -146,19 +146,25 @@
                 <div class="min-w-0">
                   <div class="flex items-center gap-1.5 flex-wrap">
                     <span class="text-xs font-bold text-slate-900 truncate">{{ m.user?.name || m.user_id }}</span>
-                    <!-- Project Role Badge -->
-                    <span
+                    <!-- Project Role Selector (Direct 1-Click Update) -->
+                    <select
+                      :value="m.project_role"
+                      @change="handleUpdateRole(m.user_id, ($event.target as HTMLSelectElement).value)"
+                      :disabled="isUpdatingRoleId === m.user_id"
+                      class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border focus:outline-none focus:ring-1 focus:ring-brand-500 cursor-pointer transition-colors"
                       :class="[
-                        'px-2 py-0.2 rounded-full text-[10px] font-mono font-semibold border',
                         m.project_role === 'pm'
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
                           : m.project_role === 'client'
-                          ? 'bg-amber-50 text-amber-700 border-amber-200'
-                          : 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                          ? 'bg-amber-50 text-amber-800 border-amber-300'
+                          : 'bg-indigo-50 text-indigo-800 border-indigo-300'
                       ]"
+                      title="Klik untuk mengubah hak akses anggota di proyek ini"
                     >
-                      {{ m.project_role === 'pm' ? 'Lead (PM)' : m.project_role === 'client' ? 'Client' : 'Member' }}
-                    </span>
+                      <option value="pm">Project Lead (PM)</option>
+                      <option value="member">Team Member</option>
+                      <option value="client">Client / Observer</option>
+                    </select>
                   </div>
                   <div class="text-[11px] text-slate-500 font-mono truncate">{{ m.user?.email || '-' }}</div>
                 </div>
@@ -239,6 +245,7 @@ const newMemberUserId = ref('')
 const newMemberRole = ref('member')
 const isSubmitting = ref(false)
 const isRevokingId = ref<string | null>(null)
+const isUpdatingRoleId = ref<string | null>(null)
 const grantErrorMessage = ref('')
 
 // Compute users who are NOT yet members of this project
@@ -295,6 +302,25 @@ async function handleAddMember() {
     grantErrorMessage.value = err.response?.data?.error || 'Gagal menambahkan anggota ke proyek'
   } finally {
     isSubmitting.value = false
+  }
+}
+
+async function handleUpdateRole(userId: string, newRole: string) {
+  if (!props.project) return
+  isUpdatingRoleId.value = userId
+  try {
+    await projectApi.addProjectMember(props.project.id, {
+      user_id: userId,
+      project_role: newRole
+    })
+    store.showToast('Peran anggota berhasil diperbarui!')
+    await loadData()
+    emit('updated')
+  } catch (err: any) {
+    store.showToast(err.response?.data?.error || 'Gagal mengubah peran anggota')
+    await loadData()
+  } finally {
+    isUpdatingRoleId.value = null
   }
 }
 

@@ -6,11 +6,15 @@ import (
 
 	"pulse-backend/internal/auth"
 	"pulse-backend/internal/database"
+	"pulse-backend/internal/mailer"
 	"pulse-backend/internal/routes"
 )
 
 func main() {
 	log.Println("[Pulse] Starting Project Management RBAC Backend Server...")
+
+	// 0. Load Environment Variables (.env)
+	mailer.LoadEnv()
 
 	// 1. Initialize SQLite Database & Auto-Migrate Schemas
 	dbPath := os.Getenv("DB_PATH")

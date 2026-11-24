@@ -5,6 +5,7 @@ import ProjectWorkspaceView from '../views/ProjectWorkspaceView.vue'
 import ClientPortalView from '../views/ClientPortalView.vue'
 import UnauthorizedView from '../views/UnauthorizedView.vue'
 import LoginView from '../views/LoginView.vue'
+import AcceptInviteView from '../views/AcceptInviteView.vue'
 
 const routes: RouteRecordRaw[] = [
   // 1. Public Entry Point: Root directly opens /login first
@@ -16,6 +17,12 @@ const routes: RouteRecordRaw[] = [
     path: '/login',
     name: 'Login',
     component: LoginView,
+    meta: { layout: 'public', requiresAuth: false },
+  },
+  {
+    path: '/accept-invite',
+    name: 'AcceptInvite',
+    component: AcceptInviteView,
     meta: { layout: 'public', requiresAuth: false },
   },
   {
@@ -68,8 +75,9 @@ router.beforeEach(async (to, _from, next) => {
     return next({ path: '/login' })
   }
 
-  // Rule 2: User explicitly visiting '/login' always sees the login page first
-  if (to.path === '/login') {
+  // Rule 2: User explicitly visiting public pages always proceeds
+  const cleanPath = to.path.replace(/\/+$/, '')
+  if (cleanPath === '/login' || cleanPath === '/accept-invite' || to.name === 'AcceptInvite' || to.name === 'Login') {
     return next()
   }
 

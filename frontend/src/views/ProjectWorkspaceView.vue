@@ -38,6 +38,39 @@
           <ShieldCheck class="w-3 h-3 text-brand-600" />
           <span>Akses Tim</span>
         </button>
+
+        <!-- Edit Project Button -->
+        <button
+          v-if="canManageProjectMembers"
+          @click="showEditProjectModal = true"
+          class="flex items-center space-x-1 px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 text-[10px] font-semibold transition-all cursor-pointer border border-zinc-200 dark:border-zinc-700"
+          title="Edit data proyek (Nama, Klien, Status, Deadline)"
+        >
+          <Edit class="w-3 h-3 text-zinc-600 dark:text-zinc-400" />
+          <span>Edit</span>
+        </button>
+
+        <!-- Copy Project Button -->
+        <button
+          v-if="canManageProjectMembers"
+          @click="showCopyProjectModal = true"
+          class="flex items-center space-x-1 px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 text-[10px] font-semibold transition-all cursor-pointer border border-indigo-200 dark:border-indigo-800"
+          title="Duplikasi seluruh pekerjaan proyek ini ke proyek baru"
+        >
+          <Copy class="w-3 h-3 text-indigo-600" />
+          <span>Salin Proyek</span>
+        </button>
+
+        <!-- Delete Project Button -->
+        <button
+          v-if="canManageProjectMembers"
+          @click="handleDeleteActiveProject"
+          class="flex items-center space-x-1 px-2 py-0.5 rounded-md bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 text-[10px] font-semibold transition-all cursor-pointer border border-rose-200 dark:border-rose-800"
+          title="Hapus proyek ini"
+        >
+          <Trash2 class="w-3 h-3 text-rose-600" />
+          <span>Hapus</span>
+        </button>
       </div>
 
       <div class="flex items-center space-x-2 text-xs">
@@ -339,30 +372,78 @@
       @close="showProjectAccessModal = false"
       @updated="store.fetchProjects()"
     />
+
+    <!-- Edit Project Modal -->
+    <EditProjectModal
+      :is-open="showEditProjectModal"
+      :project="store.currentProject || null"
+      @close="showEditProjectModal = false"
+      @updated="store.fetchProjects()"
+    />
+
+    <!-- Copy Project Modal -->
+    <CopyProjectModal
+      :is-open="showCopyProjectModal"
+      :project="store.currentProject || null"
+      @close="showCopyProjectModal = false"
+      @copied="onProjectCopied"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useProjectStore } from '../stores/projectStore'
 import { useAuthStore } from '../stores/authStore'
 import { projectApi } from '../services/api'
-import type { WikiPage } from '../types/project'
+import type { WikiPage, Project } from '../types/project'
 import KanbanBoard from '../components/KanbanBoard.vue'
 import TaskListView from '../components/TaskListView.vue'
 import ProjectAccessModal from '../components/ProjectAccessModal.vue'
-import { Kanban, ListTodo, GitCommit, BookOpen, Flag, Plus, Download, ShieldCheck, FolderKanban } from 'lucide-vue-next'
+import EditProjectModal from '../components/EditProjectModal.vue'
+import CopyProjectModal from '../components/CopyProjectModal.vue'
+import { Kanban, ListTodo, GitCommit, BookOpen, Flag, Plus, Download, ShieldCheck, FolderKanban, Edit, Trash2, Copy } from 'lucide-vue-next'
 
 const store = useProjectStore()
 const authStore = useAuthStore()
 const route = useRoute()
+const router = useRouter()
 
 const showProjectAccessModal = ref(false)
+const showEditProjectModal = ref(false)
+const showCopyProjectModal = ref(false)
+
+async function onProjectCopied(newProj: Project) {
+  await store.fetchProjects()
+  store.selectProject(newProj.id)
+  store.showToast(`Proyek "${newProj.name}" berhasil diduplikasi dan dibuka!`)
+}
 
 const canManageProjectMembers = computed(() => {
   return authStore.hasRole('super_admin') || authStore.hasRole('pm') || authStore.can('project:member:manage')
 })
+
+async function handleDeleteActiveProject() {
+  const proj = store.currentProject
+  if (!proj) return
+  if (!confirm(`Hapus proyek "${proj.name}"?\nPerhatian: Seluruh deliverable, tugas, dan data keanggotaan proyek ini akan ikut terhapus secara permanen.`)) {
+    return
+  }
+
+  try {
+    await projectApi.deleteProject(proj.id)
+    store.projects = store.projects.filter(p => p.id !== proj.id)
+    store.showToast(`Proyek "${proj.name}" berhasil dihapus.`)
+    if (store.projects.length > 0) {
+      store.selectProject(store.projects[0].id)
+    } else {
+      router.push('/dashboard')
+    }
+  } catch (err: any) {
+    store.showToast(err?.response?.data?.error || 'Gagal menghapus proyek')
+  }
+}
 
 const isExportingTasks = ref(false)
 

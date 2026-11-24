@@ -34,6 +34,23 @@
           />
         </div>
 
+        <!-- Tentukan Project Manager (PM) -->
+        <div>
+          <label class="font-semibold text-zinc-700 dark:text-zinc-300 flex items-center justify-between">
+            <span>Tentukan Project Manager (PM)</span>
+            <span class="text-[10px] text-zinc-400 font-mono">Penanggung Jawab Proyek</span>
+          </label>
+          <select
+            v-model="pmUserId"
+            class="w-full mt-1 px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500 text-xs"
+          >
+            <option value="">-- Tetapkan Pembuat Proyek (Saya Sendiri) --</option>
+            <option v-for="u in userOptions" :key="u.id" :value="u.id">
+              {{ u.name }} ({{ u.email }}) — {{ formatRole(u.role) }}
+            </option>
+          </select>
+        </div>
+
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="font-semibold text-zinc-700 dark:text-zinc-300">Tenggat Waktu</label>
@@ -82,9 +99,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useProjectStore } from '../stores/projectStore'
-import { projectApi } from '../services/api'
+import { projectApi, userApi } from '../services/api'
+import type { User } from '../types/project'
 import { FolderPlus, X, Loader2 } from 'lucide-vue-next'
 
 const props = defineProps<{
@@ -102,9 +120,40 @@ const name = ref('')
 const clientName = ref('')
 const deadline = ref('2026-12-31')
 const colorDot = ref('#4F46E5')
+const pmUserId = ref('')
+const userOptions = ref<User[]>([])
 const isSubmitting = ref(false)
 
 const colorOptions = ['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
+
+function formatRole(role: string) {
+  switch (role) {
+    case 'super_admin': return 'Super Admin'
+    case 'pm': return 'Project Manager'
+    case 'member': return 'Team Member'
+    case 'client': return 'Client'
+    default: return role
+  }
+}
+
+async function loadUsers() {
+  try {
+    const users = await userApi.getUsers()
+    userOptions.value = users || []
+  } catch (err) {
+    console.error('Failed to load users for PM selection', err)
+  }
+}
+
+watch(
+  () => props.isOpen,
+  (open) => {
+    if (open) {
+      loadUsers()
+    }
+  },
+  { immediate: true }
+)
 
 function close() {
   emit('close')
@@ -121,7 +170,8 @@ async function handleSubmit() {
       deadline: deadline.value,
       color_dot: colorDot.value,
       slug: slug,
-      status: 'active'
+      status: 'active',
+      pm_user_id: pmUserId.value || undefined
     })
     store.projects.push(created)
     store.selectProject(created.id)
@@ -130,6 +180,7 @@ async function handleSubmit() {
     emit('close')
     name.value = ''
     clientName.value = ''
+    pmUserId.value = ''
   } catch (err: any) {
     store.showToast('Gagal membuat proyek')
   } finally {

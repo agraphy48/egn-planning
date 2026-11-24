@@ -67,6 +67,7 @@ var RolePermissions = map[string][]string{
 		PermProjectCreate,
 		PermProjectRead,
 		PermProjectEdit,
+		PermProjectDelete,
 		PermProjectArchive,
 		PermProjectMemberManage,
 		PermMilestoneCreate,

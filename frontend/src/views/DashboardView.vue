@@ -136,14 +136,25 @@
           </div>
         </div>
 
-        <button
-          v-else-if="canManageUsers"
-          @click="openCreateUserModal"
-          class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold transition-all shadow-md shadow-brand-600/20 active:scale-95 text-xs flex items-center gap-1.5 cursor-pointer"
-        >
-          <UserPlus class="w-3.5 h-3.5" />
-          <span>Tambah Pengguna</span>
-        </button>
+        <div v-else-if="canManageUsers" class="flex items-center gap-2">
+          <!-- Button Undang Klien / Pengguna via Email -->
+          <button
+            @click="openInviteModal"
+            class="px-3.5 py-1.5 rounded-xl bg-white hover:bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold transition-all shadow-2xs hover:border-indigo-300 text-xs flex items-center gap-1.5 cursor-pointer"
+            title="Kirim Undangan Pendaftaran ke Klien / Pengguna via Email"
+          >
+            <Mail class="w-3.5 h-3.5 text-indigo-600" />
+            <span>Undang Klien / User</span>
+          </button>
+
+          <button
+            @click="openCreateUserModal"
+            class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold transition-all shadow-md shadow-brand-600/20 active:scale-95 text-xs flex items-center gap-1.5 cursor-pointer"
+          >
+            <UserPlus class="w-3.5 h-3.5" />
+            <span>Tambah Pengguna</span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -211,8 +222,22 @@
               <!-- Row 3: Metadata Footer & Actions -->
               <div class="mt-2.5 flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-slate-500 font-mono gap-1.5 pt-1.5 border-t border-slate-100">
                 <span class="tabular-nums font-medium">{{ proj.completed_tasks }} dari {{ proj.total_tasks }} deliverable selesai</span>
-                <div class="flex items-center gap-2">
-                  <span class="text-slate-400">Tenggat: {{ proj.deadline }}</span>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-slate-400 mr-1 hidden sm:inline">Tenggat: {{ proj.deadline }}</span>
+                  
+                  <!-- Edit Proyek Button (Admin / PM) -->
+                  <button
+                    v-if="canManageProjectAccess"
+                    type="button"
+                    @click.stop="openEditProjectModal(proj)"
+                    class="px-2 py-0.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-[10px] font-bold flex items-center gap-1 shadow-2xs transition-colors cursor-pointer"
+                    title="Edit nama, klien, deadline, dan status proyek"
+                  >
+                    <Edit class="w-3 h-3 text-slate-600" />
+                    <span>Edit</span>
+                  </button>
+
+                  <!-- Kelola Akses Tim Button -->
                   <button
                     v-if="canManageProjectAccess"
                     type="button"
@@ -221,7 +246,30 @@
                     title="Kelola hak akses team member ke proyek ini"
                   >
                     <ShieldCheck class="w-3 h-3 text-brand-600" />
-                    <span>Akses Tim</span>
+                    <span>Akses</span>
+                  </button>
+
+                  <!-- Salin / Duplikasi Proyek Button (Admin / PM) -->
+                  <button
+                    v-if="canManageProjectAccess"
+                    type="button"
+                    @click.stop="openCopyProjectModal(proj)"
+                    class="px-2 py-0.5 rounded-lg bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 text-indigo-700 text-[10px] font-bold flex items-center gap-1 shadow-2xs transition-colors cursor-pointer"
+                    title="Duplikasi seluruh pekerjaan proyek ini ke proyek baru"
+                  >
+                    <Copy class="w-3 h-3 text-indigo-600" />
+                    <span>Salin</span>
+                  </button>
+
+                  <!-- Hapus Proyek Button (Admin / PM) -->
+                  <button
+                    v-if="canManageProjectAccess"
+                    type="button"
+                    @click.stop="handleDeleteProject(proj)"
+                    class="p-1 rounded-lg bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-300 text-rose-600 text-[10px] font-bold flex items-center shadow-2xs transition-colors cursor-pointer"
+                    title="Hapus proyek ini"
+                  >
+                    <Trash2 class="w-3 h-3 text-rose-500" />
                   </button>
                 </div>
               </div>
@@ -431,6 +479,59 @@
           </div>
         </div>
 
+        <!-- Sub-Navigation Switcher: Pengguna Aktif vs Undangan Tertunda -->
+        <div class="flex items-center justify-between gap-2 flex-wrap pt-1">
+          <div class="p-1 rounded-xl bg-slate-100/90 border border-slate-200/80 flex items-center gap-1 text-xs font-semibold">
+            <button
+              @click="userSubTab = 'active'"
+              :class="[
+                'px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-all cursor-pointer',
+                userSubTab === 'active'
+                  ? 'bg-white text-slate-900 shadow-2xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900'
+              ]"
+            >
+              <Users class="w-3.5 h-3.5 text-brand-600" />
+              <span>Daftar Pengguna Aktif</span>
+              <span class="px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-slate-100 text-slate-700 border border-slate-200 ml-1">
+                {{ userList.length }}
+              </span>
+            </button>
+
+            <button
+              @click="userSubTab = 'invitations'"
+              :class="[
+                'px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-all cursor-pointer',
+                userSubTab === 'invitations'
+                  ? 'bg-white text-indigo-700 shadow-2xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900'
+              ]"
+            >
+              <Mail class="w-3.5 h-3.5 text-indigo-600" />
+              <span>Undangan Klien & User</span>
+              <span
+                v-if="pendingInvitationsCount > 0"
+                class="px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-indigo-50 text-indigo-700 font-bold border border-indigo-200 ml-1"
+              >
+                {{ pendingInvitationsCount }}
+              </span>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button
+              v-if="userSubTab === 'invitations'"
+              @click="openInviteModal"
+              class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md shadow-indigo-600/20 flex items-center gap-1.5 transition-all cursor-pointer"
+            >
+              <MailPlus class="w-3.5 h-3.5" />
+              <span>Undang Klien Baru</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ==================== SUB-VIEW 1: ACTIVE USERS (CRUD) ==================== -->
+        <template v-if="userSubTab === 'active'">
         <!-- Filter & Search Controls -->
         <div class="p-4 rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-lg shadow-slate-200/30 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <!-- Search Input -->
@@ -707,6 +808,296 @@
             </div>
           </div>
         </div>
+        </template>
+
+        <!-- ==================== SUB-VIEW 2: INVITATIONS LIST ==================== -->
+        <template v-else-if="userSubTab === 'invitations'">
+          <div class="space-y-4">
+            <!-- Header bar for Invitations -->
+            <div class="p-4 rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-lg shadow-slate-200/30 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              <div>
+                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                  <Mail class="w-4 h-4 text-indigo-600" />
+                  <span>Daftar Undangan Klien & Pengguna</span>
+                </h3>
+                <p class="text-[11px] text-slate-500 mt-0.5">
+                  Tautan undangan yang dapat Anda kirim via WhatsApp atau Email. Saat calon pengguna mengonfirmasi, akun mereka langsung dibuat dengan email dan hak akses proyek yang telah Anda tetapkan.
+                </p>
+
+                <!-- SMTP Service Status Pill -->
+                <div class="mt-2.5 flex flex-wrap items-center gap-2">
+                  <div
+                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border"
+                    :class="smtpStatus.configured ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'"
+                  >
+                    <span class="w-2 h-2 rounded-full" :class="smtpStatus.configured ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'"></span>
+                    <span>{{ smtpStatus.configured ? `SMTP Aktif (${smtpStatus.smtp_host} • ${smtpStatus.smtp_user})` : 'SMTP Belum Dikonfigurasi (Email Otomatis Nonaktif)' }}</span>
+                  </div>
+                  <button
+                    v-if="canManageUsers"
+                    @click="openSMTPConfigModal"
+                    class="text-[11px] text-indigo-600 hover:text-indigo-800 font-bold underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Settings class="w-3 h-3" />
+                    <span>Pengaturan & Tes SMTP</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2 flex-shrink-0">
+                <button
+                  @click="openInviteModal"
+                  class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-brand-600/20 flex items-center gap-1.5 transition-all cursor-pointer"
+                >
+                  <MailPlus class="w-3.5 h-3.5" />
+                  <span>Undang Klien Baru</span>
+                </button>
+
+                <button
+                  @click="loadInvitations"
+                  :disabled="isLoadingInvitations"
+                  class="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors shadow-xs cursor-pointer"
+                  title="Segarkan Undangan"
+                >
+                  <RefreshCw class="w-4 h-4" :class="isLoadingInvitations ? 'animate-spin text-brand-600' : ''" />
+                </button>
+              </div>
+            </div>
+
+            <!-- Invitations Desktop Table -->
+            <div class="hidden md:block rounded-2xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-xl shadow-slate-200/50 overflow-hidden">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-50/80 border-b border-slate-200/80 text-[10px] font-mono uppercase text-slate-500 font-bold tracking-wider">
+                    <tr>
+                      <th class="py-3 px-4">Calon Pengguna (Email)</th>
+                      <th class="py-3 px-4">Peran / Hak Akses</th>
+                      <th class="py-3 px-4">Akses Proyek Ditugaskan</th>
+                      <th class="py-3 px-4">Status Undangan</th>
+                      <th class="py-3 px-4">Tenggat Waktu</th>
+                      <th class="py-3 px-4 text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100">
+                    <tr v-if="invitationsList.length === 0">
+                      <td colspan="6" class="py-12 text-center text-slate-400">
+                        <Mail class="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                        <p class="font-medium text-xs text-slate-600">Belum ada undangan yang dibuat</p>
+                        <p class="text-[11px] text-slate-400 mt-1">Undang klien atau rekan tim baru untuk bergabung ke proyek</p>
+                        <button
+                          @click="openInviteModal"
+                          class="mt-3 px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md shadow-indigo-600/20 inline-flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <MailPlus class="w-3.5 h-3.5" />
+                          <span>Undang Klien Sekarang</span>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <tr
+                      v-for="inv in invitationsList"
+                      :key="inv.id"
+                      class="hover:bg-slate-50/80 transition-colors"
+                    >
+                      <!-- Email & Name -->
+                      <td class="py-3 px-4">
+                        <div class="font-bold text-slate-900 select-all">
+                          {{ inv.email }}
+                        </div>
+                        <p v-if="inv.name" class="text-[11px] text-slate-600 font-medium">{{ inv.name }}</p>
+                        <p class="text-[9px] font-mono text-slate-400 mt-0.5">Pengundang: {{ inv.inviter_name || 'Administrator' }}</p>
+                      </td>
+
+                      <!-- Role Badge -->
+                      <td class="py-3 px-4">
+                        <span
+                          :class="[
+                            'px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase border shadow-2xs inline-block',
+                            inv.role === 'client' ? 'bg-amber-50 text-amber-800 border-amber-200' :
+                            inv.role === 'pm' ? 'bg-purple-50 text-purple-800 border-purple-200' :
+                            'bg-blue-50 text-blue-800 border-blue-200'
+                          ]"
+                        >
+                          {{ formatRoleName(inv.role) }}
+                        </span>
+                      </td>
+
+                      <!-- Project Badges -->
+                      <td class="py-3 px-4">
+                        <div v-if="inv.project_ids && inv.project_ids.length > 0" class="flex flex-wrap gap-1 max-w-xs">
+                          <span
+                            v-for="pid in inv.project_ids"
+                            :key="pid"
+                            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-medium"
+                          >
+                            <span class="w-1.5 h-1.5 rounded-full" :style="{ backgroundColor: getProjectColor(pid) }"></span>
+                            <span class="truncate max-w-[120px]">{{ getProjectName(pid) }}</span>
+                          </span>
+                        </div>
+                        <span v-else class="text-[10px] text-slate-400 italic">Belum Ada Proyek Ditugaskan</span>
+                      </td>
+
+                      <!-- Status -->
+                      <td class="py-3 px-4">
+                        <span
+                          v-if="inv.status === 'pending'"
+                          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-[10px] font-semibold"
+                        >
+                          <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                          <span>Menunggu Konfirmasi</span>
+                        </span>
+                        <span
+                          v-else-if="inv.status === 'accepted'"
+                          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10px] font-semibold"
+                        >
+                          <CheckCircle2 class="w-3 h-3 text-emerald-600" />
+                          <span>Telah Dikonfirmasi</span>
+                        </span>
+                        <span
+                          v-else-if="inv.status === 'expired'"
+                          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-500 text-[10px] font-semibold"
+                        >
+                          <Clock class="w-3 h-3 text-slate-400" />
+                          <span>Kedaluwarsa</span>
+                        </span>
+                        <span
+                          v-else
+                          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-[10px] font-semibold"
+                        >
+                          <X class="w-3.5 h-3.5 text-rose-500" />
+                          <span>Dibatalkan</span>
+                        </span>
+                      </td>
+
+                      <!-- Expiry Date -->
+                      <td class="py-3 px-4 text-slate-500 font-mono text-[11px]">
+                        {{ formatExpiryDate(inv.expires_at) }}
+                      </td>
+
+                      <!-- Actions -->
+                      <td class="py-3 px-4 text-right">
+                        <div class="flex items-center justify-end gap-1.5">
+                          <!-- Resend Email via SMTP -->
+                          <button
+                            v-if="inv.status === 'pending'"
+                            @click="resendInvitationEmail(inv)"
+                            :disabled="isResendingId === inv.id"
+                            class="py-1 px-2.5 rounded-lg border border-indigo-200 hover:bg-indigo-50 text-indigo-700 text-[11px] font-semibold flex items-center gap-1 transition-colors cursor-pointer disabled:opacity-50"
+                            title="Kirim ulang email undangan langsung ke kotak masuk pengguna"
+                          >
+                            <Loader2 v-if="isResendingId === inv.id" class="w-3.5 h-3.5 animate-spin text-indigo-600" />
+                            <Send v-else class="w-3.5 h-3.5 text-indigo-600" />
+                            <span>{{ isResendingId === inv.id ? 'Mengirim...' : 'Kirim Email' }}</span>
+                          </button>
+
+                          <!-- Copy Link -->
+                          <button
+                            v-if="inv.status === 'pending'"
+                            @click="copyInvitationLink(inv)"
+                            class="py-1 px-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 text-[11px] font-semibold flex items-center gap-1 transition-colors cursor-pointer"
+                            :title="inv.invite_url"
+                          >
+                            <Check v-if="copiedInviteId === inv.id" class="w-3.5 h-3.5 text-emerald-600" />
+                            <Copy v-else class="w-3.5 h-3.5 text-slate-500" />
+                            <span>{{ copiedInviteId === inv.id ? 'Tersalin' : 'Salin Tautan' }}</span>
+                          </button>
+
+                          <!-- Revoke Invite -->
+                          <button
+                            v-if="inv.status === 'pending'"
+                            @click="handleRevokeInvitation(inv)"
+                            class="py-1 px-2 rounded-lg border border-rose-200 hover:bg-rose-50 text-rose-600 text-[11px] font-semibold transition-colors cursor-pointer"
+                            title="Batalkan Undangan"
+                          >
+                            <X class="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Invitations Mobile Cards -->
+            <div class="md:hidden space-y-3">
+              <div v-if="invitationsList.length === 0" class="p-8 text-center text-slate-400 bg-white rounded-2xl border border-slate-200">
+                <Mail class="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                <p class="font-medium text-xs text-slate-600">Belum ada undangan</p>
+                <button
+                  @click="openInviteModal"
+                  class="mt-3 px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white font-bold text-xs"
+                >
+                  Undang Klien
+                </button>
+              </div>
+
+              <div
+                v-for="inv in invitationsList"
+                :key="inv.id"
+                class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3"
+              >
+                <div class="flex items-start justify-between gap-2">
+                  <div>
+                    <span class="font-bold text-slate-900 text-xs block">{{ inv.email }}</span>
+                    <span v-if="inv.name" class="text-[11px] text-slate-500">{{ inv.name }}</span>
+                  </div>
+                  <span
+                    :class="[
+                      'px-2 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase border',
+                      inv.role === 'client' ? 'bg-amber-50 text-amber-800 border-amber-200' : 'bg-blue-50 text-blue-800 border-blue-200'
+                    ]"
+                  >
+                    {{ formatRoleName(inv.role) }}
+                  </span>
+                </div>
+
+                <div v-if="inv.project_ids && inv.project_ids.length > 0" class="flex flex-wrap gap-1">
+                  <span
+                    v-for="pid in inv.project_ids"
+                    :key="pid"
+                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px]"
+                  >
+                    <span class="w-1.5 h-1.5 rounded-full" :style="{ backgroundColor: getProjectColor(pid) }"></span>
+                    <span>{{ getProjectName(pid) }}</span>
+                  </span>
+                </div>
+
+                <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px]">
+                  <span class="text-slate-500 font-mono text-[10px]">{{ formatExpiryDate(inv.expires_at) }}</span>
+                  <div class="flex items-center gap-1.5">
+                    <button
+                      v-if="inv.status === 'pending'"
+                      @click="resendInvitationEmail(inv)"
+                      :disabled="isResendingId === inv.id"
+                      class="py-1 px-2 rounded-lg border border-indigo-200 text-indigo-700 font-semibold text-xs flex items-center gap-1"
+                    >
+                      <Loader2 v-if="isResendingId === inv.id" class="w-3 h-3 animate-spin text-indigo-600" />
+                      <Send v-else class="w-3 h-3 text-indigo-600" />
+                      <span>Kirim</span>
+                    </button>
+                    <button
+                      v-if="inv.status === 'pending'"
+                      @click="copyInvitationLink(inv)"
+                      class="py-1 px-2.5 rounded-lg border border-slate-200 text-slate-700 font-semibold text-xs flex items-center gap-1"
+                    >
+                      <Check v-if="copiedInviteId === inv.id" class="w-3.5 h-3.5 text-emerald-600" />
+                      <Copy v-else class="w-3.5 h-3.5 text-slate-500" />
+                      <span>Salin</span>
+                    </button>
+                    <button
+                      v-if="inv.status === 'pending'"
+                      @click="handleRevokeInvitation(inv)"
+                      class="py-1 px-2 rounded-lg border border-rose-200 text-rose-600"
+                    >
+                      <X class="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
       </div>
     </template>
 
@@ -1170,6 +1561,14 @@
       </div>
     </div>
 
+    <!-- ==================== EDIT PROJECT MODAL ==================== -->
+    <EditProjectModal
+      :is-open="showEditProjectModal"
+      :project="selectedProjectForEdit"
+      @close="showEditProjectModal = false"
+      @updated="store.fetchProjects()"
+    />
+
     <!-- ==================== PROJECT ACCESS MANAGEMENT MODAL ==================== -->
     <ProjectAccessModal
       :is-open="showProjectAccessModal"
@@ -1177,6 +1576,135 @@
       @close="showProjectAccessModal = false"
       @updated="store.fetchProjects()"
     />
+
+    <!-- ==================== COPY PROJECT MODAL ==================== -->
+    <CopyProjectModal
+      :is-open="showCopyProjectModal"
+      :project="selectedProjectForCopy"
+      @close="showCopyProjectModal = false"
+      @copied="onProjectCopied"
+    />
+
+    <!-- ==================== INVITE USER MODAL ==================== -->
+    <InviteUserModal
+      :is-open="showInviteModal"
+      :projects="store.projects"
+      @close="showInviteModal = false"
+      @invited="loadInvitations"
+    />
+
+    <!-- ==================== SMTP SETTINGS & TEST MODAL ==================== -->
+    <div
+      v-if="showSMTPModal"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs select-none"
+      @click.self="showSMTPModal = false"
+    >
+      <div class="max-w-lg w-full bg-white rounded-3xl border border-slate-200 shadow-2xl p-6 sm:p-7 space-y-5 relative max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
+        <!-- Header -->
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-3">
+            <div class="p-2.5 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600">
+              <Mail class="w-5 h-5 stroke-[2.2]" />
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-slate-900 font-display">Layanan Email (SMTP)</h3>
+              <p class="text-xs text-slate-500">Status & Pengujian Pengiriman Email Undangan</p>
+            </div>
+          </div>
+          <button @click="showSMTPModal = false" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer">
+            <X class="w-4 h-4" />
+          </button>
+        </div>
+
+        <!-- Status Card -->
+        <div
+          class="p-4 rounded-2xl border text-xs space-y-2.5"
+          :class="smtpStatus.configured ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-amber-50/70 border-amber-200 text-amber-950'"
+        >
+          <div class="flex items-center justify-between">
+            <span class="font-bold flex items-center gap-1.5">
+              <CheckCircle2 v-if="smtpStatus.configured" class="w-4 h-4 text-emerald-600" />
+              <AlertCircle v-else class="w-4 h-4 text-amber-600" />
+              <span>Status Koneksi: {{ smtpStatus.configured ? 'Terkonfigurasi (Siap Kirim)' : 'Belum Dikonfigurasi Lengkap' }}</span>
+            </span>
+            <span class="font-mono text-[10px] px-2 py-0.5 rounded-md bg-white border border-slate-200">
+              Port: {{ smtpStatus.smtp_port }}
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 pt-2 text-[11px]">
+            <div>
+              <span class="text-slate-500 block">Host:</span>
+              <span class="font-semibold font-mono">{{ smtpStatus.smtp_host || 'smtp.gmail.com' }}</span>
+            </div>
+            <div>
+              <span class="text-slate-500 block">Akun Pengirim:</span>
+              <span class="font-semibold font-mono">{{ smtpStatus.smtp_user || '-' }}</span>
+            </div>
+            <div class="col-span-2">
+              <span class="text-slate-500 block">Sandi Aplikasi (Masked):</span>
+              <span class="font-semibold font-mono">{{ smtpStatus.has_pass ? smtpStatus.masked_pass : '(Belum Diisi di backend/.env)' }}</span>
+            </div>
+          </div>
+
+          <p v-if="!smtpStatus.configured" class="text-[10px] text-amber-800 leading-relaxed pt-1 border-t border-amber-200/60">
+            * Untuk mengaktifkan pengiriman email otomatis via Google, masukkan <strong>App Password 16-digit</strong> pada file <code>backend/.env</code> parameter <code>SMTP_PASS</code>.
+          </p>
+        </div>
+
+        <!-- Test Email Dispatcher -->
+        <div class="space-y-3 pt-1">
+          <label class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
+            <Send class="w-3.5 h-3.5 text-indigo-600" />
+            <span>Kirim Email Uji Coba (Test Send)</span>
+          </label>
+          <p class="text-[11px] text-slate-500">
+            Kirimkan satu email uji coba untuk memverifikasi apakah akun SMTP berhasil terkoneksi ke Google/Mail Server.
+          </p>
+
+          <div class="flex items-center gap-2">
+            <input
+              type="email"
+              v-model="testEmailTarget"
+              placeholder="email-anda@gmail.com"
+              class="flex-1 px-3 py-2 rounded-xl border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <button
+              @click="executeTestSMTP"
+              :disabled="isTestingSMTP || !testEmailTarget"
+              class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md shadow-indigo-600/20 disabled:opacity-50 flex items-center gap-1.5 cursor-pointer transition-all flex-shrink-0"
+            >
+              <Loader2 v-if="isTestingSMTP" class="w-3.5 h-3.5 animate-spin" />
+              <Send v-else class="w-3.5 h-3.5" />
+              <span>{{ isTestingSMTP ? 'Mengirim...' : 'Tes Kirim' }}</span>
+            </button>
+          </div>
+
+          <!-- Test Result Banner -->
+          <div
+            v-if="testSMTPResponse"
+            class="p-3 rounded-xl text-xs flex items-start gap-2 border"
+            :class="testSMTPResponse.success ? 'bg-emerald-50 text-emerald-900 border-emerald-200' : 'bg-rose-50 text-rose-900 border-rose-200'"
+          >
+            <CheckCircle2 v-if="testSMTPResponse.success" class="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+            <AlertCircle v-else class="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
+            <span class="leading-relaxed">{{ testSMTPResponse.message }}</span>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+          <span class="text-[10px] text-slate-400">File Konfigurasi: <code>backend/.env</code></span>
+          <button
+            type="button"
+            @click="showSMTPModal = false"
+            class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -1185,10 +1713,13 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useProjectStore } from '../stores/projectStore'
 import { useAuthStore } from '../stores/authStore'
 import { useRouter, useRoute } from 'vue-router'
-import { projectApi, userApi, type UserPayload } from '../services/api'
-import type { TeamWorkload, BudgetItem, User, Project } from '../types/project'
+import { projectApi, userApi, invitationApi, systemApi, type UserPayload } from '../services/api'
+import type { TeamWorkload, BudgetItem, User, Project, InvitationItem } from '../types/project'
 import KPIStats from '../components/KPIStats.vue'
+import EditProjectModal from '../components/EditProjectModal.vue'
 import ProjectAccessModal from '../components/ProjectAccessModal.vue'
+import InviteUserModal from '../components/InviteUserModal.vue'
+import CopyProjectModal from '../components/CopyProjectModal.vue'
 import {
   Clock,
   Download,
@@ -1216,7 +1747,13 @@ import {
   CheckCircle2,
   FileUp,
   ChevronDown,
-  FolderKanban
+  FolderKanban,
+  Mail,
+  MailPlus,
+  Copy,
+  Check,
+  Send,
+  Settings
 } from 'lucide-vue-next'
 
 const store = useProjectStore()
@@ -1242,6 +1779,42 @@ const canManageProjectAccess = computed(() => {
 const showProjectAccessModal = ref(false)
 const selectedProjectForAccess = ref<Project | null>(null)
 
+const showEditProjectModal = ref(false)
+const selectedProjectForEdit = ref<Project | null>(null)
+
+const showCopyProjectModal = ref(false)
+const selectedProjectForCopy = ref<Project | null>(null)
+
+function openCopyProjectModal(project: Project) {
+  selectedProjectForCopy.value = project
+  showCopyProjectModal.value = true
+}
+
+async function onProjectCopied(newProject: Project) {
+  await store.fetchProjects()
+  store.selectProject(newProject.id)
+  store.showToast(`Proyek "${newProject.name}" berhasil diduplikasi!`)
+}
+
+function openEditProjectModal(project: Project) {
+  selectedProjectForEdit.value = project
+  showEditProjectModal.value = true
+}
+
+async function handleDeleteProject(project: Project) {
+  if (!confirm(`Hapus proyek "${project.name}"?\nPerhatian: Seluruh deliverable, tugas, dan data keanggotaan proyek ini akan ikut terhapus secara permanen.`)) {
+    return
+  }
+
+  try {
+    await projectApi.deleteProject(project.id)
+    store.projects = store.projects.filter(p => p.id !== project.id)
+    store.showToast(`Proyek "${project.name}" berhasil dihapus.`)
+  } catch (err: any) {
+    store.showToast(err?.response?.data?.error || 'Gagal menghapus proyek')
+  }
+}
+
 function openProjectAccessModal(project: Project) {
   selectedProjectForAccess.value = project
   showProjectAccessModal.value = true
@@ -1252,7 +1825,158 @@ function switchTab(tab: 'overview' | 'users') {
   router.replace({ query: { ...route.query, tab } })
 }
 
-// ==================== USER MANAGEMENT STATE ====================
+// ==================== USER MANAGEMENT & INVITATIONS STATE ====================
+const userSubTab = ref<'active' | 'invitations'>('active')
+const showInviteModal = ref(false)
+const invitationsList = ref<InvitationItem[]>([])
+const isLoadingInvitations = ref(false)
+const copiedInviteId = ref<string | null>(null)
+const isResendingId = ref<string | null>(null)
+
+// SMTP Service state
+const smtpStatus = ref<{
+  configured: boolean
+  smtp_host: string
+  smtp_port: number
+  smtp_user: string
+  smtp_from: string
+  smtp_secure: boolean
+  has_pass: boolean
+  masked_pass: string
+}>({
+  configured: false,
+  smtp_host: 'smtp.gmail.com',
+  smtp_port: 587,
+  smtp_user: '',
+  smtp_from: '',
+  smtp_secure: false,
+  has_pass: false,
+  masked_pass: ''
+})
+const showSMTPModal = ref(false)
+const isTestingSMTP = ref(false)
+const testEmailTarget = ref('')
+const testSMTPResponse = ref<{ success?: boolean; message?: string } | null>(null)
+
+const pendingInvitationsCount = computed(() => {
+  return invitationsList.value.filter((i) => i.status === 'pending').length
+})
+
+function openInviteModal() {
+  showInviteModal.value = true
+}
+
+function openSMTPConfigModal() {
+  testEmailTarget.value = authStore.user?.email || 'agus48@polsri.ac.id'
+  testSMTPResponse.value = null
+  showSMTPModal.value = true
+}
+
+async function loadSMTPStatus() {
+  if (!canManageUsers.value) return
+  try {
+    const data = await systemApi.getSMTPStatus()
+    if (data) smtpStatus.value = data
+  } catch (err: any) {
+    console.error('Failed to load SMTP status:', err)
+  }
+}
+
+async function resendInvitationEmail(inv: InvitationItem) {
+  if (!inv || !inv.id) return
+  isResendingId.value = inv.id
+  try {
+    const res = await invitationApi.resendInvitation(inv.id)
+    store.showToast(res.message || `Email undangan berhasil dikirim ulang ke ${inv.email}`)
+  } catch (err: any) {
+    store.showToast('Gagal mengirim email: ' + (err?.response?.data?.error || err.message))
+  } finally {
+    isResendingId.value = null
+  }
+}
+
+async function executeTestSMTP() {
+  if (!testEmailTarget.value.trim()) return
+  isTestingSMTP.value = true
+  testSMTPResponse.value = null
+  try {
+    const res = await systemApi.testSMTP(testEmailTarget.value.trim())
+    testSMTPResponse.value = { success: true, message: res.message }
+    store.showToast('Email pengujian SMTP sukses terkirim!')
+  } catch (err: any) {
+    testSMTPResponse.value = { success: false, message: err?.response?.data?.error || err.message }
+  } finally {
+    isTestingSMTP.value = false
+  }
+}
+
+async function loadInvitations() {
+  if (!canManageUsers.value) return
+  isLoadingInvitations.value = true
+  try {
+    const data = await invitationApi.getInvitations()
+    invitationsList.value = data || []
+  } catch (err: any) {
+    console.error('Failed to load invitations:', err)
+  } finally {
+    isLoadingInvitations.value = false
+  }
+}
+
+async function copyInvitationLink(inv: InvitationItem) {
+  if (!inv.invite_url) return
+  try {
+    await navigator.clipboard.writeText(inv.invite_url)
+    copiedInviteId.value = inv.id
+    store.showToast(`Tautan undangan untuk ${inv.email} berhasil disalin!`)
+    setTimeout(() => {
+      if (copiedInviteId.value === inv.id) {
+        copiedInviteId.value = null
+      }
+    }, 3000)
+  } catch (err) {
+    console.error('Failed to copy invite link:', err)
+  }
+}
+
+async function handleRevokeInvitation(inv: InvitationItem) {
+  if (!confirm(`Batalkan undangan untuk email ${inv.email}? Tautan yang telah dikirim tidak akan dapat digunakan lagi.`)) {
+    return
+  }
+  try {
+    await invitationApi.revokeInvitation(inv.id)
+    store.showToast(`Undangan untuk ${inv.email} berhasil dibatalkan`)
+    await loadInvitations()
+  } catch (err: any) {
+    store.showToast('Gagal membatalkan undangan: ' + (err?.response?.data?.error || err.message))
+  }
+}
+
+function getProjectName(id: string): string {
+  const p = store.projects.find((proj) => proj.id === id)
+  return p ? p.name : id
+}
+
+function getProjectColor(id: string): string {
+  const p = store.projects.find((proj) => proj.id === id)
+  return p?.color_dot || '#6366F1'
+}
+
+function formatExpiryDate(dStr: string): string {
+  if (!dStr) return '-'
+  try {
+    const d = new Date(dStr)
+    return d.toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  } catch {
+    return dStr
+  }
+}
+
 const userList = ref<User[]>([])
 const isLoadingUsers = ref(false)
 const userSearchQuery = ref('')
@@ -1540,6 +2264,8 @@ onMounted(async () => {
   }
 
   loadUsers()
+  loadInvitations()
+  loadSMTPStatus()
 
   try {
     const wl = await projectApi.getTeamWorkload()
@@ -1556,6 +2282,8 @@ watch(() => route.query.tab, (tab) => {
   if (tab === 'users') {
     activeDashboardTab.value = 'users'
     loadUsers()
+    loadInvitations()
+    loadSMTPStatus()
   } else {
     activeDashboardTab.value = 'overview'
   }
